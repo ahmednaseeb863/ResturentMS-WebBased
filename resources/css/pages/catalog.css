@@ -1,0 +1,154 @@
+/* Ported verbatim from pos-react src/index.css (lines 1130-1280). Keep class names identical. */
+
+/* ── Page wrapper ── */
+.bc-page {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── Two-column grid — matches sample exactly ── */
+.bc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── Each panel ── */
+.bc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Panel header row: title left, Add button right */
+.bc-panel-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Small Add button — matches sample font-size:10px, padding:3px 8px */
+.bc-add-btn {
+  font-size: 10px !important;
+  padding: 3px 8px !important;
+}
+
+/* ── Category tree box — matches sample bordered div ── */
+.bc-tree-box {
+  border: 1px solid var(--color-divider);
+  padding: 12px 16px;
+  font-size: 12px;
+  line-height: 2;
+}
+
+/* Spacing between top-level groups */
+.bc-tree-group {
+  margin-top: 4px;
+}
+
+/* Top-level parent row */
+.bc-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: default;
+}
+
+/* ▾ ▸ toggle on parent */
+.bc-tree-arrow {
+  font-size: 11px;
+  color: var(--color-neutral-500);
+  width: 14px;
+  flex: none;
+  user-select: none;
+}
+
+.bc-tree-label {
+  /* no flex:1 — count badge sits right after the name */
+}
+
+/* Children container — indented 20px like sample */
+.bc-tree-children {
+  padding-left: 20px;
+}
+
+/* Each child row: ├ or └ connector + name + count */
+.bc-tree-child-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-neutral-600);
+  font-weight: 400;
+}
+
+/* Monospace connector characters ├ └ */
+.bc-tree-connector {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  color: var(--color-neutral-400);
+  flex: none;
+}
+
+/* Arrow on child rows that have their own children */
+.bc-tree-child-arrow {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+  width: 12px;
+  flex: none;
+  user-select: none;
+}
+
+.bc-tree-child-label {
+  /* no flex:1 — count badge sits right after the name */
+}
+
+/* Grand-children: extra 20px indent */
+.bc-tree-grandchildren {
+  padding-left: 20px;
+}
+
+.bc-tree-gc-row {
+  padding-left: 0;
+}
+
+/* Product count badge */
+.bc-count {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+  font-family: var(--font-body);
+  margin-left: 6px;
+  flex: none;
+}
+
+/* ── Section Title (used in Brands & Categories panels) ── */
+.section-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text);
+}
+
+.section-title svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.5;
+  flex: none;
+  color: var(--color-accent);
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 800px) {
+  .bc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+

@@ -1,0 +1,298 @@
+/*
+ * Responsive rules (docs/PLAN.md §8). The desktop look (≥1280px) is exactly pos-react;
+ * everything below only adapts it. Test at 360, 768, 1024, 1366, 1920px.
+ */
+
+/* ── Laptop 1024–1279: same shell, fewer stat columns ── */
+@media (max-width: 1279px) {
+  .stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* ── Below 1024: panels stack, tables keep their first column visible ── */
+@media (max-width: 1023px) {
+  .toolbar-menu-btn {
+    display: inline-flex;
+  }
+
+  .dash-row,
+  .uikit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rgrid-wrap .rgrid th:first-child,
+  .rgrid-wrap .rgrid td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+
+  .rgrid-wrap .rgrid th:first-child {
+    background: var(--color-neutral-100);
+  }
+
+  .rgrid-wrap .rgrid td:first-child {
+    background: var(--color-bg);
+  }
+}
+
+/* ── Tablet 768–1023: 56px icon rail, expands over the content ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar {
+    position: relative;
+    z-index: 120;
+    width: 56px;
+    overflow-x: hidden;
+    transition: width 0.15s ease, margin-right 0.15s ease;
+  }
+
+  .app-shell:not(.nav-open) .sidebar-section {
+    font-size: 0;
+    padding: 0;
+    margin: 6px 12px;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .app-shell:not(.nav-open) .sidebar-group:first-child .sidebar-section {
+    border-top: none;
+  }
+
+  .app-shell:not(.nav-open) .sidebar-label,
+  .app-shell:not(.nav-open) .sidebar-user-text {
+    display: none;
+  }
+
+  .app-shell:not(.nav-open) .sidebar-item {
+    justify-content: center;
+    padding: 9px 0;
+  }
+
+  .app-shell:not(.nav-open) .sidebar-user {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+
+  .app-shell:not(.nav-open) .theme-toggle {
+    margin-left: 0;
+  }
+
+  /* expanded: 200px wide but still only 56px in the flow → overlays the page */
+  .app-shell.nav-open .sidebar {
+    width: 200px;
+    margin-right: -144px;
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.12);
+  }
+
+  .app-shell.nav-open .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .cust-modal {
+    width: 420px;
+  }
+}
+
+/* ── Phone < 768: off-canvas drawer, compact toolbar, 1-column content ── */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 120;
+    width: 260px;
+    max-width: 85vw;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .app-shell.nav-open .sidebar {
+    transform: none;
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .app-shell.nav-open .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .toolbar {
+    padding: 8px 12px;
+  }
+
+  .toolbar-title {
+    min-width: 0;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toolbar-actions {
+    display: none;
+  }
+
+  .toolbar-more {
+    display: block;
+  }
+
+  .branch-switcher .fselect {
+    min-width: 0;
+    max-width: 110px;
+  }
+
+  /* status bar: branch + shift only */
+  .statusbar > span:not(.sb-keep),
+  .statusbar-right > span:not(.sb-keep) {
+    display: none;
+  }
+
+  .stat-grid,
+  .alert-row {
+    grid-template-columns: 1fr;
+  }
+
+  .alert-card {
+    white-space: normal;
+  }
+
+  .products-page,
+  .dashboard {
+    padding: 12px;
+  }
+
+  .filter-row .products-search {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .finput input {
+    width: 100%;
+  }
+
+  .products-count {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .login-page {
+    height: 100dvh;
+    padding: 0 16px;
+  }
+
+  .login-window {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .login-body {
+    padding: 32px 24px;
+  }
+}
+
+/* ── Phone < 640: high-traffic lists become stacked cards ── */
+@media (max-width: 639px) {
+  .rgrid-stack .rgrid thead {
+    display: none;
+  }
+
+  .rgrid-stack .rgrid,
+  .rgrid-stack .rgrid tbody,
+  .rgrid-stack .rgrid tr,
+  .rgrid-stack .rgrid td {
+    display: block;
+    width: 100%;
+  }
+
+  .rgrid-stack .rgrid tr {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .rgrid-stack .rgrid td {
+    position: static;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 3px 0;
+    border: none;
+    background: transparent;
+    white-space: normal;
+    text-align: right;
+  }
+
+  .rgrid-stack .rgrid td::before {
+    content: attr(data-label);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-neutral-600);
+    text-align: left;
+  }
+
+  .rgrid-stack .rgrid td:first-child::before,
+  .rgrid-stack .rgrid td[data-label=""]::before,
+  .rgrid-stack .rgrid td.products-empty::before {
+    content: none;
+  }
+
+  .rgrid-stack .rgrid td.products-empty {
+    justify-content: center;
+  }
+}
+
+/* ── Touch screens: bigger targets, mouse view keeps compact density ── */
+@media (pointer: coarse) {
+  .btn,
+  .toolbar-btn,
+  .fselect,
+  .finput {
+    min-height: 40px;
+  }
+
+  .cust-input {
+    height: 40px;
+  }
+
+  .cust-textarea {
+    height: 88px;
+  }
+
+  .sidebar-item {
+    min-height: 44px;
+  }
+
+  .cust-tab {
+    min-height: 44px;
+  }
+
+  .rgrid td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .rgrid-pager span {
+    min-width: 36px;
+    height: 36px;
+  }
+
+  .toolbar-menu-btn,
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pos-cat,
+  .pos-pcard {
+    min-height: 44px;
+  }
+}

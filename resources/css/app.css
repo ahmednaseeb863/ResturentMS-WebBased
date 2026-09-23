@@ -1,0 +1,29 @@
+/*
+ * Restaurant MS — "Industry" design system, ported from D:\laragon\www\pos-react.
+ * Import order mirrors the original single index.css so the cascade is identical.
+ * New (non pos-react) styles live in shell.css and responsive.css — keep them last.
+ */
+@import "tailwindcss";
+
+@source "../views";
+@source "../js";
+
+@import "./tokens.css";
+@import "./pages/auth.css";
+@import "./layout.css";
+@import "./components.css";
+@import "./pages/pos.css";
+@import "./pages/catalog.css";
+@import "./pages/purchasing.css";
+@import "./pages/inventory.css";
+@import "./pages/finance.css";
+@import "./drawers.css";
+@import "./pages/sales.css";
+@import "./pages/offers-roles.css";
+@import "./pages/shifts.css";
+@import "./pages/operations.css";
+@import "./pages/settings.css";
+
+@import "./shell.css";
+@import "./ui.css";
+@import "./responsive.css";

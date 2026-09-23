@@ -29,4 +29,12 @@ Laravel + Inertia + React (**JavaScript/JSX, no TypeScript**) + MySQL. Full plan
 - Multi-step money/stock writes in a DB transaction; totals recalculated on the server.
 - Thin controllers → Actions/Services; Form Requests for validation; activity log on important changes.
 - UI: match the pos-react "Industry" design (`D:\laragon\www\pos-react`) exactly, reuse `resources/js/components/ui/*`, CSS in files (no inline styles), responsive + touch-friendly.
-- Each module ships with Pest feature tests, including: trash/restore works, hard delete throws, no numeric id in the Inertia response, other-branch data not accessible.
+- Each module ships with Pest feature tests, including: trash/restore works, hard delete throws, no numeric id in the Inertia response (`expectNoNumericIds($response->inertiaProps())`), other-branch data not accessible. Tests run on MySQL `resturent_ms_testing`.
+
+### 4. Frontend conventions (Phase 0 foundation)
+- Pages: `resources/js/pages/<module>/<Page>.jsx`, rendered as `Inertia::render('<module>/<Page>')`. Layout is chosen in `app.jsx` (`auth/*` none, `pos/*` no sidebar, else `AppLayout`).
+- Every page sets its toolbar with `<PageToolbar title primary={<Button variant="primary"/>}>secondary actions</PageToolbar>` and optional `<PageStatus>`; no toolbar context/useEffect.
+- Build screens from `@/components/ui` (DataTable, Drawer, ConfirmDialog, Field/Input/Select, FilterBar, Tabs, StatCard, Tag, StatusDot, EmptyState…). List = `PageBody` → `Tabs` (Active/Trash) → `FilterBar` → `DataTable meta={…}`; add/edit = `Drawer onSubmit`; trash = `ConfirmDialog reason`.
+- CSS: pos-react classes are ported verbatim (`resources/css/*`, same names — reuse them); new styles go in `ui.css` / a page css file, breakpoints in `responsive.css`. Inline `style` only for data-driven CSS variables (ESLint warns).
+- Sidebar menu: `resources/js/lib/nav.js` — items auto-enable when their Ziggy route exists. Money/qty display via `@/lib/format`.
+- Checks before finishing: `npm run lint`, `npm run build`, `./vendor/bin/pint`, `./vendor/bin/pest`. Design gallery: `/dev/ui` (local only).

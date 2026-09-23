@@ -1,0 +1,231 @@
+/*
+ * Component styles added on top of the pos-react CSS (dialogs, field errors,
+ * toasts, empty states…) — designed in the same "Industry" language.
+ */
+
+/* pos-react references these ramp steps but never defines them (dots/icons were
+   rendering transparent). Filled in from the existing neutral / accent ramps. */
+:root,
+[data-theme="light"] {
+  --color-neutral-400: #b6b6b9;
+  --color-neutral-700: #5c5c60;
+  --color-accent-300: #b3d2f0;
+}
+
+[data-theme="dark"] {
+  --color-neutral-400: #5a5a61;
+  --color-neutral-700: #c4c4cb;
+}
+
+/* ── Centred dialog ── */
+.overlay-center {
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ui-dialog {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  width: 440px;
+  max-width: 100%;
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.18s ease;
+}
+
+.ui-dialog .cust-modal-body {
+  overflow-y: auto;
+}
+
+.ui-dialog-text {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 14px;
+}
+
+.ui-dialog-text:last-child {
+  margin-bottom: 0;
+}
+
+/* Wider drawer (detail-style forms) */
+.drawer-wide {
+  width: 540px;
+}
+
+.cust-close svg {
+  display: block;
+}
+
+/* ── Form states ── */
+.field-error {
+  font-size: 11px;
+  color: var(--color-danger);
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--color-neutral-500);
+}
+
+.cust-input.is-invalid,
+.cust-input.is-invalid:focus {
+  border-color: var(--color-danger);
+}
+
+/* Login: real checkbox button + disabled state */
+.login-remember {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.login-checkbox.off {
+  background: transparent;
+  color: transparent;
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* ── Stat card / chart tones (replace pos-react inline colours) ── */
+.scard-sub-neutral {
+  color: var(--color-neutral-600);
+}
+
+.scard-sub-danger {
+  color: var(--color-danger);
+}
+
+.bar {
+  height: var(--bar-h, 0);
+}
+
+.alist-dot-accent {
+  background: var(--color-accent);
+}
+
+.alist-dot-neutral {
+  background: var(--color-neutral-400);
+}
+
+.alist-dot-light {
+  background: var(--color-accent-300);
+}
+
+.chart-box-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.chart-box-head .chart-title {
+  margin-bottom: 0;
+}
+
+/* Dashboard two-panel row (pos-react inline grid) */
+.dash-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* ── Tables ── */
+.rgrid-clickable {
+  cursor: pointer;
+}
+
+/* ── Tabs count ── */
+.cust-tab-count {
+  margin-left: 6px;
+  padding: 1px 5px;
+  font-size: 10px;
+  background: var(--color-neutral-200);
+  color: var(--color-neutral-600);
+}
+
+.cust-tab.active .cust-tab-count {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+}
+
+/* ── Empty state ── */
+.empty-state {
+  position: relative;
+  border: 1px solid var(--color-divider);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--color-neutral-500);
+}
+
+.empty-state-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.empty-state-text {
+  font-size: 12px;
+  max-width: 320px;
+  margin-bottom: 6px;
+}
+
+/* ── Flash toast ── */
+.toast {
+  position: fixed;
+  right: 16px;
+  bottom: 36px;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 10px 10px 10px 14px;
+  font-size: 12px;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  border-left: 2px solid var(--color-accent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  animation: slideInRight 0.18s ease;
+}
+
+.toast > svg {
+  flex: none;
+  color: var(--color-accent);
+}
+
+.toast-error {
+  border-left-color: var(--color-danger);
+}
+
+.toast-error > svg {
+  color: var(--color-danger);
+}
+
+/* ── Dev UI kit page ── */
+.uikit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.uikit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}

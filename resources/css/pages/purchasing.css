@@ -1,0 +1,193 @@
+/* Ported verbatim from pos-react src/index.css (lines 1281-1470). Keep class names identical. */
+
+/* ── Purchase Orders — status dots ── */
+.sdot.s-draft::before {
+  background: var(--color-accent-500);
+}
+
+.sdot.s-confirmed::before {
+  background: #4a8c5c;
+}
+
+.sdot.s-received::before {
+  background: #4a8c5c;
+}
+
+.sdot.s-partial::before {
+  background: #c49a2a;
+}
+
+.sdot.s-cancelled::before {
+  background: #b35c3a;
+}
+
+/* ── Purchase Orders — date input ── */
+.po-date-input {
+  min-width: 160px;
+  cursor: text;
+}
+
+/* ── Purchase Invoices — status dots ── */
+.sdot.s-paid::before {
+  background: #4a8c5c;
+}
+
+.sdot.s-unpaid::before {
+  background: #b35c3a;
+}
+
+/* Linked PO column — accent colour to hint it's clickable */
+.pi-linked-po {
+  color: var(--color-accent);
+}
+
+/* ── Purchase Invoice Detail ── */
+.pi-detail-page {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Back button */
+.pi-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 11px;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-family: var(--font-body);
+  width: fit-content;
+}
+
+.pi-back-btn:hover {
+  color: var(--color-accent-700);
+}
+
+/* 3-column meta card grid */
+.pi-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* Key–value rows inside each meta card */
+.pi-card-rows {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  font-size: 12px;
+  align-items: baseline;
+}
+
+.pi-card-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--color-neutral-600);
+  white-space: nowrap;
+}
+
+/* Table footer total row */
+.pi-tfoot-label {
+  text-align: right;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  border-top: 1px solid var(--color-divider);
+  padding: 7px 10px;
+}
+
+.pi-tfoot-total {
+  text-align: right;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  border-top: 1px solid var(--color-divider);
+  padding: 7px 10px;
+}
+
+/* Invoice # link in list */
+.pi-id-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.pi-id-link:hover {
+  text-decoration: underline;
+}
+
+/* Toolbar tags for invoice detail */
+.pi-tag-completed {
+  background: #d4edd9;
+  color: #2e6b42;
+  font-size: 9px;
+  padding: 3px 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.pi-tag-draft {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+  font-size: 9px;
+  padding: 3px 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.pi-tag-cancelled {
+  background: #fce8e4;
+  color: #8b2e20;
+  font-size: 9px;
+  padding: 3px 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.pi-tag-paid {
+  background: #d4edd9;
+  color: #2e6b42;
+  font-size: 9px;
+  padding: 3px 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.pi-tag-partial {
+  background: #fdf3d8;
+  color: #8a6a10;
+  font-size: 9px;
+  padding: 3px 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.pi-tag-unpaid {
+  background: #fce8e4;
+  color: #8b2e20;
+  font-size: 9px;
+  padding: 3px 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive — stack meta cards on small screens */
+@media (max-width: 800px) {
+  .pi-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+

@@ -1,0 +1,174 @@
+/* Ported verbatim from pos-react src/index.css (lines 1667-1837). Keep class names identical. */
+
+/* ── Sale Returns — linked invoice accent colour ── */
+.sr-linked-invoice {
+  color: var(--color-accent);
+}
+
+/* ── Payments page ── */
+
+/* 4-column stat grid */
+.pay-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Type tag — smaller than default */
+.pay-tag {
+  font-size: 9px !important;
+  padding: 2px 6px;
+  letter-spacing: 0.05em;
+}
+
+/* Amount column — right-aligned, colour-coded */
+.pay-amount-in {
+  text-align: right;
+  font-weight: 500;
+  color: #4a8c5c;
+}
+
+.pay-amount-out {
+  text-align: right;
+  font-weight: 500;
+  color: #b35c3a;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .pay-stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .pay-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Expiry & Alerts page ── */
+.expiry-page {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* 3-column stat grid */
+.expiry-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Coloured left border on each stat card */
+.expiry-card-red {
+  border-left: 3px solid #b35c3a;
+}
+
+.expiry-card-amber {
+  border-left: 3px solid #c49a2a;
+}
+
+.expiry-card-neutral {
+  border-left: 3px solid var(--color-neutral-400);
+}
+
+/* Small action button in the table */
+.expiry-action-btn {
+  font-size: 10px !important;
+  padding: 2px 8px !important;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .expiry-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reports page ── */
+.rpt-page {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* 3-column card grid per section */
+.rpt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Individual report card */
+.rpt-card {
+  border: 1px solid var(--color-divider);
+  padding: 16px;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.rpt-card:hover {
+  border-color: var(--color-accent);
+}
+
+/* Icon box — small square with accent background */
+.rpt-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-100);
+  border: 1px solid var(--color-accent-200);
+  flex: none;
+}
+
+.rpt-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.5;
+  color: var(--color-accent-700);
+}
+
+/* Card title */
+.rpt-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+}
+
+/* Card description */
+.rpt-desc {
+  font-size: 11px;
+  color: var(--color-neutral-600);
+  line-height: 1.45;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .rpt-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .rpt-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+

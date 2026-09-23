@@ -1,0 +1,525 @@
+/* Ported verbatim from pos-react src/index.css (lines 360-562, 812-1129). Keep class names identical. */
+
+/* Corner marks */
+.corner {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  color: rgba(29, 31, 32, 0.45);
+}
+
+.corner::before,
+.corner::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+
+.corner::before {
+  left: 4px;
+  top: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.corner::after {
+  top: 4px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.corner.tl {
+  top: -5px;
+  left: -5px;
+}
+
+.corner.tr {
+  top: -5px;
+  right: -5px;
+}
+
+.corner.bl {
+  bottom: -5px;
+  left: -5px;
+}
+
+.corner.br {
+  bottom: -5px;
+  right: -5px;
+}
+
+/* Stat Cards */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.scard {
+  border: 1px solid var(--color-divider);
+  padding: 14px 16px;
+  position: relative;
+  background: transparent;
+}
+
+.scard-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  margin-bottom: 3px;
+}
+
+.scard-val {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.scard-sub {
+  font-size: 10px;
+  margin-top: 3px;
+  color: var(--color-accent-700);
+}
+
+/* Chart Box */
+.chart-box {
+  border: 1px solid var(--color-divider);
+  padding: 16px;
+  position: relative;
+  background: transparent;
+}
+
+.chart-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 120px;
+}
+
+.bar {
+  flex: 1;
+  background: var(--color-accent-200);
+  border: 1px solid var(--color-accent-500);
+  min-width: 0;
+}
+
+.bar-labels {
+  display: flex;
+  gap: 5px;
+  font-size: 9px;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+.bar-labels span {
+  flex: 1;
+  text-align: center;
+}
+
+/* Activity List */
+.alist {
+  display: flex;
+  flex-direction: column;
+}
+
+.alist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.alist-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex: none;
+  margin-top: 5px;
+}
+
+.alist-text {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.alist-time {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+  margin-top: 1px;
+}
+
+/* Alert Row */
+.alert-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.alert-card {
+  flex: 1;
+  border: 1px solid var(--color-divider);
+  padding: 10px 14px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* Tags */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tag-accent {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+}
+
+.tag-neutral {
+  background: var(--color-neutral-200);
+  color: var(--color-neutral-700);
+}
+
+
+/* ── Tags ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tag-accent {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+}
+
+.tag-neutral {
+  background: rgba(29, 31, 32, 0.08);
+  color: var(--color-text);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 4px 12px;
+}
+
+.btn svg {
+  display: block;
+  width: 13px;
+  height: 13px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-700);
+  border-color: var(--color-accent-700);
+}
+
+.btn-primary:active {
+  background: var(--color-accent-700);
+}
+
+.btn-secondary {
+  border-color: var(--color-divider);
+}
+
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+}
+
+.btn-secondary:active {
+  background: color-mix(in srgb, var(--color-text) 14%, transparent);
+}
+
+.btn-danger {
+  background: var(--color-danger-100);
+  color: var(--color-danger);
+  border-color: var(--color-danger-200);
+}
+
+.btn-danger:hover {
+  background: var(--color-danger-200);
+  color: var(--color-danger-600);
+}
+
+.btn-danger:active {
+  background: var(--color-danger-200);
+  color: var(--color-danger-700);
+}
+
+/* ── Products Page ── */
+.products-page {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.finput {
+  padding: 4px 9px;
+  font-size: 11px;
+  min-height: 26px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  font-family: var(--font-body);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.finput input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 11px;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  width: 200px;
+}
+
+.finput input::placeholder {
+  color: var(--color-neutral-500);
+}
+
+.products-search {
+  min-width: 220px;
+}
+
+.fselect {
+  padding: 4px 9px;
+  font-size: 11px;
+  min-height: 26px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  font-family: var(--font-body);
+  color: var(--color-text);
+  min-width: 100px;
+  outline: none;
+  cursor: pointer;
+}
+
+.flabel {
+  font-size: 10px;
+  color: var(--color-neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.products-count {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--color-neutral-500);
+}
+
+/* Table wrapper — horizontal scroll on small screens */
+.rgrid-wrap {
+  border: 1px solid var(--color-divider);
+  overflow-x: auto;
+}
+
+.rgrid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.rgrid th {
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--color-divider);
+  background: var(--color-neutral-100);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rgrid td {
+  padding: 7px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 6%, transparent);
+  white-space: nowrap;
+}
+
+.rgrid tbody tr:hover {
+  background: var(--color-accent-100);
+}
+
+.rgrid tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--color-text) 2%, transparent);
+}
+
+.rgrid tbody tr:nth-child(even):hover {
+  background: var(--color-accent-100);
+}
+
+/* Dark mode — replace the washed-out light-green hover with a
+   subtle accent tint that stays readable against dark text */
+[data-theme="dark"] .rgrid tbody tr:hover,
+[data-theme="dark"] .rgrid tbody tr:nth-child(even):hover {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-text);
+}
+
+.products-name {
+  font-weight: 500;
+}
+
+.products-action {
+  text-align: center;
+  color: var(--color-neutral-400);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.products-empty {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--color-neutral-500);
+  font-size: 12px;
+}
+
+/* mono helper (also used in other pages) */
+.mono {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  color: var(--color-neutral-600);
+}
+
+/* Status dot */
+.sdot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.sdot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.sdot.s-active::before {
+  background: #4a8c5c;
+}
+
+.sdot.s-inactive::before {
+  background: var(--color-neutral-400);
+}
+
+/* Table footer */
+.rgrid-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--color-neutral-600);
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-neutral-100);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rgrid-pager {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rgrid-pager span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  border: 1px solid var(--color-divider);
+  font-size: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rgrid-pager span:hover:not(.active):not(.disabled):not(.ellipsis) {
+  background: var(--color-neutral-200);
+}
+
+.rgrid-pager span.active {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+  cursor: default;
+}
+
+.rgrid-pager span.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.rgrid-pager span.ellipsis {
+  border: none;
+  cursor: default;
+}
+
+

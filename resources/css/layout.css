@@ -1,0 +1,153 @@
+/* Ported verbatim from pos-react src/index.css (lines 229-358, 563-581). Keep class names identical. */
+
+.sidebar {
+  width: 200px;
+  flex: none;
+  background: var(--color-neutral-200);
+  border-right: 1px solid var(--color-divider);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.sidebar-section {
+  padding: 12px 0 4px 16px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
+  font-weight: 600;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 16px;
+  font-size: 12.5px;
+  color: var(--color-text);
+  cursor: pointer;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.sidebar-item:hover {
+  background: var(--color-neutral-300);
+}
+
+.sidebar-item.active {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+  border-left-color: var(--color-accent);
+  font-weight: 500;
+}
+
+.sidebar-item svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  opacity: 0.6;
+}
+
+.sidebar-item.active svg {
+  opacity: 1;
+  color: var(--color-accent-700);
+}
+
+.sidebar-user {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--color-neutral-600);
+}
+
+.sidebar-avatar {
+  width: 28px;
+  height: 28px;
+  background: var(--color-accent-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-accent-800);
+  flex: none;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--color-divider);
+  background: var(--color-neutral-100);
+  flex: none;
+}
+
+.toolbar-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 17px;
+  margin-right: auto;
+  letter-spacing: -0.01em;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.toolbar-btn:hover {
+  background: var(--color-neutral-200);
+}
+
+.toolbar-btn.primary {
+  background: var(--color-accent);
+  color: #f2f2f3;
+  border-color: var(--color-accent);
+}
+
+.toolbar-btn.primary:hover {
+  background: var(--color-accent-700);
+}
+
+.toolbar-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Status Bar */
+.statusbar {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 12px;
+  background: var(--color-neutral-200);
+  border-top: 1px solid var(--color-divider);
+  font-size: 10px;
+  color: var(--color-neutral-500);
+  gap: 16px;
+  flex: none;
+}
+
+.statusbar-right {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+}
+

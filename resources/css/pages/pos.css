@@ -1,0 +1,232 @@
+/* Ported verbatim from pos-react src/index.css (lines 583-811). Keep class names identical. */
+
+/* ── POS Page ── */
+.pos-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pos-invoice-label {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--color-neutral-500);
+}
+
+.pos-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.pos-items {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.pos-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  min-height: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  color: var(--color-neutral-500);
+  font-size: 11px;
+}
+
+.pos-cats {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pos-cat {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  border: 1px solid var(--color-divider);
+  cursor: pointer;
+  background: transparent;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+.pos-cat.active {
+  background: var(--color-accent);
+  color: #f2f2f3;
+  border-color: var(--color-accent);
+}
+
+.pos-pgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  align-content: start;
+}
+
+.pos-pcard {
+  border: 1px solid var(--color-divider);
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-align: center;
+  background: transparent;
+}
+
+.pos-pcard:hover {
+  border-color: var(--color-accent);
+}
+
+.pos-picon {
+  width: 40px;
+  height: 40px;
+  background: var(--color-accent-100);
+  border: 1px solid var(--color-accent-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pos-picon svg {
+  color: var(--color-accent-700);
+}
+
+.pos-pname {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.pos-pprice {
+  font-size: 10px;
+  color: var(--color-accent-700);
+  font-weight: 600;
+}
+
+.pos-pstock {
+  font-size: 9px;
+  color: var(--color-neutral-500);
+}
+
+.pos-pstock.low {
+  color: #b35c3a;
+}
+
+/* ── Cart ── */
+.cart {
+  background: var(--color-neutral-100);
+  border-left: 1px solid var(--color-divider);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-hdr {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-divider);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(29, 31, 32, 0.06);
+  font-size: 12px;
+}
+
+.cart-item-name {
+  font-weight: 500;
+}
+
+.cart-item-price {
+  text-align: right;
+  font-weight: 500;
+}
+
+.cart-item-detail {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+}
+
+.cart-summary {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-divider);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.cart-row.total {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.cart-discount {
+  color: var(--color-accent);
+}
+
+.cart-actions {
+  padding: 10px 16px;
+  display: flex;
+  gap: 6px;
+}
+
+.cart-hold {
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  padding: 10px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.cart-pay {
+  flex: 1;
+  background: var(--color-accent);
+  color: #f2f2f3;
+  border: 1px solid var(--color-accent);
+  padding: 10px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cart-pay:hover {
+  background: #416180;
+}
+
+

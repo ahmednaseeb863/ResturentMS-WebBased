@@ -1,0 +1,394 @@
+/* Ported verbatim from pos-react src/index.css (lines 3296-3686). Keep class names identical. */
+
+/* ── Loyalty ─────────────────────────────────────────────── */
+.loyalty-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.loyalty-settings-card {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.loyalty-settings-title {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-neutral-600);
+}
+
+.loyalty-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.loyalty-settings-row:last-child { border-bottom: none; }
+
+.loyalty-settings-label {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.loyalty-settings-val {
+  font-size: 12px;
+  color: var(--color-neutral-600);
+}
+
+/* ── Gift Cards ──────────────────────────────────────────── */
+.gc-preset-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.gc-preset-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  transition: border-color 0.15s;
+}
+
+.gc-preset-btn:hover { border-color: var(--color-accent-500); }
+.gc-preset-btn.selected { border-color: var(--color-accent); background: var(--color-accent-100); color: var(--color-accent-800); }
+
+.gc-balance-result {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: 4px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gc-balance-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.gc-balance-main {
+  font-size: 14px;
+  font-weight: 700;
+  border-top: 1px solid var(--color-divider);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* ── Delivery ────────────────────────────────────────────── */
+.sdot-blue {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.sdot-orange {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Delivery tracking stepper */
+.del-status-track {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 16px 0;
+  overflow-x: auto;
+}
+
+.del-track-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  min-width: 60px;
+}
+
+.del-track-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-divider);
+  border: 2px solid var(--color-neutral-300);
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.del-track-step.done .del-track-dot {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.del-track-step.current .del-track-dot {
+  background: #4a8c5c;
+  border-color: #4a8c5c;
+  box-shadow: 0 0 0 3px rgba(74,140,92,0.2);
+}
+
+.del-track-line {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--color-divider);
+}
+
+.del-track-line.done { background: var(--color-accent); }
+
+.del-track-label {
+  font-size: 10px;
+  text-align: center;
+  margin-top: 6px;
+  color: var(--color-neutral-500);
+  white-space: nowrap;
+}
+
+.del-track-step.current .del-track-label { color: var(--color-text); font-weight: 600; }
+.del-track-step.done .del-track-label { color: var(--color-accent-700); }
+
+/* ── Accounts & Ledger ───────────────────────────────────── */
+.acc-income-layout {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+.acc-income-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.acc-income-title { font-weight: 700; font-size: 14px; }
+.acc-income-period { font-size: 12px; color: var(--color-neutral-500); }
+
+.acc-section {
+  border-bottom: 1px solid var(--color-divider);
+  padding: 12px 20px;
+}
+
+.acc-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-neutral-600);
+  margin-bottom: 8px;
+}
+
+.acc-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 12px;
+  padding-left: 12px;
+}
+
+.acc-negative { color: var(--color-danger); }
+
+.acc-subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  border-top: 1px solid var(--color-divider);
+  margin-top: 6px;
+}
+
+.acc-net-profit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--color-surface);
+}
+
+/* ── Notifications ───────────────────────────────────────── */
+.notif-settings-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 0;
+}
+
+.notif-settings-card {
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.notif-card-title {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-neutral-600);
+}
+
+.notif-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-divider);
+  gap: 12px;
+}
+
+.notif-toggle-label { font-size: 12px; font-weight: 500; }
+.notif-toggle-sub { font-size: 11px; color: var(--color-neutral-500); margin-top: 2px; }
+
+.notif-toggle-btn {
+  width: 34px;
+  height: 18px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.notif-toggle-btn.on { background: var(--color-accent); }
+.notif-toggle-btn.off { background: var(--color-neutral-300); }
+
+.notif-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.notif-toggle-btn.on .notif-toggle-thumb { left: 18px; }
+.notif-toggle-btn.off .notif-toggle-thumb { left: 2px; }
+
+.notif-divider { height: 1px; background: var(--color-surface); margin: 4px 0; }
+
+.notif-api-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-divider);
+}
+
+.notif-template-editor {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-template-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.notif-template-edit-title { font-size: 14px; font-weight: 600; }
+
+.notif-template-vars {
+  font-size: 11px;
+  color: var(--color-neutral-600);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.notif-template-vars .mono {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin: 0 2px;
+}
+
+.notif-template-textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── Tag extras ──────────────────────────────────────────── */
+.tag-info {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+
+.tag-warn {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.s-pending {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+

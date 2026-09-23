@@ -1,0 +1,20 @@
+// Design-system components — always reuse these instead of re-writing markup.
+export { default as Avatar } from './Avatar';
+export { default as Button } from './Button';
+export { default as ChartBox } from './ChartBox';
+export { default as ConfirmDialog } from './ConfirmDialog';
+export { default as Corners } from './Corners';
+export { default as DataTable } from './DataTable';
+export { default as Dialog } from './Dialog';
+export { default as Drawer } from './Drawer';
+export { default as EmptyState } from './EmptyState';
+export { FilterBar, FilterSelect, SearchInput } from './Filters';
+export { Field, FormGrid, Input, Select, Textarea } from './Form';
+export { default as PageBody } from './PageBody';
+export { default as Pagination, visitPage } from './Pagination';
+export { default as StatCard, StatGrid } from './StatCard';
+export { default as StatusDot } from './StatusDot';
+export { default as Tabs } from './Tabs';
+export { default as Tag } from './Tag';
+export { default as Toggle } from './Toggle';
+export { PageStatus, PageToolbar } from '../layout/LayoutSlots';

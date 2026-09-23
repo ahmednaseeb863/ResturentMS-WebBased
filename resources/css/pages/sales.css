@@ -1,0 +1,411 @@
+/* Ported verbatim from pos-react src/index.css (lines 2203-2610). Keep class names identical. */
+
+/* ══════════════════════════════════════════════
+   SALES INVOICES MODULE
+═══════════════════════════════════════════════ */
+
+/* Invoice ID link */
+.si-id-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.si-id-link:hover {
+  text-decoration: underline;
+}
+
+/* Payment status tags on detail page */
+.si-tag-paid {
+  background: #e8f5ee;
+  color: #2e6b47;
+  border-color: #b8ddc9;
+}
+
+.si-tag-partial {
+  background: #fff8e6;
+  color: #8a6200;
+  border-color: #f0d88a;
+}
+
+.si-tag-unpaid {
+  background: var(--color-danger-100);
+  color: var(--color-danger-600);
+  border-color: var(--color-danger-200);
+}
+
+/* Count sheet instruction label */
+.sa-sheet-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 16px 0 8px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+/* Physical qty input inside count sheet table */
+.sa-qty-input {
+  width: 72px;
+  height: 26px;
+  padding: 0 8px;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-accent-500);
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  outline: none;
+  text-align: center;
+}
+
+.sa-qty-input:focus {
+  border-color: var(--color-accent);
+  background: #fff;
+}
+
+/* Live summary bar at bottom of count sheet */
+.sa-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  margin-top: 12px;
+  padding: 10px 0;
+}
+
+.sa-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  padding: 0 16px;
+}
+
+.sa-summary-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-neutral-500);
+}
+
+.sa-summary-val {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sa-summary-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--color-divider);
+  flex-shrink: 0;
+}
+
+/* Status tags on detail page */
+.sa-tag-approved {
+  background: #e8f5ee;
+  color: #2e6b47;
+  border-color: #b8ddc9;
+}
+
+.sa-tag-pending {
+  background: #fff8e6;
+  color: #8a6200;
+  border-color: #f0d88a;
+}
+
+.sa-tag-rejected {
+  background: var(--color-danger-100);
+  color: var(--color-danger-600);
+  border-color: var(--color-danger-200);
+}
+
+.sa-tag-inprogress {
+  background: var(--color-accent-100);
+  color: var(--color-accent-700);
+  border-color: var(--color-accent-200);
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .sa-summary-bar {
+    flex-wrap: wrap;
+  }
+
+  .sa-summary-item {
+    flex: 0 0 50%;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .sa-summary-divider {
+    display: none;
+  }
+}
+
+.cp-ledger-panel {
+  width: 760px;
+  max-width: 95vw;
+}
+
+.cp-ledger-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cp-ledger-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+}
+
+.cp-ledger-card-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
+  margin-bottom: 4px;
+}
+
+.cp-ledger-card-val {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+.cp-ledger-btn {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: var(--color-accent-100);
+  border: 1px solid var(--color-accent-200);
+  border-radius: var(--radius);
+  padding: 3px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.cp-ledger-btn:hover {
+  background: var(--color-accent-200);
+}
+
+.vp-avatar {
+    background: var(--color-accent-800);
+    color: var(--color-accent-200);
+}
+
+.vp-avatar-sm {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-accent-800);
+    color: var(--color-accent-200);
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+}
+/* ── Quotations ──────────────────────────────────────────── */
+
+/* Status badges */
+.qt-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+}
+.qt-status-draft    { background: var(--color-neutral-200); color: var(--color-neutral-600); border-color: var(--color-neutral-300); }
+.qt-status-sent     { background: var(--color-accent-100);  color: var(--color-accent-700);  border-color: var(--color-accent-200); }
+.qt-status-accepted { background: #eaf4ed; color: #2e7d4f; border-color: #b6dfc4; }
+.qt-status-expired  { background: var(--color-danger-100);  color: var(--color-danger-600);  border-color: var(--color-danger-200); }
+
+/* Convert to Sale modal */
+.qt-convert-modal {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    width: 440px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.qt-convert-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    padding: 8px 0;
+}
+.qt-convert-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-accent-100);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.qt-convert-text {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+.qt-convert-sub {
+    font-size: 12px;
+    color: var(--color-neutral-500);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Converted chip */
+.qt-converted-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2e7d4f;
+    background: #eaf4ed;
+    border: 1px solid #b6dfc4;
+    border-radius: var(--radius);
+    padding: 3px 10px;
+}
+
+/* Form — header grid */
+.qt-form-header-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+.qt-form-field { display: flex; flex-direction: column; gap: 4px; }
+.qt-form-field-full { grid-column: 1 / -1; }
+.qt-form-label { font-size: 11px; font-weight: 600; color: var(--color-neutral-500); letter-spacing: 0.04em; }
+
+/* Line items table inputs */
+.qt-form-table { table-layout: fixed; }
+
+.qt-line-input {
+    width: 100%;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s;
+}
+.qt-line-input:focus { border-color: var(--color-accent); }
+.qt-line-num { text-align: right; }
+
+.qt-line-total {
+    text-align: right;
+    font-size: 12px;
+    font-weight: 500;
+    padding-right: 12px;
+}
+
+/* Remove row button */
+.qt-remove-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-neutral-500);
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+.qt-remove-btn:hover { color: var(--color-danger); background: var(--color-danger-100); }
+
+/* Add line bar */
+.qt-add-row-bar {
+    padding: 8px 12px;
+    border-top: 1px solid var(--color-border);
+}
+.qt-add-line-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-accent);
+    background: var(--color-accent-100);
+    border: 1px solid var(--color-accent-200);
+    border-radius: var(--radius);
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.qt-add-line-btn:hover { background: var(--color-accent-200); }
+
+/* Totals bar */
+.qt-totals-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 16px;
+    border-top: 1px solid var(--color-border);
+}
+.qt-totals-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 280px;
+}
+.qt-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--color-neutral-600);
+}
+.qt-grand-total {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+    padding-top: 6px;
+    border-top: 1px solid var(--color-border);
+    margin-top: 2px;
+}
+.qt-discount-input {
+    width: 110px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 3px 8px;
+    font-size: 12px;
+    text-align: right;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    outline: none;
+}
+.qt-discount-input:focus { border-color: var(--color-accent); }
+
+

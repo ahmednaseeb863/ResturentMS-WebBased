@@ -1,0 +1,199 @@
+/* Ported verbatim from pos-react src/index.css (lines 1471-1666). Keep class names identical. */
+
+/* ── Warehouses & Counters page ── */
+.wh-page {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Two-column top grid */
+.wh-top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Counters panel header row — title left, Add Counter button right */
+.wh-panel-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Small secondary Add Counter button */
+.wh-add-btn {
+  font-size: 10px !important;
+  padding: 3px 8px !important;
+}
+
+/* Highlighted row when a warehouse is selected */
+.wh-row-selected td {
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+}
+
+/* 3-column stat card grid */
+.wh-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .wh-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wh-stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Stock Transfer page ── */
+.st-page {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Bordered create-transfer panel */
+.st-form-panel {
+  border: 1px solid var(--color-divider);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 3-column form grid */
+.st-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px 20px;
+}
+
+/* ── form-field: label stacked above input ── */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Inside a form panel, selects and inputs fill their column */
+.st-form-panel .fselect,
+.st-form-panel .finput {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Form field label style (reuses .form-field from existing CSS) */
+.form-field label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+  font-weight: 500;
+}
+
+/* Select/input height inside form */
+.st-form-select {
+  min-height: 30px;
+  font-size: 12px;
+}
+
+/* Qty input — small, centred number */
+.st-qty-input {
+  width: 60px;
+  text-align: center;
+  padding: 3px 6px;
+  font-size: 12px;
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  color: var(--color-text);
+  outline: none;
+}
+
+.st-qty-input:focus {
+  border-color: var(--color-accent);
+}
+
+/* Red × remove button */
+.st-remove-btn {
+  text-align: center;
+  color: #b35c3a;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.st-remove-btn:hover {
+  color: #8b2e20;
+}
+
+/* Add-product picker dropdown */
+.st-picker {
+  border: 1px solid var(--color-divider);
+  background: var(--color-bg);
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.st-picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 5%, transparent);
+}
+
+.st-picker-row:last-child {
+  border-bottom: none;
+}
+
+.st-picker-row:hover {
+  background: var(--color-accent-100);
+}
+
+.st-picker-avail {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+}
+
+/* Form bottom action bar */
+.st-form-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.st-form-actions-right {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .st-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .st-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+

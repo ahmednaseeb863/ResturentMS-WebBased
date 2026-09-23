@@ -1,0 +1,134 @@
+/*
+ * App-shell additions that pos-react does not have (Inertia slots, mobile nav,
+ * branch switcher, theme toggle). Same visual language: hairlines, square corners.
+ */
+
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Toolbar / status bar slots are transparent wrappers around portalled page content */
+.toolbar-slot,
+.statusbar-slot {
+  display: contents;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hamburger — shown on tablet (expands the icon rail) and phone (opens the drawer) */
+.toolbar-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: -6px;
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  flex: none;
+}
+
+.toolbar-menu-btn:hover {
+  background: var(--color-neutral-200);
+}
+
+/* "⋯" overflow menu for secondary actions (phones only) */
+.toolbar-more {
+  position: relative;
+  display: none;
+}
+
+.toolbar-more-btn {
+  padding: 4px 8px;
+}
+
+.toolbar-more-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 150;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.toolbar-more-menu .btn {
+  justify-content: flex-start;
+  width: 100%;
+  border-color: transparent;
+}
+
+/* Branch switcher (multi-branch users) */
+.branch-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 10px;
+  margin-left: 2px;
+  border-left: 1px solid var(--color-divider);
+  color: var(--color-neutral-600);
+}
+
+/* Sidebar extras */
+.sidebar-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sidebar-item.disabled:hover {
+  background: transparent;
+}
+
+.sidebar-user-text {
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+  font-size: 10px;
+}
+
+.theme-toggle {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-neutral-600);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--color-neutral-300);
+  color: var(--color-text);
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+body.overlay-open {
+  overflow: hidden;
+}
