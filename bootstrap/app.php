@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Middleware\EnsureActiveAdmin;
+use App\Http\Middleware\EnsurePermission;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SetCurrentBranch;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,8 +17,17 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
+            SetCurrentBranch::class,
+            EnsureActiveAdmin::class,
             HandleInertiaRequests::class,
         ]);
+
+        $middleware->alias([
+            'permission' => EnsurePermission::class,
+        ]);
+
+        $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectUsersTo(fn () => route('dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

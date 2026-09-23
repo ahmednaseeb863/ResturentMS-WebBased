@@ -21,6 +21,22 @@ export function qty(value, unit = '') {
     return unit ? `${text} ${unit}` : text;
 }
 
+const dateFmt = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+const timeFmt = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' });
+
+/** ISO string → "23 Sep 2026" */
+export function date(iso) {
+    return iso ? dateFmt.format(new Date(iso)) : '—';
+}
+
+/** ISO string → "23 Sep 2026, 3:15 PM" (today → "Today, 3:15 PM") */
+export function dateTime(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const day = d.toDateString() === new Date().toDateString() ? 'Today' : dateFmt.format(d);
+    return `${day}, ${timeFmt.format(d)}`;
+}
+
 export function initials(name = '') {
     return name
         .split(' ')

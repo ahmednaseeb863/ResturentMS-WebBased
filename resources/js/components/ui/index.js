@@ -2,6 +2,7 @@
 export { default as Avatar } from './Avatar';
 export { default as Button } from './Button';
 export { default as ChartBox } from './ChartBox';
+export { CheckBox, CheckItem } from './Checkbox';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as Corners } from './Corners';
 export { default as DataTable } from './DataTable';
@@ -17,4 +18,6 @@ export { default as StatusDot } from './StatusDot';
 export { default as Tabs } from './Tabs';
 export { default as Tag } from './Tag';
 export { default as Toggle } from './Toggle';
+export { default as TrashTabs } from './TrashTabs';
+export { default as trashColumns } from './trashColumns';
 export { PageStatus, PageToolbar } from '../layout/LayoutSlots';

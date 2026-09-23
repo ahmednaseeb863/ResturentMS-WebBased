@@ -3,8 +3,8 @@ import { Store } from 'lucide-react';
 
 /**
  * Current-branch picker for users with access to more than one branch.
- * Data (uuids only) comes from the shared `context` prop; the switch route
- * is added in Phase 1 together with branch access.
+ * Data (uuids only) comes from the shared `context` prop; switching reloads
+ * the dashboard in the new branch.
  */
 export default function BranchSwitcher() {
     const { context } = usePage().props;

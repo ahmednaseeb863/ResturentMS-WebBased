@@ -77,6 +77,15 @@
     margin-left: 0;
   }
 
+  .app-shell:not(.nav-open) .sidebar-user-actions {
+    flex-direction: column;
+  }
+
+  .app-shell:not(.nav-open) .sidebar-user-actions button + button {
+    border-left: 0;
+    border-top: 1px solid var(--color-divider);
+  }
+
   /* expanded: 200px wide but still only 56px in the flow → overlays the page */
   .app-shell.nav-open .sidebar {
     width: 200px;
@@ -294,5 +303,42 @@
   .pos-cat,
   .pos-pcard {
     min-height: 44px;
+  }
+}
+
+/* ── Phase 1 screens ── */
+@media (max-width: 767px) {
+  .role-modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 100dvh;
+    height: 100dvh;
+  }
+
+  .role-modal-body {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .role-info-col {
+    border-right: 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .role-perms-col {
+    overflow: visible;
+  }
+
+  .role-perm-items,
+  .check-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (pointer: coarse) {
+  .role-perm-item,
+  .role-perm-group-header,
+  .sidebar-user-actions button {
+    min-height: 40px;
   }
 }

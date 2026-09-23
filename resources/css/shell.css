@@ -106,6 +106,36 @@
   font-size: 10px;
 }
 
+/* Lock / switch user + sign out under the user block */
+.sidebar-user-actions {
+  display: flex;
+  border-top: 1px solid var(--color-divider);
+}
+
+.sidebar-user-actions button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-neutral-600);
+  font-family: var(--font-body);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.sidebar-user-actions button + button {
+  border-left: 1px solid var(--color-divider);
+}
+
+.sidebar-user-actions button:hover {
+  background: var(--color-neutral-300);
+  color: var(--color-text);
+}
+
 .theme-toggle {
   margin-left: auto;
   width: 26px;

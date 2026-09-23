@@ -85,7 +85,7 @@ users (customers) ──1:N── orders
 
 ### Designation vs Role
 - **Designation** = job title (Waiter, Chef, Rider, Cashier, Manager…). Used for pickers: the POS waiter list shows the branch's *Waiter* employees, the rider list shows *Rider* employees.
-- **Role** = what the admin account may do (spatie/laravel-permission, `admin` guard). A designation has a **default role** used when the login is created; it can be changed.
+- **Role** = what the admin account may do (our own module, `admin` guard): a role holds permissions, each permission grants a set of **route names**; one role per admin. A designation has a **default role** used when the login is created; it can be changed.
 - **Super Admin** = `admins.is_super_admin`, bypasses all permission and branch checks. No employee record needed.
 - Effective access = **role permissions** × **allowed branches**.
 
@@ -109,7 +109,7 @@ Permissions are granular (e.g. `orders.create`, `orders.void`, `orders.discount`
 ### 4.1 Authentication
 - Admin login (email/username + password); **PIN quick login / switch user** on shared POS, kitchen, and waiter devices
 - Branch switcher after login for multi-branch users
-- Rate-limited login, active/inactive accounts, activity/audit log (spatie/laravel-activitylog)
+- Rate-limited login, active/inactive accounts, activity/audit log (our own append-only `activity_logs`)
 
 ### 4.2 Branches *(Super Admin)*
 - Branch: code, name, address, phone, email, tax/NTN number, logo override, active
@@ -361,13 +361,13 @@ Conventions: BIGINT `id` (internal only) + **public `uuid` on every table shown 
 | `branches` | code, name, address, phone, email, tax_number, logo, manager_id (employee), is_active |
 | `admins` | name, email, username, password, pin (hashed), is_super_admin, is_active, last_login_at |
 | `admin_branch` | admin_id, branch_id |
-| `roles`, `permissions`, … | spatie/laravel-permission, guard `admin` |
+| `roles`, `permission_groups`, `permissions`, `permission_role` | own module: permission = title + JSON list of route names (catalog in code, synced by `permissions:sync`); `admins.role_id`; pivot rows trashed on revoke |
 | `designations` | name, default_role_id, is_active |
 | `employees` **[B]** | admin_id (unique, nullable), designation_id, code, name, phone, cnic, address, photo, joining_date, salary, status |
 | `users` *(customers)* | name, phone (unique), email, password (nullable), birthday, notes, total_spent, visits_count, last_visit_at |
 | `user_addresses` | user_id, label, address, area, landmark, lat, lng, is_default |
 | `settings` | branch_id (**NULL = global**, else branch override), group, key, value (json); unique (branch_id, group, key). A branch row exists only for overridden fields — switching back to "use global" **trashes** the override row (kept as history) |
-| `activity_log` | spatie/laravel-activitylog (+ branch_id in properties) |
+| `activity_logs` | own, append-only: branch_id, admin_id, event, subject, subject_label, properties (json, no ids), ip |
 
 ### Tax
 Tax rate and on/off live in `settings` (group `tax`, global + branch override). The values used are snapshotted on each order (`orders.tax_name`, `tax_rate`, `tax_total`).
@@ -650,8 +650,8 @@ The mockups are a desktop (WPF) app: **skip the window title bar**, match everyt
 | Icons & fonts | lucide-react (stroke 1.5), @fontsource/barlow, @fontsource/barlow-condensed |
 | Charts | recharts |
 | Routes in JS | tightenco/ziggy |
-| Roles & permissions | spatie/laravel-permission |
-| Audit log | spatie/laravel-activitylog |
+| Roles & permissions | own module — route-name permissions (no package) |
+| Audit log | own `activity_logs` (no package) |
 | Websockets | laravel/reverb + laravel-echo + pusher-js |
 | Thermal printing | QZ Tray (qz-tray JS) + an ESC/POS builder; print-CSS fallback |
 | PWA (waiter/rider) | vite-plugin-pwa |
