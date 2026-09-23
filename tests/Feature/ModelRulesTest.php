@@ -11,16 +11,13 @@ use Illuminate\Support\Str;
 /*
  * Project rules (CLAUDE.md §1–2) checked for every model in app/Models:
  * nothing can be hard-deleted, and every table with a uuid uses HasPublicUuid.
- * `User` (customers) is rebuilt in Phase 2 and listed here until then.
  */
-const RULES_PENDING = ['App\\Models\\User'];
 
 function appModels(): array
 {
     return collect(glob(app_path('Models/*.php')))
         ->map(fn (string $file) => 'App\\Models\\'.Str::before(basename($file), '.php'))
         ->filter(fn (string $class) => is_subclass_of($class, Model::class))
-        ->reject(fn (string $class) => in_array($class, RULES_PENDING, true))
         ->values()
         ->all();
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Resource;
 use App\Models\Admin;
+use App\Models\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,9 +67,13 @@ class TrashController extends Controller
         /** @var Model $model */
         $model = $config['model']::query()->onlyTrashed()->where('uuid', $uuid)->firstOrFail();
 
-        if ($model instanceof Admin) {
-            abort_unless($request->user('admin')->canManage($model), 403);
-        }
+        // the same scope checks as the module's own restore
+        $login = match (true) {
+            $model instanceof Admin => $model,
+            $model instanceof Employee => $model->admin()->withTrashed()->first(),
+            default => null,
+        };
+        abort_if($login && ! $request->user('admin')->canManage($login), 403);
 
         $model->restoreFromTrash();
 

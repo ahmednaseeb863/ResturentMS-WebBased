@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enums\DesignationType;
 use App\Models\Admin;
 use App\Models\Branch;
+use App\Models\Designation;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RolePermission;
@@ -18,12 +20,26 @@ class DatabaseSeeder extends Seeder
      * modules are built; the super admin can change them from the Roles screen.
      */
     private const ROLES = [
-        'Manager' => ['Runs their branch(es): menu, stock, staff, shifts, approvals, reports', ['admins.index', 'admins.store', 'admins.update', 'activity.index']],
-        'Cashier' => ['POS, billing, payments, own shift, cash in/out, customers', []],
+        'Manager' => ['Runs their branch(es): menu, stock, staff, shifts, approvals, reports', [
+            'admins.index', 'admins.store', 'admins.update', 'activity.index',
+            'employees.index', 'employees.store', 'employees.update', 'employees.destroy', 'employees.restore',
+            'designations.index', 'customers.index', 'customers.store', 'customers.update',
+        ]],
+        'Cashier' => ['POS, billing, payments, own shift, cash in/out, customers', ['customers.index', 'customers.store', 'customers.update']],
         'Waiter' => ['Waiter app: tables, dine-in orders, send to kitchen, request bill', []],
         'Kitchen' => ['Kitchen display: preparing/ready, confirm raw material used, reprint tickets', []],
         'Rider' => ['Assigned deliveries, picked up / delivered, cash to settle', []],
         'Storekeeper' => ['Raw materials, ready item stock, purchases, stock counts, waste', []],
+    ];
+
+    /** Default designations (PLAN §3): name => [type, default role]. */
+    private const DESIGNATIONS = [
+        'Manager' => [DesignationType::Manager, 'Manager'],
+        'Cashier' => [DesignationType::Cashier, 'Cashier'],
+        'Waiter' => [DesignationType::Waiter, 'Waiter'],
+        'Chef' => [DesignationType::Kitchen, 'Kitchen'],
+        'Rider' => [DesignationType::Rider, 'Rider'],
+        'Storekeeper' => [DesignationType::Storekeeper, 'Storekeeper'],
     ];
 
     public function run(): void
@@ -50,6 +66,13 @@ class DatabaseSeeder extends Seeder
                     ->pluck('id')->all();
                 TrashablePivot::sync(RolePermission::class, 'role_id', $role->id, 'permission_id', $ids);
             }
+        }
+
+        foreach (self::DESIGNATIONS as $name => [$type, $role]) {
+            Designation::withTrashed()->firstOrCreate(['name' => $name], [
+                'type' => $type,
+                'default_role_id' => Role::query()->where('name', $role)->value('id'),
+            ]);
         }
     }
 }

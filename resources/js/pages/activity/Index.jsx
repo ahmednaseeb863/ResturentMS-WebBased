@@ -36,7 +36,7 @@ function Details({ log }) {
         );
     }
 
-    ['granted', 'revoked', 'removed', 'reason', 'method'].forEach((k) => {
+    ['granted', 'revoked', 'added', 'updated', 'removed', 'reason', 'method'].forEach((k) => {
         if (p[k] && (!Array.isArray(p[k]) || p[k].length)) {
             lines.push(
                 <span key={k}>

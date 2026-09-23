@@ -5,9 +5,12 @@ namespace App\Models;
 use App\Models\Concerns\HasPublicUuid;
 use App\Models\Concerns\LogsActivity;
 use App\Models\Concerns\Trashable;
+use App\Support\Activity;
+use App\Support\TrashablePivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -40,6 +43,46 @@ class Admin extends Authenticatable
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class)->using(AdminBranch::class)->wherePivotNull('deleted_at');
+    }
+
+    /** The staff record this login belongs to (any branch). Null for the super admin. */
+    public function employee(): HasOne
+    {
+        return $this->hasOne(Employee::class)->allBranches();
+    }
+
+    /**
+     * Set the branches this admin may work in (removed links are trashed, not
+     * deleted) and log what changed.
+     *
+     * @param  list<int>  $branchIds
+     */
+    public function syncBranches(array $branchIds): void
+    {
+        $changes = TrashablePivot::sync(AdminBranch::class, 'admin_id', $this->id, 'branch_id', $branchIds);
+        $this->logBranchAccess($changes['attached'], $changes['detached']);
+    }
+
+    /** Add one branch, keeping the others (e.g. an allocated manager). */
+    public function grantBranch(Branch $branch): void
+    {
+        if ($this->is_super_admin || $this->branches()->whereKey($branch->id)->exists()) {
+            return;
+        }
+
+        $current = AdminBranch::query()->where('admin_id', $this->id)->pluck('branch_id')->all();
+        $this->syncBranches([...$current, $branch->id]);
+    }
+
+    private function logBranchAccess(array $attached, array $detached): void
+    {
+        if (! $attached && ! $detached) {
+            return;
+        }
+
+        $names = fn (array $ids) => Branch::withTrashed()->whereIn('id', $ids)->pluck('name')->all();
+
+        Activity::log('branch_access', $this, ['granted' => $names($attached), 'removed' => $names($detached)]);
     }
 
     /** Active branches this admin may work in. Super admins: all. */

@@ -362,8 +362,8 @@ Conventions: BIGINT `id` (internal only) + **public `uuid` on every table shown 
 | `admins` | name, email, username, password, pin (hashed), is_super_admin, is_active, last_login_at |
 | `admin_branch` | admin_id, branch_id |
 | `roles`, `permission_groups`, `permissions`, `permission_role` | own module: permission = title + JSON list of route names (catalog in code, synced by `permissions:sync`); `admins.role_id`; pivot rows trashed on revoke |
-| `designations` | name, default_role_id, is_active |
-| `employees` **[B]** | admin_id (unique, nullable), designation_id, code, name, phone, cnic, address, photo, joining_date, salary, status |
+| `designations` | name, type (manager/cashier/waiter/kitchen/rider/storekeeper/other — used by pickers), default_role_id, is_active |
+| `employees` **[B]** | admin_id (unique, nullable), designation_id, code (auto `BRANCH-0001`), name, phone, cnic, address, photo, joining_date, salary, status (active / on_leave / left — not active ⇒ login off) |
 | `users` *(customers)* | name, phone (unique), email, password (nullable), birthday, notes, total_spent, visits_count, last_visit_at |
 | `user_addresses` | user_id, label, address, area, landmark, lat, lng, is_default |
 | `settings` | branch_id (**NULL = global**, else branch override), group, key, value (json); unique (branch_id, group, key). A branch row exists only for overridden fields — switching back to "use global" **trashes** the override row (kept as history) |

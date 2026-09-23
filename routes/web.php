@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BranchController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DesignationController;
+use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\TrashController;
 use App\Http\Controllers\Auth\LoginController;
@@ -28,6 +31,16 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::post('/branch/switch', BranchSwitchController::class)->name('branch.switch');
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    // People
+    Route::resource('customers', CustomerController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('customers/{customer}/restore', [CustomerController::class, 'restore'])->withTrashed()->name('customers.restore');
+
+    Route::resource('employees', EmployeeController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('employees/{employee}/restore', [EmployeeController::class, 'restore'])->withTrashed()->name('employees.restore');
+
+    Route::resource('designations', DesignationController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('designations/{designation}/restore', [DesignationController::class, 'restore'])->withTrashed()->name('designations.restore');
 
     // Administration
     Route::resource('branches', BranchController::class)->only(['index', 'store', 'update', 'destroy']);

@@ -6,6 +6,19 @@ export function FormGrid({ className, children }) {
     return <div className={cx('cust-form-grid', className)}>{children}</div>;
 }
 
+/** Heading that splits a FormGrid into parts (pos-react `.section-title`). */
+export function FormSection({ icon: Icon, title, children }) {
+    return (
+        <div className="cust-field-full form-section">
+            <div className="section-title">
+                {Icon && <Icon />}
+                {title}
+            </div>
+            {children && <div className="form-section-sub">{children}</div>}
+        </div>
+    );
+}
+
 /** Label + control + validation error (pos-react `.cust-field`). `full` spans both columns. */
 export function Field({ label, required, error, hint, full, className, children }) {
     return (

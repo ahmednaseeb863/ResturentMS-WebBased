@@ -14,6 +14,7 @@ import {
     PageStatus,
     PageToolbar,
     SearchInput,
+    Select,
     StatusDot,
     Textarea,
     Toggle,
@@ -26,12 +27,21 @@ import useTrash from '@/hooks/useTrash';
 
 const EMPTY = { code: '', name: '', phone: '', email: '', tax_number: '', address: '', is_active: true };
 
-function BranchDrawer({ branch, onClose, onTrash }) {
+function BranchDrawer({ branch, managers, onClose, onTrash }) {
     const can = useCan();
     const isEdit = Boolean(branch?.id);
     const { data, setData, post, put, processing, errors } = useForm(
-        isEdit ? Object.fromEntries(Object.keys(EMPTY).map((k) => [k, branch[k] ?? EMPTY[k]])) : EMPTY,
+        isEdit
+            ? {
+                  ...Object.fromEntries(Object.keys(EMPTY).map((k) => [k, branch[k] ?? EMPTY[k]])),
+                  manager: branch.manager?.id ?? '',
+              }
+            : EMPTY,
     );
+    const managerOptions = (managers[branch?.id] ?? []).map((e) => ({
+        value: e.id,
+        label: e.designation ? `${e.name} — ${e.designation}` : e.name,
+    }));
 
     function submit() {
         const options = { preserveScroll: true, onSuccess: onClose };
@@ -115,12 +125,32 @@ function BranchDrawer({ branch, onClose, onTrash }) {
                         onChange={(e) => setData('address', e.target.value)}
                     />
                 </Field>
+                {isEdit && (
+                    <Field
+                        label="Branch manager"
+                        full
+                        error={errors.manager}
+                        hint={
+                            managerOptions.length
+                                ? 'Their login gets access to this branch automatically'
+                                : 'Add employees to this branch first (Employees screen)'
+                        }
+                    >
+                        <Select
+                            value={data.manager}
+                            invalid={errors.manager}
+                            placeholder="No manager"
+                            options={managerOptions}
+                            onChange={(e) => setData('manager', e.target.value)}
+                        />
+                    </Field>
+                )}
             </FormGrid>
         </Drawer>
     );
 }
 
-export default function BranchesIndex({ branches, filters, counts }) {
+export default function BranchesIndex({ branches, filters, counts, managers }) {
     const can = useCan();
     const [query, setQuery] = useListQuery(filters);
     const [editing, setEditing] = useState(null);
@@ -143,6 +173,11 @@ export default function BranchesIndex({ branches, filters, counts }) {
         ? [...baseColumns, ...trashColumns({ onRestore: trash.restore, canRestore: can('branches.restore') })]
         : [
               ...baseColumns,
+              {
+                  key: 'manager',
+                  label: 'Manager',
+                  render: (r) => r.manager?.name ?? <span className="cell-muted">—</span>,
+              },
               { key: 'address', label: 'Address', className: 'cell-muted', render: (r) => r.address || '—' },
               { key: 'admins_count', label: 'Staff logins', align: 'center', className: 'mono' },
               {
@@ -215,6 +250,7 @@ export default function BranchesIndex({ branches, filters, counts }) {
                 <BranchDrawer
                     key={editing.id ?? 'new'}
                     branch={editing}
+                    managers={managers}
                     onClose={() => setEditing(null)}
                     onTrash={() => trash.ask(editing)}
                 />

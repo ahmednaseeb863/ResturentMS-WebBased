@@ -419,3 +419,125 @@ form.role-modal {
 .login-pin::placeholder {
   letter-spacing: normal;
 }
+
+/* ── Phase 2: people screens ── */
+
+/* Photo inside the small avatars (employees) */
+.users-avatar img,
+.cust-detail-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.users-avatar:has(img) {
+  overflow: hidden;
+}
+
+/* Detail panel header actions (Edit + close) */
+.detail-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Form section heading inside a drawer grid */
+.form-section {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-divider);
+}
+
+.form-section .section-title {
+  margin-bottom: 0;
+  font-size: 13px;
+}
+
+.form-section-sub {
+  font-size: 11px;
+  color: var(--color-neutral-500);
+}
+
+/* Photo picker: preview + pos-react upload box */
+.photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.photo-upload .stg-upload-box {
+  flex: 1;
+  min-width: 0;
+}
+
+.photo-upload .stg-upload-box span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-upload-preview {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: 1px solid var(--color-divider);
+  flex: none;
+}
+
+/* Customer address rows in the drawer */
+.address-row {
+  border: 1px solid var(--color-divider);
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.address-default {
+  background: none;
+  border: 1px solid var(--color-divider);
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-neutral-500);
+  cursor: pointer;
+}
+
+.address-default.on {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.address-add {
+  align-self: flex-start;
+}
+
+/* Customer address cards in the detail panel */
+.address-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.address-card {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--color-divider);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+}
+
+.address-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

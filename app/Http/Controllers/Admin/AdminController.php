@@ -8,11 +8,9 @@ use App\Http\Requests\AdminRequest;
 use App\Http\Resources\AdminResource;
 use App\Http\Resources\BranchOptionResource;
 use App\Models\Admin;
-use App\Models\AdminBranch;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Support\Activity;
-use App\Support\TrashablePivot;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,7 +59,7 @@ class AdminController extends Controller
     {
         $admin = DB::transaction(function () use ($request) {
             $admin = Admin::create($request->accountData());
-            $this->syncBranches($admin, $request->branchIds());
+            $admin->syncBranches($request->branchIds());
 
             return $admin;
         });
@@ -88,7 +86,7 @@ class AdminController extends Controller
                 Activity::log('role_changed', $admin, ['old' => ['role' => $oldRole], 'attributes' => ['role' => $admin->fresh('role')->role?->name]]);
             }
 
-            $this->syncBranches($admin, $branchIds);
+            $admin->syncBranches($branchIds);
         });
 
         return back()->with('success', "Admin account “{$admin->name}” saved.");
@@ -110,19 +108,5 @@ class AdminController extends Controller
         $admin->restoreFromTrash();
 
         return back()->with('success', "Admin account “{$admin->name}” restored.");
-    }
-
-    private function syncBranches(Admin $admin, array $branchIds): void
-    {
-        $changes = TrashablePivot::sync(AdminBranch::class, 'admin_id', $admin->id, 'branch_id', $branchIds);
-
-        if ($changes['attached'] || $changes['detached']) {
-            $names = fn (array $ids) => Branch::withTrashed()->whereIn('id', $ids)->pluck('name')->all();
-
-            Activity::log('branch_access', $admin, [
-                'granted' => $names($changes['attached']),
-                'removed' => $names($changes['detached']),
-            ]);
-        }
     }
 }

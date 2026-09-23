@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Admin;
-use App\Models\User;
+use App\Models\Customer;
 
 return [
 
@@ -77,7 +77,7 @@ return [
 
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => env('AUTH_MODEL', Customer::class),
         ],
 
         // 'users' => [

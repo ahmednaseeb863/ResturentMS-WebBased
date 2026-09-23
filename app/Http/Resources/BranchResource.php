@@ -17,6 +17,7 @@ class BranchResource extends Resource
             'email' => $this->email,
             'tax_number' => $this->tax_number,
             'is_active' => $this->is_active,
+            'manager' => $this->ref('manager'),
             'admins_count' => $this->whenCounted('admins'),
             'created_at' => static::iso($this->created_at),
             $this->trashFields(),

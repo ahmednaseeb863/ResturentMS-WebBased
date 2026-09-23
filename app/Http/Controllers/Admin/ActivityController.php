@@ -13,7 +13,7 @@ use Inertia\Response;
 /** Read-only audit trail. Normal admins see their current branch + global entries. */
 class ActivityController extends Controller
 {
-    public const EVENTS = ['created', 'updated', 'trashed', 'restored', 'permissions', 'role_changed', 'branch_access', 'login', 'logout'];
+    public const EVENTS = ['created', 'updated', 'trashed', 'restored', 'permissions', 'role_changed', 'branch_access', 'manager_changed', 'addresses', 'login', 'logout'];
 
     public function index(Request $request): Response
     {

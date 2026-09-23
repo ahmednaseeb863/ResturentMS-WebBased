@@ -12,7 +12,8 @@ composer install
 npm install
 cp .env.example .env && php artisan key:generate
 # MySQL databases: resturent_ms and resturent_ms_testing (utf8mb4)
-php artisan migrate --seed   # permission catalog, Main Branch, default roles, super admin
+php artisan migrate --seed   # permission catalog, Main Branch, default roles & designations, super admin
+php artisan storage:link     # employee photos
 npm run build        # or: npm run dev
 ```
 

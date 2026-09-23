@@ -22,11 +22,41 @@ class PermissionCatalog
     {
         return [
             [
+                'title' => 'Customers',
+                'permissions' => [
+                    ['title' => 'View customers', 'routes' => ['customers.index']],
+                    ['title' => 'Add customer', 'routes' => ['customers.store']],
+                    ['title' => 'Edit customer', 'routes' => ['customers.update']],
+                    ['title' => 'Trash customer', 'routes' => ['customers.destroy']],
+                    ['title' => 'Restore customer', 'routes' => ['customers.restore']],
+                ],
+            ],
+            [
+                'title' => 'Employees',
+                'permissions' => [
+                    ['title' => 'View employees', 'routes' => ['employees.index']],
+                    ['title' => 'Add employee', 'routes' => ['employees.store']],
+                    ['title' => 'Edit employee', 'routes' => ['employees.update']],
+                    ['title' => 'Trash employee', 'routes' => ['employees.destroy']],
+                    ['title' => 'Restore employee', 'routes' => ['employees.restore']],
+                ],
+            ],
+            [
+                'title' => 'Designations',
+                'permissions' => [
+                    ['title' => 'View designations', 'routes' => ['designations.index']],
+                    ['title' => 'Add designation', 'routes' => ['designations.store']],
+                    ['title' => 'Edit designation', 'routes' => ['designations.update']],
+                    ['title' => 'Trash designation', 'routes' => ['designations.destroy']],
+                    ['title' => 'Restore designation', 'routes' => ['designations.restore']],
+                ],
+            ],
+            [
                 'title' => 'Branches',
                 'permissions' => [
                     ['title' => 'View branches', 'routes' => ['branches.index']],
                     ['title' => 'Add branch', 'routes' => ['branches.store']],
-                    ['title' => 'Edit branch', 'routes' => ['branches.update']],
+                    ['title' => 'Edit branch & allocate manager', 'routes' => ['branches.update']],
                     ['title' => 'Trash branch', 'routes' => ['branches.destroy']],
                     ['title' => 'Restore branch', 'routes' => ['branches.restore']],
                 ],

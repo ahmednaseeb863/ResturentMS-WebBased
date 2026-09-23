@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureActiveAdmin::class,
             HandleInertiaRequests::class,
         ]);
+
+        // The current branch must be known before route model binding, so
+        // {employee} etc. resolve through the BelongsToBranch scope (404 for other branches).
+        $middleware->prependToPriorityList(before: SubstituteBindings::class, prepend: SetCurrentBranch::class);
 
         $middleware->alias([
             'permission' => EnsurePermission::class,
