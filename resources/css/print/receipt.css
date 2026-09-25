@@ -1,0 +1,93 @@
+/* Thermal receipt layout for browser printing (58 / 80 mm). Used by print pages only. */
+
+@page {
+  margin: 0;
+}
+
+.print-page {
+  margin: 0;
+  background: #e6e6e8;
+  color: #000;
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.print-page.paper-80 { --paper: 80mm; }
+.print-page.paper-58 { --paper: 58mm; }
+
+.print-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 16px;
+  background: #1d1f20;
+  color: #f2f2f3;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.print-toolbar button {
+  margin-left: auto;
+  padding: 6px 14px;
+  border: 0;
+  background: #5980a6;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.print-note { color: #f3c969; }
+
+.receipt {
+  width: var(--paper);
+  box-sizing: border-box;
+  margin: 16px auto;
+  padding: 4mm 3mm;
+  background: #fff;
+}
+
+.receipt-logo {
+  display: block;
+  max-width: 60%;
+  max-height: 22mm;
+  margin: 0 auto 2mm;
+}
+
+.receipt-title {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.receipt-center { text-align: center; }
+.receipt-strong { font-weight: 700; }
+.receipt-pre { white-space: pre-line; }
+
+.receipt-rule {
+  margin: 2mm 0;
+  border-top: 1px dashed #000;
+}
+
+.receipt-lines {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1mm 3mm;
+  margin: 0;
+}
+
+.receipt-lines dt { font-weight: 700; }
+.receipt-lines dd { margin: 0; text-align: right; word-break: break-all; }
+
+.receipt-ruler {
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+@media print {
+  .print-page { background: #fff; }
+  .no-print { display: none; }
+  .receipt { margin: 0; padding: 0 2mm; }
+}

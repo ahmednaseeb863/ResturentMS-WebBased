@@ -46,7 +46,7 @@ class SaveCustomer
             }
         }
 
-        foreach ($existing->except($keep) as $address) {
+        foreach ($existing->toBase()->except($keep) as $address) {
             $address->trash();
             $changes['removed'][] = $address->trashLabel();
         }

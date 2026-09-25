@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Resource;
 use App\Models\Admin;
 use App\Models\Employee;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ use Inertia\Response;
 
 /**
  * Recycle Bin: trashed records of every module listed in config/trash.php.
- * Branch-scoped models are automatically limited to the current branch.
+ * Branch-scoped models are automatically limited to the current branch; models with a
+ * `visibleTo($admin)` scope (e.g. bank accounts) are limited by it.
  */
 class TrashController extends Controller
 {
@@ -31,7 +33,7 @@ class TrashController extends Controller
 
         $rows = collect($modules)
             ->when($module !== '', fn ($c) => $c->only($module))
-            ->flatMap(fn (array $config, string $key) => $this->trashedOf($key, $config, $search))
+            ->flatMap(fn (array $config, string $key) => $this->trashedOf($key, $config, $search, $request))
             ->sortByDesc('deleted_at')
             ->values();
 
@@ -65,7 +67,7 @@ class TrashController extends Controller
         $config = config("trash.modules.{$module}") ?? abort(404);
 
         /** @var Model $model */
-        $model = $config['model']::query()->onlyTrashed()->where('uuid', $uuid)->firstOrFail();
+        $model = $this->visible($config['model']::query(), $request)->onlyTrashed()->where('uuid', $uuid)->firstOrFail();
 
         // the same scope checks as the module's own restore
         $login = match (true) {
@@ -80,9 +82,9 @@ class TrashController extends Controller
         return back()->with('success', "{$config['label']} “{$model->trashLabel()}” restored.");
     }
 
-    private function trashedOf(string $key, array $config, string $search): array
+    private function trashedOf(string $key, array $config, string $search, Request $request): array
     {
-        return $config['model']::query()
+        return $this->visible($config['model']::query(), $request)
             ->onlyTrashed()
             ->with('deletedBy')
             ->when($search !== '', fn ($q) => $q->where(function ($q) use ($config, $search) {
@@ -103,5 +105,12 @@ class TrashController extends Controller
                 'delete_reason' => $m->delete_reason,
             ])
             ->all();
+    }
+
+    private function visible(Builder $query, Request $request): Builder
+    {
+        return method_exists($query->getModel(), 'scopeVisibleTo')
+            ? $query->visibleTo($request->user('admin'))
+            : $query;
     }
 }

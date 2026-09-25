@@ -26,7 +26,7 @@ it('allocates a manager and gives their login access to the branch', function ()
         ->and($admin->fresh()->branches->pluck('id')->sort()->values()->all())->toBe(collect([$branch->id, $elsewhere->id])->sort()->values()->all())
         ->and(ActivityLog::where('event', 'manager_changed')->first()->properties['attributes']['manager'])->toBe('Farah Noor');
 
-    $response = $this->get(route('branches.index'))->assertInertia(fn (Assert $page) => $page
+    $response = $this->get(route('branches.index', ['search' => 'Gulberg']))->assertInertia(fn (Assert $page) => $page
         ->where('branches.data.0.manager.name', 'Farah Noor')
         ->where("managers.{$branch->uuid}.0.name", 'Farah Noor'));
 

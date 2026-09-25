@@ -62,6 +62,21 @@ it('trashes removed addresses instead of deleting them', function () {
         ->and(ActivityLog::where('event', 'addresses')->first()->properties)->toBe(['added' => ['Office'], 'removed' => ['Home']]);
 });
 
+it('keeps and updates an address that is sent back with its uuid', function () {
+    loginSuperAdmin();
+    $customer = Customer::factory()->withAddress(['label' => 'Home'])->create();
+    $address = $customer->addresses()->first();
+
+    $this->put(route('customers.update', $customer), [
+        'name' => $customer->name,
+        'phone' => $customer->phone,
+        'addresses' => [['id' => $address->uuid, 'address' => 'House 5, Street 2', 'label' => 'Home']],
+    ])->assertSessionHasNoErrors();
+
+    expect($address->fresh())->isTrashed()->toBeFalse()->address->toBe('House 5, Street 2')
+        ->and(CustomerAddress::withTrashed()->count())->toBe(1);
+});
+
 it('rejects address uuids of another customer', function () {
     loginSuperAdmin();
     $customer = Customer::factory()->create();

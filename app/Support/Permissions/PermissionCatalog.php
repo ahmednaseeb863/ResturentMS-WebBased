@@ -5,6 +5,7 @@ namespace App\Support\Permissions;
 use App\Models\Permission;
 use App\Models\PermissionGroup;
 use App\Models\Role;
+use App\Support\Settings\SettingsRegistry;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,6 +22,43 @@ class PermissionCatalog
     public static function groups(): array
     {
         return [
+            static::crud('Menu Categories', 'category', 'categories'),
+            static::crud('Menu Items', 'menu item', 'menu-items', [
+                ['title' => 'Copy menu from another branch', 'routes' => ['menu-items.copy']],
+            ]),
+            static::crud('Ready Items', 'ready item', 'ready-items'),
+            static::crud('Add-on Groups', 'add-on group', 'modifier-groups'),
+            static::crud('Kitchen Stations', 'kitchen station', 'kitchen-stations'),
+            static::crud('Deals', 'deal', 'deals'),
+            static::crud('Discounts', 'discount', 'discounts'),
+            [
+                'title' => 'Tables & Floor Plan',
+                'permissions' => [
+                    ['title' => 'View floor plan', 'routes' => ['tables.floor']],
+                    ['title' => 'Set table status (available / reserved / cleaning)', 'routes' => ['tables.status']],
+                    ['title' => 'Arrange floor plan', 'routes' => ['tables.layout']],
+                    ['title' => 'View tables', 'routes' => ['tables.index']],
+                    ['title' => 'Add table', 'routes' => ['tables.store']],
+                    ['title' => 'Edit table', 'routes' => ['tables.update']],
+                    ['title' => 'Trash table', 'routes' => ['tables.destroy']],
+                    ['title' => 'Restore table', 'routes' => ['tables.restore']],
+                ],
+            ],
+            static::crud('Dining Areas', 'area', 'areas'),
+            static::crud('Raw Materials', 'raw material', 'raw-materials', [
+                ['title' => 'Manage raw material categories', 'routes' => [
+                    'raw-material-categories.index', 'raw-material-categories.store', 'raw-material-categories.update',
+                    'raw-material-categories.destroy', 'raw-material-categories.restore',
+                ]],
+            ]),
+            [
+                'title' => 'Stock',
+                'permissions' => [
+                    ['title' => 'Add stock', 'routes' => ['stock.add']],
+                    ['title' => 'View stock ledger', 'routes' => ['stock-ledger.index']],
+                ],
+            ],
+            static::crud('Units', 'unit', 'units'),
             [
                 'title' => 'Customers',
                 'permissions' => [
@@ -49,6 +87,58 @@ class PermissionCatalog
                     ['title' => 'Edit designation', 'routes' => ['designations.update']],
                     ['title' => 'Trash designation', 'routes' => ['designations.destroy']],
                     ['title' => 'Restore designation', 'routes' => ['designations.restore']],
+                ],
+            ],
+            [
+                'title' => 'Settings',
+                'permissions' => [
+                    ['title' => 'View branch settings', 'routes' => ['settings.index']],
+                    ...array_map(fn (string $group) => [
+                        'title' => 'Edit branch settings — '.SettingsRegistry::groups()[$group]['label'],
+                        'routes' => ["settings.branch.{$group}"],
+                    ], SettingsRegistry::groupKeys()),
+                    ['title' => 'View & edit global settings', 'routes' => ['settings.global', 'settings.global.update']],
+                ],
+            ],
+            [
+                'title' => 'Cash Counters',
+                'permissions' => [
+                    ['title' => 'View cash counters', 'routes' => ['counters.index']],
+                    ['title' => 'Add cash counter', 'routes' => ['counters.store']],
+                    ['title' => 'Edit cash counter', 'routes' => ['counters.update']],
+                    ['title' => 'Trash cash counter', 'routes' => ['counters.destroy']],
+                    ['title' => 'Restore cash counter', 'routes' => ['counters.restore']],
+                ],
+            ],
+            [
+                'title' => 'Printers',
+                'permissions' => [
+                    ['title' => 'View printers', 'routes' => ['printers.index']],
+                    ['title' => 'Add printer', 'routes' => ['printers.store']],
+                    ['title' => 'Edit printer', 'routes' => ['printers.update']],
+                    ['title' => 'Test print', 'routes' => ['printers.test']],
+                    ['title' => 'Trash printer', 'routes' => ['printers.destroy']],
+                    ['title' => 'Restore printer', 'routes' => ['printers.restore']],
+                ],
+            ],
+            [
+                'title' => 'Shift Types',
+                'permissions' => [
+                    ['title' => 'View shift types', 'routes' => ['shift-types.index']],
+                    ['title' => 'Add shift type', 'routes' => ['shift-types.store']],
+                    ['title' => 'Edit shift type', 'routes' => ['shift-types.update']],
+                    ['title' => 'Trash shift type', 'routes' => ['shift-types.destroy']],
+                    ['title' => 'Restore shift type', 'routes' => ['shift-types.restore']],
+                ],
+            ],
+            [
+                'title' => 'Bank Accounts',
+                'permissions' => [
+                    ['title' => 'View bank accounts', 'routes' => ['bank-accounts.index']],
+                    ['title' => 'Add bank account', 'routes' => ['bank-accounts.store']],
+                    ['title' => 'Edit bank account', 'routes' => ['bank-accounts.update']],
+                    ['title' => 'Trash bank account', 'routes' => ['bank-accounts.destroy']],
+                    ['title' => 'Restore bank account', 'routes' => ['bank-accounts.restore']],
                 ],
             ],
             [
@@ -88,6 +178,22 @@ class PermissionCatalog
                     ['title' => 'Restore from recycle bin', 'routes' => ['trash.restore']],
                     ['title' => 'View activity log', 'routes' => ['activity.index']],
                 ],
+            ],
+        ];
+    }
+
+    /** View / Add / Edit / Trash / Restore for a resource module, plus extra permissions. */
+    private static function crud(string $title, string $noun, string $prefix, array $extra = []): array
+    {
+        return [
+            'title' => $title,
+            'permissions' => [
+                ['title' => 'View '.str($noun)->plural(), 'routes' => ["{$prefix}.index"]],
+                ['title' => "Add {$noun}", 'routes' => ["{$prefix}.store"]],
+                ['title' => "Edit {$noun}", 'routes' => ["{$prefix}.update"]],
+                ['title' => "Trash {$noun}", 'routes' => ["{$prefix}.destroy"]],
+                ['title' => "Restore {$noun}", 'routes' => ["{$prefix}.restore"]],
+                ...$extra,
             ],
         ];
     }

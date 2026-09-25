@@ -60,6 +60,12 @@ class HandleInertiaRequests extends Middleware
             'context' => [
                 'branch' => $current->get() ? (new BranchOptionResource($current->get()))->resolve() : null,
                 'branches' => $admin ? BranchOptionResource::collection($current->available())->resolve() : [],
+                // display settings of the current branch (branch override → global → default)
+                'settings' => $admin ? fn () => [
+                    'business_name' => setting('general.business_name'),
+                    'currency_symbol' => setting('general.currency_symbol'),
+                    'time_format' => setting('general.time_format'),
+                ] : null,
                 'shift' => null,
                 'business_date' => null,
             ],

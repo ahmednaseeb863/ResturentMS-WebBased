@@ -4,8 +4,17 @@
 const moneyFmt = new Intl.NumberFormat('en-PK', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const qtyFmt = new Intl.NumberFormat('en-PK', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
 
-/** "Rs 1,250" — currency symbol comes from settings later (Phase 3). */
-export function money(value, symbol = 'Rs') {
+// Display settings shared by the server (context.settings); set by AppLayout.
+const display = { currencySymbol: 'Rs', hour12: true };
+
+export function configureFormat(settings) {
+    if (!settings) return;
+    display.currencySymbol = settings.currency_symbol || 'Rs';
+    display.hour12 = settings.time_format !== '24h';
+}
+
+/** "Rs 1,250" — the symbol comes from the General settings. */
+export function money(value, symbol = display.currencySymbol) {
     const n = Number(value ?? 0);
     const text = moneyFmt.format(Math.abs(n));
     return n < 0 ? `(${symbol} ${text})` : `${symbol} ${text}`;
@@ -22,7 +31,16 @@ export function qty(value, unit = '') {
 }
 
 const dateFmt = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-const timeFmt = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' });
+const timeFmt = {
+    format: (d) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: display.hour12 }),
+};
+
+/** "19:00" (from a TIME value) → "7:00 PM" or "19:00" per the time format setting. */
+export function clock(hhmm) {
+    if (!hhmm) return '—';
+    const [h, m] = hhmm.split(':').map(Number);
+    return timeFmt.format(new Date(2000, 0, 1, h, m));
+}
 
 /** ISO string → "23 Sep 2026" */
 export function date(iso) {

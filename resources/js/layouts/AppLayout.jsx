@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import Sidebar from '@/components/layout/Sidebar';
 import Toolbar from '@/components/layout/Toolbar';
 import StatusBar from '@/components/layout/StatusBar';
 import { LayoutSlotsContext } from '@/components/layout/LayoutSlots';
 import FlashToasts from '@/components/ui/FlashToasts';
-import { cx } from '@/lib/format';
+import { configureFormat, cx } from '@/lib/format';
 
 /**
  * App shell — pos-react MainLayout (sidebar · toolbar · content · status bar),
@@ -16,6 +16,9 @@ export default function AppLayout({ hideSidebar = false, children }) {
     const [navOpen, setNavOpen] = useState(false);
     const [toolbarEl, setToolbarEl] = useState(null);
     const [statusEl, setStatusEl] = useState(null);
+
+    // currency symbol / time format from settings, before children format anything
+    configureFormat(usePage().props.context?.settings);
 
     // Close the mobile drawer / expanded rail after every navigation.
     useEffect(() => router.on('navigate', () => setNavOpen(false)), []);

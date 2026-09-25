@@ -380,26 +380,26 @@ Tax rate and on/off live in `settings` (group `tax`, global + branch override). 
 | `menu_items` **[B]** | category_id, kitchen_station_id (override), name, slug, description, image, price, prep_time_minutes, available_for (json), is_active, is_sold_out, sort_order — **no stock columns** |
 | `ready_items` **[B]** | category_id, kitchen_station_id (nullable), code, barcode, name, image, price, stock_unit_id, purchase_unit_id, purchase_unit_factor, current_stock, alert_level, avg_cost, available_for (json), is_active, sort_order |
 | `menu_item_variants` | menu_item_id, name, price, is_default, sort_order |
-| `modifier_groups` **[B]** / `modifiers` | name, min_select, max_select, is_required / group_id, name, price, is_active |
+| `modifier_groups` **[B]** / `modifiers` | name, min_select, max_select, is_active (required = min_select > 0) / group_id, name, price, is_active, sort_order |
 | `menu_item_modifier_group` | menu_item_id, modifier_group_id, sort_order |
-| `recipe_items` | recipeable (morph: menu_item / menu_item_variant / modifier), raw_material_id, quantity, unit_id |
+| `recipe_items` | recipeable (morph: menu_item / menu_item_variant / modifier), raw_material_id, quantity, unit_id — one line per raw material, unit of the material's family |
 
 Recipe rule: a variant's own recipe replaces the item's recipe if it has one; modifier recipes are added on top.
 
 ### Deals & discounts *(per branch)*
 | Table | Key columns |
 |---|---|
-| `deals` **[B]** | name, description, image, price, starts_at, ends_at, days_of_week, start_time, end_time, available_for, is_active |
-| `deal_slots` / `deal_slot_options` | deal_id, name, quantity / slot_id, sellable (morph: menu_item / ready_item), variant_id, extra_price |
-| `discounts` **[B]** | name, type, value, applies_to, requires_approval, is_active |
+| `deals` **[B]** | name, description, image, price, starts_on, ends_on (business dates), days_of_week (ISO 1–7, null = every day), start_time, end_time (may pass midnight), available_for, is_active, sort_order |
+| `deal_slots` / `deal_slot_options` | deal_id, name, quantity / deal_slot_id, sellable (morph: menu_item / ready_item), variant_id (fixed size; empty = the item's default size), extra_price, is_default — one option = fixed item, more = customer picks |
+| `discounts` **[B]** | name, type (percent/fixed), value, applies_to (order/item), max_amount (percent cap), min_order_amount, starts_on, ends_on, requires_approval, is_active |
 
 ### Floor, counters, printing
 | Table | Key columns |
 |---|---|
-| `areas` **[B]** | name, sort_order |
-| `tables` **[B]** | area_id, name, capacity, status, pos_x, pos_y, shape |
+| `areas` **[B]** | name, sort_order, is_active |
+| `tables` **[B]** | area_id, name, capacity, status, shape, pos_x, pos_y (top-left cell of a 24 × 14 floor-plan grid; the shape sets the cells covered), is_active — model `DiningTable` |
 | `cash_counters` **[B]** | name, receipt_printer_id, is_active |
-| `printers` **[B]** | name, type (receipt/kitchen), connection (usb/network), device_name_or_ip, paper_width, is_active |
+| `printers` **[B]** | name, type (receipt/kitchen), connection_type (usb/network), device_name (USB) / ip_address + port (network), paper_width, is_active, last_tested_at |
 | `print_jobs` **[B]** | printer_id, document_type (kot/receipt/pre_bill/z_report/void), reference (morph), status, attempts, error |
 | `reservations` **[B]** | user_id, table_id, reserved_for, party_size, status, notes, created_by |
 

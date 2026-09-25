@@ -342,3 +342,176 @@
     min-height: 40px;
   }
 }
+
+/* ── Phase 3: settings page ── */
+@media (max-width: 1023px) {
+  .stg-page {
+    grid-template-columns: 170px 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .stg-page {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* group list becomes a horizontal strip */
+  .stg-nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-divider);
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .stg-nav-item {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .stg-scope-nav {
+    flex-shrink: 0;
+    margin: 0 4px 0 0;
+  }
+
+  .stg-panel,
+  .stg-panel-body {
+    overflow: visible;
+  }
+
+  .stg-panel-header,
+  .stg-panel-body {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .stg-row {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .stg-row-label {
+    flex: 1 1 100%;
+  }
+
+  .stg-row-control {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .stg-row-control > .stg-input:not(.stg-input-sm),
+  .stg-row-control-full {
+    flex: 1 1 100%;
+  }
+
+  .stg-input {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .stg-row-control > select.stg-input,
+  .stg-row-control > input.stg-input:not(.stg-input-sm) {
+    flex: 1 1 180px;
+  }
+}
+
+@media (pointer: coarse) {
+  .stg-nav-item,
+  .stg-scope > button,
+  .stg-scope > a {
+    min-height: 40px;
+  }
+
+  .stg-input {
+    height: 38px;
+  }
+}
+
+/* Menu & stock editors on phones: recipe lines and option rows wrap */
+@media (max-width: 767px) {
+  .recipe-line {
+    grid-template-columns: minmax(0, 1fr) 72px 72px 24px;
+  }
+
+  .recipe-line-material {
+    grid-column: 1 / -1;
+  }
+
+  .recipe-line-cost {
+    text-align: left;
+  }
+
+  .option-row-main {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+
+  .option-row-tools {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    padding-bottom: 0;
+  }
+
+  .stock-preview {
+    gap: 8px 12px;
+  }
+}
+
+/* Deals & floor plan on smaller screens */
+@media (max-width: 767px) {
+  .promo-stat-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .deal-option-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .deal-option-kind {
+    display: none;
+  }
+
+  .deal-slot-head {
+    grid-template-columns: minmax(0, 1fr) 64px auto;
+  }
+
+  .deal-slot-head > .option-row-tools {
+    grid-column: auto;
+    padding-bottom: 8px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .floor-table-seats {
+    display: none;
+  }
+}
+
+/* phones: card grid instead of the plan; arranging needs a bigger screen */
+@media (max-width: 639px) {
+  .floor-wrap,
+  .floor-arrange-btn {
+    display: none;
+  }
+
+  .floor-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .floor-cards .floor-table-seats {
+    display: inline-flex;
+  }
+
+  .floor-status-buttons {
+    grid-template-columns: 1fr;
+  }
+}

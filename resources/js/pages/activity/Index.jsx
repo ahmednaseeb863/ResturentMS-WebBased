@@ -36,8 +36,12 @@ function Details({ log }) {
         );
     }
 
-    ['granted', 'revoked', 'added', 'updated', 'removed', 'reason', 'method'].forEach((k) => {
-        if (p[k] && (!Array.isArray(p[k]) || p[k].length)) {
+    // any other summary: granted / revoked, added / removed, recipe lines, copy counts…
+    Object.keys(p).forEach((k) => {
+        if (k === 'old' || k === 'attributes' || (p[k] !== null && typeof p[k] === 'object' && !Array.isArray(p[k]))) {
+            return;
+        }
+        if (p[k] !== '' && p[k] !== null && (!Array.isArray(p[k]) || p[k].length)) {
             lines.push(
                 <span key={k}>
                     <b>{label(k)}</b>: {show(p[k])}

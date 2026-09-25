@@ -3,7 +3,7 @@ import { Image } from 'lucide-react';
 
 /**
  * Image picker in the pos-react settings style (`.stg-upload-box`) with a preview.
- * `value` = File chosen now (or null), `current` = URL already saved.
+ * `value` = File chosen now (or null), `current` = URL already saved. `disabled` = view only.
  */
 export default function PhotoUpload({
     value,
@@ -11,6 +11,7 @@ export default function PhotoUpload({
     onChange,
     onRemove,
     removed,
+    disabled,
     label = 'Click to upload photo (JPG, PNG, WebP · max 2 MB)',
 }) {
     const id = useId();
@@ -21,7 +22,7 @@ export default function PhotoUpload({
     const shown = preview ?? (removed ? null : current);
 
     return (
-        <div className="photo-upload">
+        <div className={disabled ? 'photo-upload is-disabled' : 'photo-upload'}>
             {shown && <img className="photo-upload-preview" src={shown} alt="" />}
             <label htmlFor={id} className="stg-upload-box">
                 <Image size={18} strokeWidth={1.5} />
@@ -31,10 +32,11 @@ export default function PhotoUpload({
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
                     className="sr-only"
+                    disabled={disabled}
                     onChange={(e) => onChange(e.target.files?.[0] ?? null)}
                 />
             </label>
-            {shown && onRemove && (
+            {shown && onRemove && !disabled && (
                 <button type="button" className="btn btn-ghost btn-xs" onClick={onRemove}>
                     Remove
                 </button>
