@@ -6,6 +6,8 @@ use App\Models\Deal;
 use App\Models\MenuItem;
 use App\Models\MenuItemVariant;
 use App\Models\Modifier;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\RawMaterial;
 use App\Models\ReadyItem;
 use App\Support\CurrentBranch;
@@ -38,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
             'menu_item_variant' => MenuItemVariant::class,
             'modifier' => Modifier::class,
             'deal' => Deal::class,
+            'order' => Order::class,
+            'order_item' => OrderItem::class,
         ]);
 
         if ($this->app->runningUnitTests()) {

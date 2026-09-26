@@ -22,6 +22,17 @@ class PermissionCatalog
     public static function groups(): array
     {
         return [
+            [
+                'title' => 'POS & Orders',
+                'permissions' => [
+                    ['title' => 'Use the POS — take, hold and send orders, add customers', 'routes' => ['pos.index', 'pos.orders.store', 'pos.orders.update', 'pos.orders.discard', 'pos.customers.store']],
+                    ['title' => 'View orders', 'routes' => ['orders.index', 'orders.show']],
+                    ['title' => 'Give discounts (and approve them with a PIN)', 'routes' => ['orders.discount']],
+                    ['title' => 'Remove service charge (and approve it with a PIN)', 'routes' => ['orders.service-charge']],
+                    ['title' => 'Void sent items (and approve voids with a PIN)', 'routes' => ['orders.items.void']],
+                    ['title' => 'Cancel orders (and approve cancels with a PIN)', 'routes' => ['orders.cancel']],
+                ],
+            ],
             static::crud('Menu Categories', 'category', 'categories'),
             static::crud('Menu Items', 'menu item', 'menu-items', [
                 ['title' => 'Copy menu from another branch', 'routes' => ['menu-items.copy']],

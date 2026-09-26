@@ -17,6 +17,8 @@ use Illuminate\Validation\ValidationException;
  *   app(StockLedger::class)->record($chicken, StockMovementType::StockIn, 12.5, unitCost: 880);
  *
  * `quantity` is signed and in the item's stock unit; `unitCost` is per stock unit.
+ * `allowNegative` overrides `inventory.allow_negative_stock` (POS sales follow the
+ * "ready item out of stock" setting instead).
  */
 class StockLedger
 {
@@ -27,14 +29,17 @@ class StockLedger
         ?float $unitCost = null,
         ?string $note = null,
         ?Model $reference = null,
+        ?bool $allowNegative = null,
     ): StockMovement {
-        return DB::transaction(function () use ($item, $type, $quantity, $unitCost, $note, $reference) {
+        return DB::transaction(function () use ($item, $type, $quantity, $unitCost, $note, $reference, $allowNegative) {
             $locked = $item->newQueryWithoutScopes()->lockForUpdate()->findOrFail($item->getKey());
 
             $before = (float) $locked->current_stock;
             $after = round($before + $quantity, 3);
 
-            if ($quantity < 0 && $after < 0 && ! setting('inventory.allow_negative_stock', $locked->branch_id)) {
+            $allowNegative ??= (bool) setting('inventory.allow_negative_stock', $locked->branch_id);
+
+            if ($quantity < 0 && $after < 0 && ! $allowNegative) {
                 throw ValidationException::withMessages([
                     'quantity' => "Not enough stock of “{$locked->name}” — only ".Qty::format($before).' left.',
                 ]);

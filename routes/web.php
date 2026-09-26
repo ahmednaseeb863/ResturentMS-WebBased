@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\KitchenStationController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\ModifierGroupController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\PrinterController;
 use App\Http\Controllers\Admin\RawMaterialCategoryController;
 use App\Http\Controllers\Admin\RawMaterialController;
@@ -51,6 +53,20 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::post('/branch/switch', BranchSwitchController::class)->name('branch.switch');
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    // POS & orders
+    Route::get('pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('pos/orders', [PosController::class, 'store'])->name('pos.orders.store');
+    Route::put('pos/orders/{order}', [PosController::class, 'update'])->name('pos.orders.update');
+    Route::put('pos/orders/{order}/discard', [PosController::class, 'discard'])->name('pos.orders.discard');
+    Route::post('pos/customers', [PosController::class, 'storeCustomer'])->name('pos.customers.store');
+
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::put('orders/{order}/cancel', [OrderController::class, 'cancel'])->middleware('throttle:30,1')->name('orders.cancel');
+    Route::put('orders/{order}/discount', [OrderController::class, 'discount'])->middleware('throttle:30,1')->name('orders.discount');
+    Route::put('orders/{order}/service-charge', [OrderController::class, 'serviceCharge'])->middleware('throttle:30,1')->name('orders.service-charge');
+    Route::put('orders/{order}/items/{item}/void', [OrderController::class, 'void'])->middleware('throttle:30,1')->scopeBindings()->name('orders.items.void');
 
     // Menu
     Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);

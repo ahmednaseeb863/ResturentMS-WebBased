@@ -415,12 +415,12 @@ Recipe rule: a variant's own recipe replaces the item's recipe if it has one; mo
 ### Orders, kitchen & delivery
 | Table | Key columns |
 |---|---|
-| `orders` **[B]** | order_number, type, source (pos/waiter_app), status, business_date, shift_id (paid in), user_id, table_id, waiter_id, created_by, guests, items_total, discount_total, net_total, service_charge_rate, service_charge, delivery_fee, tax_name, tax_rate, tax_total, round_off, grand_total, paid_total, payment_status, notes, placed_at, completed_at, cancelled_at, cancel_reason |
+| `orders` **[B]** | order_number, type, source (pos/waiter_app), status, business_date, shift_id (paid in), user_id, table_id, waiter_id, created_by, guests, items_total, discount_total, net_total, service_charge_rate, service_charge_removed, service_charge, delivery_fee, tax_name, tax_rate, tax_total, round_off, grand_total, paid_total, payment_status, held_items (cart of a held/draft order), notes, placed_at, completed_at, cancelled_at, cancelled_by, cancel_reason; one open order per table (generated unique `open_table_id`); number given when placed |
 | `order_items` | order_id, sellable (morph: menu_item / ready_item), variant_id, deal_id, parent_order_item_id, item_name, variant_name, quantity, unit_price, modifiers_total, discount_amount, line_total, kitchen_status, kitchen_station_id, kitchen_ticket_id, consumption_status (pending/confirmed/auto_confirmed/not_required — ready items are "not_required", their stock moves on sale), notes, voided_at, void_reason, voided_by, void_wasted |
 | `order_item_consumptions` | order_item_id, raw_material_id, expected_qty, actual_qty, unit_id, reason, confirmed_by, confirmed_at, stock_movement_id |
 | `order_item_modifiers` | order_item_id, modifier_id, name, price |
-| `order_discounts` | order_id, order_item_id, discount_id, type, value, amount, approved_by, reason |
-| `kitchen_tickets` **[B]** | order_id, kitchen_station_id, ticket_number, status, sent_at, started_at, completed_at, printed_at |
+| `order_discounts` | order_id, order_item_id, discount_id, name, type, value, max_amount, min_amount (copied from the discount), amount, approved_by, reason; replaced ones trashed |
+| `kitchen_tickets` **[B]** | order_id, kitchen_station_id, business_date, number (KOT-001 per day), status, sent_at, started_at, completed_at, printed_at |
 | `order_status_histories` | order_id, from_status, to_status, admin_id, note |
 | `delivery_zones` **[B]** | name, fee, min_order_amount |
 | `deliveries` **[B]** | order_id, user_address_id, address_snapshot, rider_id, delivery_zone_id, fee, status, assigned_at, picked_up_at, delivered_at, cash_to_collect, cash_collected, settled_at, settlement_movement_id |
