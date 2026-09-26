@@ -24,6 +24,7 @@ class CloseShiftRequest extends FormRequest
             'float_left' => ['required', 'numeric', 'min:0', 'max:9999999999.99', 'decimal:0,2'],
             'notes' => ['nullable', 'string', 'max:500'],
             'pin' => ['nullable', 'digits_between:4,6'],
+            'carry_rider_cash' => ['boolean'],
         ];
     }
 

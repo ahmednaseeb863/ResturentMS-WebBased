@@ -247,7 +247,7 @@ function CountTable({ title, lines }) {
 }
 
 /** One shift: drawer, cash in / out, staff, close / reopen, X / Z report. */
-export default function ShiftShow({ shift, lines, transfers, movements, counts, staff, staffOptions, movementTypes, denominations, canHandle, canReopen, rules }) {
+export default function ShiftShow({ shift, lines, transfers, movements, counts, staff, staffOptions, movementTypes, denominations, canHandle, canReopen, rules, riderCash, isShiftManager }) {
     const can = useCan();
     const { url } = usePage();
     const open = shift.is_open;
@@ -338,6 +338,9 @@ export default function ShiftShow({ shift, lines, transfers, movements, counts, 
                         },
                         { label: 'Float Left', value: money(shift.float_left), className: 'mono' },
                         { label: 'Handed Over', value: money(shift.handed_over_amount), className: 'mono' },
+                        ...(Number(shift.rider_cash_carried) > 0
+                            ? [{ label: 'Rider Cash Carried Over', value: money(shift.rider_cash_carried), className: 'mono cash-minus' }]
+                            : []),
                     ]}
                 />
             )}
@@ -428,7 +431,15 @@ export default function ShiftShow({ shift, lines, transfers, movements, counts, 
             )}
 
             {dialog === 'close' && (
-                <CloseShiftDialog shift={shift} lines={lines} denominations={denominations} rules={rules} onClose={() => setDialog(null)} />
+                <CloseShiftDialog
+                    shift={shift}
+                    lines={lines}
+                    denominations={denominations}
+                    rules={rules}
+                    riderCash={riderCash}
+                    isShiftManager={isShiftManager}
+                    onClose={() => setDialog(null)}
+                />
             )}
             {dialog === 'cash' && <CashMovementDialog shift={shift} types={movementTypes} onClose={() => setDialog(null)} />}
             {dialog === 'reopen' && <ReopenDialog shift={shift} pinRequired={rules.pin_reopen} onClose={() => setDialog(null)} />}

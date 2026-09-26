@@ -15,11 +15,13 @@ use Illuminate\Support\Facades\DB;
  *              ready (`kind` ready / items_ready — POS and waiter alerts), the waiter asked
  *              for the bill (`kind` bill — POS alert)
  *   floor    — an order or table changed (waiter app table grid / table screen)
+ *   deliveries — a delivery changed (board, riders, rider panel); event `kind` assigned
+ *              tells the rider a new delivery is theirs
  *   printers — a print job is waiting (print agent)
  */
 class LiveUpdates
 {
-    public const TOPICS = ['kitchen', 'orders', 'floor', 'printers'];
+    public const TOPICS = ['kitchen', 'orders', 'floor', 'deliveries', 'printers'];
 
     private const EVENTS_KEPT = 30;
 

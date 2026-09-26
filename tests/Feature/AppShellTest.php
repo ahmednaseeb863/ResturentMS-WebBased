@@ -32,7 +32,8 @@ it('renders the dashboard with the shared shell props', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Dashboard')
-            ->has('stats', 4)
+            ->has('stats.sales')
+            ->where('refreshSeconds', 60)
             ->where('auth.user.id', $admin->uuid)
             ->where('auth.user.role', 'Super Admin')
             ->where('auth.permissions.all', true)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\DesignationType;
 use App\Enums\DiscountScope;
 use App\Enums\DiscountType;
 use App\Enums\EmployeeStatus;
@@ -10,6 +11,7 @@ use App\Enums\OrderType;
 use App\Models\Admin;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
+use App\Models\DeliveryZone;
 use App\Models\DiningTable;
 use App\Models\Discount;
 use App\Models\Employee;
@@ -60,6 +62,8 @@ class PosOrderRequest extends FormRequest
             'customer' => ['nullable', 'uuid'],
             'address' => ['nullable', 'uuid'],
             'address_text' => ['nullable', 'string', 'max:500'],
+            'zone' => ['nullable', 'uuid'],
+            'rider' => ['nullable', 'uuid'],
             'notes' => ['nullable', 'string', 'max:500'],
             'items' => ['nullable', 'array', 'max:100'],
             'items.*.type' => ['required', 'in:menu_item,ready_item,deal'],
@@ -114,6 +118,14 @@ class PosOrderRequest extends FormRequest
             }
             if ($this->filled('address') && ! $this->address()) {
                 $errors->add('address', 'Pick one of the customer’s addresses.');
+            }
+            if ($this->filled('zone') && ! $this->zone()) {
+                $errors->add('zone', 'Pick an active delivery zone of this branch.');
+            }
+            if ($this->filled('rider') && ! $this->rider()) {
+                $errors->add('rider', 'Pick an active rider of this branch.');
+            } elseif ($this->riderChanged() && ! $admin->canRoute('deliveries.assign')) {
+                $errors->add('rider', 'You may not give deliveries to riders.');
             }
 
             try {
@@ -195,6 +207,28 @@ class PosOrderRequest extends FormRequest
         return once(fn () => $this->filled('address') && $this->customer()
             ? $this->customer()->addresses()->where('uuid', $this->input('address'))->first()
             : null);
+    }
+
+    public function zone(): ?DeliveryZone
+    {
+        return once(fn () => $this->filled('zone') ? DeliveryZone::query()->active()->where('uuid', $this->input('zone'))->first() : null);
+    }
+
+    public function rider(): ?Employee
+    {
+        return once(fn () => $this->filled('rider')
+            ? Employee::query()->ofType(DesignationType::Rider)->where('uuid', $this->input('rider'))->first()
+            : null);
+    }
+
+    /** The rider was sent and differs from the delivery's (a held order gets its rider when sent). */
+    public function riderChanged(): bool
+    {
+        if (! $this->has('rider') || $this->orderType() !== OrderType::Delivery) {
+            return false;
+        }
+
+        return $this->rider()?->id !== $this->order()?->delivery?->rider_id;
     }
 
     /** @return list<CartLine> */

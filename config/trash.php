@@ -8,10 +8,12 @@ use App\Models\CashCounter;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Deal;
+use App\Models\DeliveryZone;
 use App\Models\Designation;
 use App\Models\DiningTable;
 use App\Models\Discount;
 use App\Models\Employee;
+use App\Models\ExpenseCategory;
 use App\Models\KitchenStation;
 use App\Models\MenuItem;
 use App\Models\ModifierGroup;
@@ -21,6 +23,7 @@ use App\Models\RawMaterialCategory;
 use App\Models\ReadyItem;
 use App\Models\Role;
 use App\Models\ShiftType;
+use App\Models\Supplier;
 use App\Models\Unit;
 
 /*
@@ -52,6 +55,9 @@ return [
         'raw_material' => ['model' => RawMaterial::class, 'label' => 'Raw material', 'search' => ['name', 'code'], 'route' => 'raw-materials.restore'],
         'raw_material_category' => ['model' => RawMaterialCategory::class, 'label' => 'Raw material category', 'search' => ['name'], 'route' => 'raw-material-categories.restore'],
         'unit' => ['model' => Unit::class, 'label' => 'Unit', 'search' => ['name', 'short_name'], 'route' => 'units.restore'],
+        'delivery_zone' => ['model' => DeliveryZone::class, 'label' => 'Delivery zone', 'search' => ['name'], 'route' => 'delivery-zones.restore'],
+        'supplier' => ['model' => Supplier::class, 'label' => 'Supplier', 'search' => ['name', 'contact_person', 'phone'], 'route' => 'suppliers.restore'],
+        'expense_category' => ['model' => ExpenseCategory::class, 'label' => 'Expense category', 'search' => ['name'], 'route' => 'expense-categories.restore'],
         'role' => ['model' => Role::class, 'label' => 'Role', 'search' => ['name'], 'route' => 'roles.restore'],
     ],
 ];

@@ -27,6 +27,9 @@ class CancelOrder
             if (! $order->isOpen()) {
                 throw ValidationException::withMessages(['reason' => "Order {$order->code()} is already {$order->status->label()}."]);
             }
+            if ($order->delivery?->status->isDispatched()) {
+                throw ValidationException::withMessages(['reason' => "{$order->code()} is {$order->delivery->status->label()} — mark it returned first."]);
+            }
             if ((float) $order->paid_total > 0) {
                 throw ValidationException::withMessages(['reason' => 'The order has payments — refund them first.']);
             }

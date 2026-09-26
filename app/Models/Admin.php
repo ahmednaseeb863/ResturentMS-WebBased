@@ -117,6 +117,7 @@ class Admin extends Authenticatable
         return match (true) {
             $this->is_super_admin, $this->canRoute('pos.index'), $this->canRoute('orders.index') => 'dashboard',
             $this->canRoute('waiter.index') => 'waiter.index',
+            $this->canRoute('rider.index') => 'rider.index',
             $this->canRoute('kitchen.index') => 'kitchen.index',
             default => 'dashboard',
         };

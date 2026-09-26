@@ -41,6 +41,7 @@ class Shift extends Model
             'difference' => 'decimal:2',
             'float_left' => 'decimal:2',
             'handed_over_amount' => 'decimal:2',
+            'rider_cash_carried' => 'decimal:2',
             'number' => 'integer',
             'reopen_count' => 'integer',
         ];

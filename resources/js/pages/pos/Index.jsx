@@ -4,6 +4,7 @@ import { ClipboardList, Clock, LogOut, Plus, Printer, ShoppingCart } from 'lucid
 import { Button, ConfirmDialog, PageStatus, PageToolbar } from '@/components/ui';
 import Cart from '@/components/pos/Cart';
 import CustomerDialog from '@/components/pos/CustomerDialog';
+import DeliveryDialog from '@/components/pos/DeliveryDialog';
 import DealDialog from '@/components/pos/DealDialog';
 import DiscountDialog from '@/components/pos/DiscountDialog';
 import ItemDialog from '@/components/pos/ItemDialog';
@@ -47,6 +48,8 @@ function initialState(order, index, discounts, types) {
         customer: order?.customer ?? null,
         address: saved,
         addressText: order?.delivery && !saved ? order.delivery.address : '',
+        zone: order?.delivery?.zone?.id ?? null,
+        rider: order?.delivery?.rider?.id ?? null,
         notes: order?.notes ?? '',
         discount: order?.discount
             ? {
@@ -65,7 +68,7 @@ function initialState(order, index, discounts, types) {
 }
 
 function PosScreen({ onSaved }) {
-    const { order, items, deals, categories, tables, waiters, discounts, rules, bankAccounts, openOrders, printers, context } = usePage().props;
+    const { order, items, deals, categories, tables, waiters, riders, zones, discounts, rules, bankAccounts, openOrders, printers, context } = usePage().props;
     const { url } = usePage();
     const can = useCan();
     const index = useMemo(() => new Map([...items, ...deals].map((i) => [i.key, i])), [items, deals]);
@@ -85,11 +88,15 @@ function PosScreen({ onSaved }) {
     const sent = placed ? order.lines : [];
 
     // ── bill ──────────────────────────────────────────────────────────
+    // the zone's fee once picked; a placed order keeps its fee until the zone changes
+    const zone = zones.find((z) => z.id === state.zone);
+    const deliveryFee =
+        rules.use_zones && zone && (!placed || state.zone !== order.delivery?.zone?.id) ? zone.fee : placed ? Number(order.delivery_fee) : rules.delivery_fee;
     const rates = {
         type: state.type,
         serviceRate: placed ? Number(order.service_charge_rate) : state.type === 'dine_in' ? rules.service_charge : 0,
         serviceRemoved: state.removeService,
-        deliveryFee: placed ? Number(order.delivery_fee) : rules.delivery_fee,
+        deliveryFee,
         taxRate: placed ? Number(order.tax_rate) : rules.tax_rate,
         taxName: placed ? order.tax_name : rules.tax_name,
         rounding: rules.rounding,
@@ -112,7 +119,11 @@ function PosScreen({ onSaved }) {
         : state.address && order?.delivery
           ? order.delivery.address
           : state.addressText;
+    const rider = riders.find((r) => r.value === state.rider);
     const details = {
+        delivery: Boolean(zone || rider),
+        deliveryText: [zone?.name, rider ? `Rider: ${rider.label}` : null].filter(Boolean).join(' · '),
+        needsZone: rules.use_zones && zones.length > 0 && !zone,
         table: state.table,
         tableText: [table?.name ?? order?.table?.name, state.guests && `${state.guests} guests`, waiter?.label].filter(Boolean).join(' · '),
         customer: state.customer,
@@ -163,6 +174,9 @@ function PosScreen({ onSaved }) {
             customer: state.customer?.id ?? null,
             address: state.type === 'delivery' ? state.address : null,
             address_text: state.type === 'delivery' && !state.address ? state.addressText : null,
+            zone: state.type === 'delivery' ? state.zone : null,
+            // only sent by those who may give deliveries to riders
+            rider: state.type === 'delivery' && can('deliveries.assign') ? state.rider : undefined,
             notes: state.notes || null,
             items: state.lines.map(payloadOf),
             discount: state.discount
@@ -347,6 +361,20 @@ function PosScreen({ onSaved }) {
                 <CustomerDialog
                     value={{ customer: state.customer, address: state.address, addressText: state.addressText }}
                     delivery={state.type === 'delivery'}
+                    onSave={(v) => {
+                        set(v);
+                        close();
+                    }}
+                    onClose={close}
+                />
+            )}
+            {dialog?.kind === 'delivery' && (
+                <DeliveryDialog
+                    zones={zones}
+                    riders={riders}
+                    value={{ zone: state.zone, rider: state.rider }}
+                    canAssign={can('deliveries.assign')}
+                    riderLocked={Boolean(order?.delivery?.dispatched)}
                     onSave={(v) => {
                         set(v);
                         close();

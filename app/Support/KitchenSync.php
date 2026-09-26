@@ -78,10 +78,11 @@ class KitchenSync
     /**
      * An `orders` event for the alerts: `ready` (the whole order — POS and waiter app),
      * `items_ready` (one station's ticket — waiter app), `bill` (bill requested — POS).
+     * A delivery's `ready` also tells its rider (rider panel).
      */
     public static function announce(Order $order, string $kind, array $extra = []): void
     {
-        $order->loadMissing('table', 'customer', 'waiter');
+        $order->loadMissing('table', 'customer', 'waiter', 'delivery.rider');
 
         LiveUpdates::bump('orders', $order->branch_id, [
             'id' => $order->uuid,
@@ -90,6 +91,7 @@ class KitchenSync
             'label' => $order->label(),
             'table' => $order->table?->uuid,
             'waiter' => $order->waiter?->uuid,
+            'rider' => $order->delivery?->rider?->uuid,
             ...$extra,
         ]);
     }

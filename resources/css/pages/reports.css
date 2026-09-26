@@ -1,0 +1,441 @@
+/* Phase 14–15: dashboard panels, report screen, reservations calendar, expenses. */
+
+/* ── Dashboard ── */
+.dashboard .stat-grid {
+  margin-bottom: 12px;
+}
+
+.dashboard .stat-grid:last-of-type {
+  margin-bottom: 16px;
+}
+
+.dash-empty {
+  padding: 24px 0;
+  font-size: 12px;
+  text-align: center;
+  color: var(--color-neutral-500);
+}
+
+.dash-link {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent-700);
+}
+
+.dash-link:hover {
+  color: var(--color-accent);
+}
+
+.dash-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.dash-list-row:last-child {
+  border-bottom: 0;
+}
+
+.dash-list-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dash-list-name {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-list-sub {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+}
+
+.dash-list-value {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dash-tone-danger {
+  color: var(--color-danger);
+}
+
+.dash-tone-warn {
+  color: var(--color-accent-700);
+}
+
+.dashboard .bars {
+  height: 140px;
+}
+
+.alert-card-link {
+  color: inherit;
+  white-space: normal;
+}
+
+.alert-card-link:hover {
+  border-color: var(--color-accent);
+}
+
+.alert-card-text {
+  min-width: 0;
+}
+
+.btn.is-spinning svg {
+  animation: dash-spin 0.9s linear infinite;
+}
+
+@keyframes dash-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Reports ── */
+.rpt-section .section-title {
+  margin-bottom: 10px;
+}
+
+.rpt-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rpt-desc-line {
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--color-neutral-600);
+}
+
+.rpt-chart {
+  margin-bottom: 16px;
+}
+
+.rpt-chart .bar-labels span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.rpt-table tfoot td,
+.rpt-table tr.rpt-strong td {
+  font-weight: 700;
+}
+
+.rpt-table tfoot td {
+  border-top: 1.5px solid var(--color-text);
+  background: var(--color-surface);
+}
+
+.rpt-negative {
+  color: var(--color-danger);
+}
+
+/* ── Reservations ── */
+.rsv-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.rsv-month-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rsv-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.rsv-nav-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.rsv-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.rsv-weekday {
+  padding: 4px 0;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-neutral-500);
+}
+
+.rsv-day {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 64px;
+  padding: 6px;
+  font: inherit;
+  color: var(--color-text);
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.rsv-day:hover {
+  border-color: var(--color-accent-300);
+}
+
+.rsv-day.is-out {
+  opacity: 0.4;
+}
+
+.rsv-day.is-past .rsv-day-num {
+  color: var(--color-neutral-500);
+}
+
+.rsv-day.is-today .rsv-day-num {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.rsv-day.is-selected {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.rsv-day-num {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rsv-day-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px;
+  font-size: 10px;
+  color: var(--color-accent-800);
+  background: var(--color-accent-100);
+}
+
+.rsv-day-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--color-neutral-500);
+}
+
+.rsv-day-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rsv-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  font: inherit;
+  color: var(--color-text);
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.rsv-card:hover {
+  border-color: var(--color-accent);
+}
+
+.rsv-card.is-closed {
+  opacity: 0.55;
+}
+
+.rsv-card-time {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: 44px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rsv-card-time span {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-neutral-500);
+}
+
+.rsv-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.rsv-card-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rsv-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--color-neutral-600);
+}
+
+.rsv-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rsv-drawer-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--color-neutral-600);
+}
+
+.rsv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ── Expenses ── */
+.exp-clip {
+  margin-left: 6px;
+  vertical-align: -1px;
+  color: var(--color-neutral-500);
+}
+
+.exp-voided {
+  text-decoration: line-through;
+  color: var(--color-neutral-500);
+}
+
+.exp-attachment {
+  padding: 14px 20px;
+}
+
+.exp-attachment img {
+  display: block;
+  max-width: 100%;
+  max-height: 360px;
+  border: 1px solid var(--color-divider);
+}
+
+.ui-dialog.exp-cat-dialog {
+  width: 520px;
+}
+
+.exp-cat-add-row,
+.exp-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exp-cat-add-row {
+  margin-bottom: 12px;
+}
+
+.exp-cat-add-row .cust-input,
+.exp-cat-row .cust-input {
+  flex: 1;
+}
+
+.exp-cat-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid var(--color-divider);
+}
+
+.exp-cat-row {
+  min-height: 44px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.exp-cat-row:last-child {
+  border-bottom: 0;
+}
+
+.exp-cat-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.exp-cat-count {
+  font-size: 10px;
+  color: var(--color-neutral-500);
+}
+
+.exp-cat-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--color-neutral-600);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.exp-cat-icon-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-divider);
+}
+
+.exp-cat-icon-btn.exp-cat-del:hover {
+  color: var(--color-danger);
+}
+
+.dialog-note {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--color-neutral-600);
+}
+
+.rpt-table th.text-right {
+  text-align: right;
+}

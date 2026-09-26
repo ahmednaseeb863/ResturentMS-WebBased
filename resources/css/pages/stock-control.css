@@ -1,0 +1,113 @@
+/*
+ * Suppliers, purchases, waste, stock counts, consumption review (PLAN §4.16) — same
+ * "Industry" language; line editors reuse the recipe editor rows.
+ */
+
+/* ── Stock line editor (purchases, waste) ── */
+.stock-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 110px 80px 24px;
+  align-items: center;
+  gap: 6px;
+}
+
+.stock-line.with-cost {
+  grid-template-columns: minmax(0, 1fr) 90px 110px 100px 90px 24px;
+}
+
+.stock-line-item {
+  min-width: 0;
+}
+
+.stock-line-note {
+  grid-column: 1 / -1;
+  margin-top: -2px;
+  font-size: 11px;
+  color: var(--color-neutral-500);
+}
+
+.stock-line-note.is-short {
+  color: var(--color-danger);
+}
+
+/* ── Purchase form ── */
+.purchase-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inv-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inv-panel-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.inv-panel-sub {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--color-neutral-500);
+  text-transform: none;
+}
+
+/* ── Lists inside pages / dialogs ── */
+.inv-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.inv-list-row {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) auto 100px;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.inv-list-row > :last-child {
+  text-align: right;
+}
+
+.inv-return-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+/* ── Count sheet ── */
+.count-input {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.count-input .cust-input {
+  width: 110px;
+  text-align: right;
+}
+
+/* ── Consumption review ── */
+.consumption-off {
+  color: var(--color-danger);
+}

@@ -29,9 +29,9 @@ class PosController extends Controller
 {
     /** What the POS / order detail load with an order. */
     public const ORDER_WITH = [
-        'table', 'waiter', 'customer', 'createdBy', 'cancelledBy', 'billRequestedBy', 'orderDiscount.discount', 'delivery.savedAddress',
+        'table', 'waiter', 'customer', 'createdBy', 'cancelledBy', 'billRequestedBy', 'orderDiscount.discount', 'delivery.savedAddress', 'delivery.zone', 'delivery.rider',
         'lines.modifiers', 'lines.children', 'lines.discount', 'lines.station', 'lines.ticket', 'lines.voidedBy',
-        'payments.bankAccount', 'payments.receivedBy', 'payments.shift', 'payments.split', 'splits.payments',
+        'payments.bankAccount', 'payments.receivedBy', 'payments.shift', 'payments.collectedByRider', 'payments.split', 'splits.payments',
     ];
 
     public function index(Request $request): Response|RedirectResponse
@@ -49,6 +49,8 @@ class PosController extends Controller
             'deals' => PosMenu::deals(),
             'tables' => PosMenu::tables(),
             'waiters' => PosMenu::waiters(),
+            'riders' => PosMenu::riders(),
+            'zones' => PosMenu::zones(),
             'discounts' => PosMenu::discounts(),
             'rules' => PosMenu::rules(),
             'bankAccounts' => PosMenu::bankAccounts(),

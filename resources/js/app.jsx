@@ -6,6 +6,7 @@ import '@fontsource/barlow-condensed/600.css';
 
 import { createInertiaApp } from '@inertiajs/react';
 import AppLayout from '@/layouts/AppLayout';
+import RiderLayout from '@/layouts/RiderLayout';
 import WaiterLayout from '@/layouts/WaiterLayout';
 
 const appName = document.querySelector('title')?.textContent || 'Restaurant MS';
@@ -14,6 +15,7 @@ const appName = document.querySelector('title')?.textContent || 'Restaurant MS';
 function layoutFor(name) {
     if (name.startsWith('auth/')) return null;
     if (name.startsWith('waiter/')) return WaiterLayout;
+    if (name.startsWith('rider/')) return RiderLayout;
     if (name.startsWith('pos/') || name.startsWith('kitchen/')) return [AppLayout, { hideSidebar: true }];
     return AppLayout;
 }

@@ -16,7 +16,7 @@ use App\Models\OrderItem;
  *   discount       = line discounts + order discount (on the items after line discounts)
  *   net            = items total − discount
  *   service charge = net × rate            (dine-in, unless removed)
- *   delivery fee   = flat fee              (delivery)
+ *   delivery fee   = zone / default fee    (delivery)
  *   tax            = (net + service charge + delivery fee) × tax rate
  *   grand total    = net + service charge + delivery fee + tax ± round-off (Payments setting)
  *
@@ -34,7 +34,17 @@ class OrderPricing
             ? (float) setting('service_charge.rate', $branch) : 0;
         $order->tax_name = setting('tax.name', $branch);
         $order->tax_rate = setting('tax.enabled', $branch) ? (float) setting('tax.rate', $branch) : 0;
-        $order->delivery_fee = $order->type === OrderType::Delivery ? (float) setting('delivery.default_fee', $branch) : 0;
+        $order->delivery_fee = $order->type === OrderType::Delivery ? static::deliveryFee($order) : 0;
+    }
+
+    /** The delivery zone's fee (Delivery setting "use zones"), else the default fee. */
+    public static function deliveryFee(Order $order): float
+    {
+        $zone = setting('delivery.use_zones', $order->branch_id) && $order->relationLoaded('delivery')
+            ? $order->delivery?->zone
+            : null;
+
+        return $zone ? (float) $zone->fee : (float) setting('delivery.default_fee', $order->branch_id);
     }
 
     /** Recalculate and save the order's totals (and its order discount's amount). */

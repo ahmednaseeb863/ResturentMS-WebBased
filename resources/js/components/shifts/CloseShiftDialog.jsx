@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { Button, Dialog, Field, FormGrid, Input, Textarea } from '@/components/ui';
+import { Button, CheckItem, Dialog, Field, FormGrid, Input, Textarea } from '@/components/ui';
 import { cx, money } from '@/lib/format';
 import CashCount, { countPayload, countTotal, emptyCount } from './CashCount';
 
@@ -42,8 +42,10 @@ export function DiffBanner({ diff }) {
 /**
  * pos-react "Close Shift" modal: expected cash (hidden on blind close), the count, the
  * difference, float left for the next shift, and a manager PIN when the difference is too big.
+ * Cash riders still hold must be settled first, or a manager carries it over (PIN unless
+ * the closer is a shift manager).
  */
-export default function CloseShiftDialog({ shift, lines, denominations, rules, onClose }) {
+export default function CloseShiftDialog({ shift, lines, denominations, rules, riderCash = 0, isShiftManager = false, onClose }) {
     const [counting, setCounting] = useState(rules.require_denominations);
     const [count, setCount] = useState(() => emptyCount(denominations));
     const { data, setData, put, processing, errors, transform } = useForm({
@@ -51,6 +53,7 @@ export default function CloseShiftDialog({ shift, lines, denominations, rules, o
         float_left: '0',
         notes: '',
         pin: '',
+        carry_rider_cash: false,
     });
 
     const counted = counting ? countTotal(count) : Number(data.counted_cash || 0);
@@ -58,7 +61,8 @@ export default function CloseShiftDialog({ shift, lines, denominations, rules, o
     const expected = Number(shift.expected_cash ?? 0);
     const diff = counted - expected;
     const overLimit = shift.cash_visible && hasCount && Math.abs(diff) > rules.max_difference;
-    const askPin = overLimit || Boolean(errors.pin);
+    const carryNeedsPin = riderCash > 0 && data.carry_rider_cash && !isShiftManager;
+    const askPin = overLimit || carryNeedsPin || Boolean(errors.pin);
     const handedOver = Math.max(counted - Number(data.float_left || 0), 0);
 
     function submit(e) {
@@ -157,7 +161,11 @@ export default function CloseShiftDialog({ shift, lines, denominations, rules, o
                             required
                             full
                             error={errors.pin}
-                            hint={`The difference is more than the ${money(rules.max_difference)} allowed — recount, or a manager approves with their PIN`}
+                            hint={
+                                overLimit
+                                    ? `The difference is more than the ${money(rules.max_difference)} allowed — recount, or a manager approves with their PIN`
+                                    : 'A manager approves carrying the rider cash over'
+                            }
                         >
                             <Input
                                 mono
@@ -170,6 +178,19 @@ export default function CloseShiftDialog({ shift, lines, denominations, rules, o
                                 onChange={(e) => setData('pin', e.target.value.replace(/\D/g, ''))}
                             />
                         </Field>
+                    )}
+
+                    {riderCash > 0 && (
+                        <div className="cust-field cust-field-full">
+                            <div className="shift-rider-cash">
+                                Riders still hold <strong className="mono">{money(riderCash)}</strong> — settle it on the Riders screen before closing, or carry it
+                                over to the next shift.
+                            </div>
+                            <CheckItem checked={data.carry_rider_cash} onChange={(v) => setData('carry_rider_cash', v)}>
+                                Carry the rider cash over (manager)
+                            </CheckItem>
+                            {errors.rider_cash && <div className="field-error">{errors.rider_cash}</div>}
+                        </div>
                     )}
 
                     <Field label="Notes" full error={errors.notes}>

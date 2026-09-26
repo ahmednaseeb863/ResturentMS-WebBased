@@ -42,6 +42,8 @@ import {
     ArchiveRestore,
     ScrollText,
     Wallet,
+    MapPinned,
+    Navigation,
 } from 'lucide-react';
 
 /**
@@ -59,6 +61,7 @@ export const navSections = [
             { label: 'Tables', route: 'tables.floor', icon: LayoutGrid },
             { label: 'Kitchen Display', route: 'kitchen.index', icon: ChefHat },
             { label: 'Waiter App', route: 'waiter.index', icon: ConciergeBell },
+            { label: 'Rider Panel', route: 'rider.index', icon: Navigation },
         ],
     },
     {
@@ -102,6 +105,7 @@ export const navSections = [
             { label: 'Shifts', route: 'shifts.index', icon: Clock },
             { label: 'Payments', route: 'payments.index', icon: Wallet },
             { label: 'Deliveries', route: 'deliveries.index', icon: Truck },
+            { label: 'Delivery Zones', route: 'delivery-zones.index', icon: MapPinned },
             { label: 'Reservations', route: 'reservations.index', icon: CalendarDays },
             { label: 'Expenses', route: 'expenses.index', icon: Receipt },
             { label: 'Reports', route: 'reports.index', icon: BarChart2 },

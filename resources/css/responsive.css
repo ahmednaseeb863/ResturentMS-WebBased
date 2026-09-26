@@ -435,6 +435,19 @@
 
 /* Menu & stock editors on phones: recipe lines and option rows wrap */
 @media (max-width: 767px) {
+  .stock-line,
+  .stock-line.with-cost {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 24px;
+  }
+
+  .stock-line-item {
+    grid-column: 1 / -1;
+  }
+
+  .inv-list-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   .recipe-line {
     grid-template-columns: minmax(0, 1fr) 72px 72px 24px;
   }
@@ -713,6 +726,16 @@
 
 /* Waiter app on phones: two table columns; the order bar sits above the bottom navigation */
 @media (max-width: 767px) {
+  .rider-settle-list,
+  .rider-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .delivery-rider {
+    min-width: 0;
+    width: 100%;
+  }
+
   .waiter-page {
     padding: 12px 12px 20px;
   }
@@ -743,5 +766,40 @@
   .waiter-pick {
     padding-top: 6px;
     padding-bottom: 6px;
+  }
+}
+
+/* ── Phase 14–15: reservations calendar, dashboard, reports ── */
+@media (max-width: 1023px) {
+  .rsv-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 639px) {
+  .rsv-day {
+    min-height: 48px;
+    padding: 4px;
+  }
+
+  .rsv-day-count {
+    padding: 0 3px;
+    font-size: 9px;
+  }
+
+  .rsv-day-count svg {
+    display: none;
+  }
+
+  .exp-cat-count {
+    display: none;
+  }
+
+  .dashboard .bars {
+    height: 100px;
+  }
+
+  .rpt-chart .bar-labels {
+    display: none;
   }
 }

@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Deal;
 use App\Models\DealSlot;
 use App\Models\DealSlotOption;
+use App\Models\DeliveryZone;
 use App\Models\DiningTable;
 use App\Models\Discount;
 use App\Models\Employee;
@@ -145,6 +146,26 @@ class PosMenu
             ->map(fn (Employee $e) => ['value' => $e->uuid, 'label' => $e->name])->all();
     }
 
+    /** Active riders for the delivery rider picker, busiest last. */
+    public static function riders(): array
+    {
+        return collect(DeliveryBoard::riders())
+            ->map(fn (array $r) => ['value' => $r['id'], 'label' => $r['name'], 'active' => $r['active']])
+            ->all();
+    }
+
+    /** Active delivery zones (when the branch uses zones). */
+    public static function zones(): array
+    {
+        if (! setting('delivery.use_zones')) {
+            return [];
+        }
+
+        return DeliveryZone::query()->active()->ordered()->get()
+            ->map(fn (DeliveryZone $z) => ['id' => $z->uuid, 'name' => $z->name, 'fee' => (float) $z->fee, 'minimum' => $z->minimum()])
+            ->all();
+    }
+
     /** Predefined discounts running today. */
     public static function discounts(): array
     {
@@ -174,6 +195,7 @@ class PosMenu
             'tax_rate' => setting('tax.enabled') ? (float) setting('tax.rate') : 0,
             'delivery_fee' => (float) setting('delivery.default_fee'),
             'delivery_minimum' => (float) setting('delivery.min_order_amount'),
+            'use_zones' => (bool) setting('delivery.use_zones'),
             'rounding' => (string) setting('payments.rounding'),
             'out_of_stock' => setting('inventory.out_of_stock'),
             'pin_discount_above' => (float) setting('approvals.pin_discount_above'),

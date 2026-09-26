@@ -91,7 +91,9 @@ export default function OrderPayments({ order, refunds, canPrint, canPay, onPrin
                                         </td>
                                         <td>
                                             <Tag tone={p.method.tone}>{p.method.label}</Tag>
-                                            {(p.bank || p.split) && <span className="cell-sub">{[p.bank?.name, p.split?.label].filter(Boolean).join(' · ')}</span>}
+                                            {(p.bank || p.split || p.rider) && (
+                                                <span className="cell-sub">{[p.bank?.name, p.split?.label, p.rider && `Collected by ${p.rider.name}`].filter(Boolean).join(' · ')}</span>
+                                            )}
                                         </td>
                                         <td className="mono">
                                             {p.reference_no ?? '—'}

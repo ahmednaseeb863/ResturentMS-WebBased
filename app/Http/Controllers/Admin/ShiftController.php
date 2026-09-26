@@ -19,6 +19,7 @@ use App\Http\Resources\CashMovementResource;
 use App\Http\Resources\ShiftEmployeeResource;
 use App\Http\Resources\ShiftResource;
 use App\Models\CashCounter;
+use App\Models\Delivery;
 use App\Models\Employee;
 use App\Models\Shift;
 use App\Models\ShiftEmployee;
@@ -128,6 +129,9 @@ class ShiftController extends Controller
                 'max_difference' => (float) setting('shifts.max_difference'),
                 'pin_reopen' => (bool) setting('approvals.pin_reopen_shift'),
             ],
+            // cash riders hold blocks the close unless a manager carries it over
+            'riderCash' => $shift->isOpen() ? Delivery::cashHeld($shift->branch_id) : 0,
+            'isShiftManager' => $admin->canRoute(Shift::MANAGER_ROUTE),
         ]);
     }
 
@@ -162,6 +166,7 @@ class ShiftController extends Controller
             round((float) $request->validated('float_left'), 2),
             $request->validated('notes'),
             $request->validated('pin'),
+            $request->boolean('carry_rider_cash'),
         );
 
         $difference = (float) $shift->difference;

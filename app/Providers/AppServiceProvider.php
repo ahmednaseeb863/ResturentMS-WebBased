@@ -4,14 +4,20 @@ namespace App\Providers;
 
 use App\Models\BillSplit;
 use App\Models\Deal;
+use App\Models\Expense;
 use App\Models\KitchenTicket;
 use App\Models\MenuItem;
 use App\Models\MenuItemVariant;
 use App\Models\Modifier;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Purchase;
+use App\Models\PurchaseReturn;
 use App\Models\RawMaterial;
 use App\Models\ReadyItem;
+use App\Models\Reservation;
+use App\Models\StockAdjustment;
+use App\Models\StockCount;
 use App\Support\CurrentBranch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -46,6 +52,12 @@ class AppServiceProvider extends ServiceProvider
             'order_item' => OrderItem::class,
             'kitchen_ticket' => KitchenTicket::class,
             'bill_split' => BillSplit::class,
+            'purchase' => Purchase::class,
+            'purchase_return' => PurchaseReturn::class,
+            'stock_adjustment' => StockAdjustment::class,
+            'stock_count' => StockCount::class,
+            'expense' => Expense::class,
+            'reservation' => Reservation::class,
         ]);
 
         if ($this->app->runningUnitTests()) {

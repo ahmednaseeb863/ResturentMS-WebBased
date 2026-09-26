@@ -48,6 +48,7 @@ class ShiftResource extends Resource
             'difference' => $shift->difference,
             'float_left' => $shift->float_left,
             'handed_over_amount' => $shift->handed_over_amount,
+            'rider_cash_carried' => $shift->rider_cash_carried,
             'closing_notes' => $shift->closing_notes,
             'approved_by' => $this->ref('approvedBy'),
             'reopened_by' => $this->ref('reopenedBy'),

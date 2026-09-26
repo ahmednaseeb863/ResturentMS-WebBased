@@ -1,4 +1,4 @@
-import { Ban, BadgePercent, Pencil, Printer, Trash2, User, Utensils, X } from 'lucide-react';
+import { Ban, BadgePercent, Bike, Pencil, Printer, Trash2, User, Utensils, X } from 'lucide-react';
 import { Tag } from '@/components/ui';
 import { cx, money } from '@/lib/format';
 import { lineDetail, lineDiscount, lineGross } from './cartLines';
@@ -92,6 +92,16 @@ export default function Cart({
                         <User size={12} strokeWidth={1.5} />
                         {details.customer ? details.customerText : type === 'delivery' ? 'Pick the customer' : 'Customer'}
                     </button>
+                    {type === 'delivery' && (
+                        <button
+                            type="button"
+                            className={cx('pos-chip', details.needsZone && 'is-missing', (errors.zone || errors.rider) && 'is-error')}
+                            onClick={() => onDetails('delivery')}
+                        >
+                            <Bike size={12} strokeWidth={1.5} />
+                            {details.delivery ? details.deliveryText : details.needsZone ? 'Pick the zone' : 'Rider'}
+                        </button>
+                    )}
                 </div>
             </div>
 

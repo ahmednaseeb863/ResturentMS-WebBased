@@ -8,14 +8,19 @@ use App\Http\Controllers\Admin\BillingController;
 use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\CashCounterController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ConsumptionController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DealController;
+use App\Http\Controllers\Admin\DeliveryController;
+use App\Http\Controllers\Admin\DeliveryZoneController;
 use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DiningTableController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\KitchenController;
 use App\Http\Controllers\Admin\KitchenStationController;
+use App\Http\Controllers\Admin\LowStockController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\ModifierGroupController;
 use App\Http\Controllers\Admin\OrderController;
@@ -23,23 +28,32 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\PrinterController;
 use App\Http\Controllers\Admin\PrintJobController;
+use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\QzController;
 use App\Http\Controllers\Admin\RawMaterialCategoryController;
 use App\Http\Controllers\Admin\RawMaterialController;
 use App\Http\Controllers\Admin\ReadyItemController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ReservationController;
+use App\Http\Controllers\Admin\RiderController;
+use App\Http\Controllers\Admin\RiderPanelController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShiftController;
 use App\Http\Controllers\Admin\ShiftTypeController;
 use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\StockCountController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TrashController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\WaiterController;
+use App\Http\Controllers\Admin\WasteController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BranchSwitchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dev\UiKitController;
 use App\Http\Controllers\LivePollController;
+use App\Reports\Report;
 use App\Support\Settings\SettingsRegistry;
 use Illuminate\Support\Facades\Route;
 
@@ -92,6 +106,19 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::put('waiter/orders/{order}', [WaiterController::class, 'update'])->name('waiter.orders.update');
     Route::put('waiter/orders/{order}/serve', [WaiterController::class, 'serve'])->name('waiter.orders.serve');
     Route::post('waiter/orders/{order}/bill', [WaiterController::class, 'requestBill'])->middleware('throttle:30,1')->name('waiter.orders.bill');
+
+    // Deliveries & riders
+    Route::get('deliveries', [DeliveryController::class, 'index'])->name('deliveries.index');
+    Route::put('deliveries/{delivery}/rider', [DeliveryController::class, 'assign'])->name('deliveries.assign');
+    Route::put('deliveries/{delivery}/status', [DeliveryController::class, 'status'])->name('deliveries.status');
+    Route::get('riders', [RiderController::class, 'index'])->name('riders.index');
+    Route::post('riders/{rider}/settle', [RiderController::class, 'settle'])->middleware('throttle:30,1')->name('riders.settle');
+    Route::resource('delivery-zones', DeliveryZoneController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('delivery-zones/{delivery_zone}/restore', [DeliveryZoneController::class, 'restore'])->withTrashed()->name('delivery-zones.restore');
+
+    // Rider panel (phones)
+    Route::get('rider', [RiderPanelController::class, 'index'])->name('rider.index');
+    Route::put('rider/deliveries/{delivery}/status', [RiderPanelController::class, 'status'])->name('rider.deliveries.status');
 
     // Kitchen display
     Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
@@ -157,6 +184,49 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
 
     Route::post('stock/add', [StockController::class, 'store'])->name('stock.add');
     Route::get('stock-ledger', [StockController::class, 'ledger'])->name('stock-ledger.index');
+
+    // Suppliers, purchases, waste, stock counts, consumption review, low stock
+    Route::resource('suppliers', SupplierController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::post('suppliers/{supplier}/restore', [SupplierController::class, 'restore'])->withTrashed()->name('suppliers.restore');
+    Route::post('suppliers/{supplier}/payments', [SupplierController::class, 'pay'])->middleware('throttle:30,1')->name('suppliers.pay');
+    Route::get('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+    Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
+    Route::post('purchases/{purchase}/returns', [PurchaseController::class, 'returnItems'])->name('purchases.return');
+    Route::get('waste', [WasteController::class, 'index'])->name('waste.index');
+    Route::post('waste', [WasteController::class, 'store'])->name('waste.store');
+    Route::get('stock-counts', [StockCountController::class, 'index'])->name('stock-counts.index');
+    Route::post('stock-counts', [StockCountController::class, 'store'])->name('stock-counts.store');
+    Route::get('stock-counts/{stock_count}', [StockCountController::class, 'show'])->name('stock-counts.show');
+    Route::put('stock-counts/{stock_count}', [StockCountController::class, 'update'])->name('stock-counts.update');
+    Route::put('stock-counts/{stock_count}/approve', [StockCountController::class, 'approve'])->name('stock-counts.approve');
+    Route::put('stock-counts/{stock_count}/cancel', [StockCountController::class, 'cancel'])->name('stock-counts.cancel');
+    Route::get('consumptions', [ConsumptionController::class, 'index'])->name('consumptions.pending');
+    Route::post('consumptions/confirm', [ConsumptionController::class, 'confirm'])->name('consumptions.confirm');
+    Route::put('consumptions/{item}', [ConsumptionController::class, 'adjust'])->name('consumptions.adjust');
+    Route::get('low-stock', [LowStockController::class, 'index'])->name('low-stock.index');
+
+    // Reservations & expenses
+    Route::get('reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::post('reservations', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::put('reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
+    Route::put('reservations/{reservation}/status', [ReservationController::class, 'status'])->name('reservations.status');
+    Route::get('expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('expenses', [ExpenseController::class, 'store'])->middleware('throttle:30,1')->name('expenses.store');
+    Route::put('expenses/{expense}/void', [ExpenseController::class, 'void'])->name('expenses.void');
+    Route::post('expense-categories', [ExpenseController::class, 'storeCategory'])->name('expense-categories.store');
+    Route::put('expense-categories/{expense_category}', [ExpenseController::class, 'updateCategory'])->name('expense-categories.update');
+    Route::delete('expense-categories/{expense_category}', [ExpenseController::class, 'destroyCategory'])->name('expense-categories.destroy');
+    Route::post('expense-categories/{expense_category}/restore', [ExpenseController::class, 'restoreCategory'])->withTrashed()->name('expense-categories.restore');
+
+    // Dashboard figures (polled every minute) & reports — one permission per report group
+    Route::get('dashboard/stats', [DashboardController::class, 'stats'])->middleware('throttle:60,1')->name('dashboard.stats');
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    foreach (array_keys(Report::GROUPS) as $reportGroup) {
+        Route::get("reports/{$reportGroup}/{report}", [ReportController::class, 'show'])->defaults('group', $reportGroup)->name("reports.{$reportGroup}");
+    }
+    Route::get('reports/{group}/{report}/export', [ReportController::class, 'export'])->middleware('throttle:30,1')->name('reports.export');
 
     // People
     Route::resource('customers', CustomerController::class)->only(['index', 'store', 'update', 'destroy']);

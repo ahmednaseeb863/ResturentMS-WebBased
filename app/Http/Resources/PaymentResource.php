@@ -28,6 +28,7 @@ class PaymentResource extends Resource
             'business_date' => $payment->business_date->toDateString(),
             'created_at' => static::iso($payment->created_at),
             'received_by' => $this->ref('receivedBy'),
+            'rider' => $this->ref('collectedByRider'),
             'shift' => $payment->relationLoaded('shift') && $payment->shift ? ['id' => $payment->shift->uuid, 'code' => $payment->shift->code()] : null,
             'split' => $payment->relationLoaded('split') && $payment->split ? ['id' => $payment->split->uuid, 'label' => $payment->split->label] : null,
             'order' => $payment->relationLoaded('order') && $payment->order

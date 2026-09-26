@@ -28,7 +28,7 @@ class ConfirmConsumption
     /**
      * @param  array<int, array{material: RawMaterial, quantity: float, reason: ?string}>|null  $actual  keyed by raw material id
      */
-    public function handle(OrderItem $item, ?array $actual, Admin $admin): void
+    public function handle(OrderItem $item, ?array $actual, ?Admin $admin): void
     {
         if ($item->consumption_status !== ConsumptionStatus::Pending || $item->isVoided()) {
             return;
@@ -90,7 +90,7 @@ class ConfirmConsumption
                 'actual_qty' => $row['actual'],
                 'reason' => $row['actual'] != $row['expected'] ? $row['reason'] : null,
                 'auto' => $auto,
-                'confirmed_by' => $auto ? null : $admin->id,
+                'confirmed_by' => $auto ? null : $admin?->id,
                 'confirmed_at' => now(),
                 'stock_movement_id' => $movement?->id,
             ]);

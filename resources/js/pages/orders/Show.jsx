@@ -198,8 +198,28 @@ export default function OrderShow({ order, history, tickets, consumptions, refun
                                 <>
                                     <span className="pi-card-label">Deliver To</span>
                                     <span>{order.delivery.address}</span>
+                                    {order.delivery.zone && (
+                                        <>
+                                            <span className="pi-card-label">Zone</span>
+                                            <span>{order.delivery.zone.name}</span>
+                                        </>
+                                    )}
                                     <span className="pi-card-label">Delivery</span>
-                                    <span>{order.delivery.status}</span>
+                                    <span>
+                                        <Tag tone={order.delivery.status.tone}>{order.delivery.status.label}</Tag>
+                                        {order.delivery.failed_reason && <span className="cell-muted"> · {order.delivery.failed_reason}</span>}
+                                    </span>
+                                    <span className="pi-card-label">Rider</span>
+                                    <span>{order.delivery.rider?.name ?? '—'}</span>
+                                    {Number(order.delivery.cash_collected) > 0 && (
+                                        <>
+                                            <span className="pi-card-label">Rider Cash</span>
+                                            <span>
+                                                <span className="mono">{money(order.delivery.cash_collected)}</span>
+                                                <span className="cell-muted">{order.delivery.settled_at ? ' · settled' : ' · not settled yet'}</span>
+                                            </span>
+                                        </>
+                                    )}
                                 </>
                             )}
                             {order.notes && (

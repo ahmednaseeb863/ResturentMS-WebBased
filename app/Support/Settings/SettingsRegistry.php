@@ -80,6 +80,9 @@ class SettingsRegistry
                     ['title' => 'Business Day', 'fields' => [
                         'business_day_cutoff' => ['label' => 'Business day starts at', 'type' => 'time', 'default' => '05:00', 'sub' => 'Sales before this time count for the previous day (overnight shifts)'],
                     ]],
+                    ['title' => 'Reservations', 'fields' => [
+                        'reservation_minutes' => ['label' => 'A booking holds its table for', 'type' => 'int', 'default' => 90, 'min' => 15, 'max' => 600, 'suffix' => 'min', 'sub' => 'Default length of a reservation; a table can\'t be booked twice in that time'],
+                    ]],
                 ],
             ],
             'tax' => [

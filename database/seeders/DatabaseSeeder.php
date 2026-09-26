@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\Branch;
 use App\Models\CashCounter;
 use App\Models\Designation;
+use App\Models\ExpenseCategory;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RolePermission;
@@ -23,6 +24,23 @@ class DatabaseSeeder extends Seeder
 
     /** Take payment, split, print bills / receipts, list payments (refunds are the manager's). */
     private const BILLING = ['orders.payments.store', 'orders.split', 'orders.print.bill', 'orders.print.receipt', 'orders.bill', 'payments.index'];
+
+    /** Suppliers, purchases, waste, counts, low stock (approving counts, paying and correcting use are for managers). */
+    private const INVENTORY = [
+        'suppliers.index', 'suppliers.show', 'suppliers.store', 'suppliers.update', 'low-stock.index',
+        'purchases.index', 'purchases.show', 'purchases.create', 'purchases.store', 'purchases.return',
+        'waste.index', 'waste.store', 'stock-counts.index', 'stock-counts.show', 'stock-counts.store', 'stock-counts.update',
+        'stock-counts.cancel', 'consumptions.pending', 'consumptions.confirm',
+    ];
+
+    /** Default expense categories (shared by every branch). */
+    private const EXPENSE_CATEGORIES = ['Rent', 'Electricity', 'Gas', 'Water', 'Salaries', 'Maintenance', 'Transport', 'Supplies', 'Other'];
+
+    /** Reservations: calendar, book, confirm / seat / cancel. */
+    private const RESERVATIONS = ['reservations.index', 'reservations.store', 'reservations.update', 'reservations.status'];
+
+    /** Deliveries board, riders and their cash (zones are the manager's). */
+    private const DELIVERY = ['deliveries.index', 'deliveries.assign', 'deliveries.status', 'riders.index', 'riders.settle'];
 
     /**
      * Default roles (PLAN §3). Permissions are listed by route name and grow as
@@ -56,15 +74,21 @@ class DatabaseSeeder extends Seeder
             'orders.index', 'orders.show', 'orders.discount', 'orders.service-charge', 'orders.items.void', 'orders.cancel',
             'kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall', 'kitchen.tickets.reprint',
             'waiter.index', 'waiter.table', 'waiter.orders.store', 'waiter.orders.update', 'waiter.orders.serve', 'waiter.orders.bill',
+            ...self::INVENTORY, 'suppliers.destroy', 'suppliers.restore', 'suppliers.pay', 'stock-counts.approve', 'consumptions.adjust',
+            ...self::DELIVERY, 'delivery-zones.index', 'delivery-zones.store', 'delivery-zones.update', 'delivery-zones.destroy', 'delivery-zones.restore',
+            'settings.branch.delivery',
             ...self::PRINT_DEVICE, 'print-jobs.index', 'print-jobs.retry',
             ...self::BILLING, 'orders.payments.refund', 'settings.branch.payments',
+            ...self::RESERVATIONS, 'expenses.index', 'expenses.store', 'expenses.void', 'expense-categories.store', 'expense-categories.update',
+            'dashboard.stats', 'reports.index', 'reports.sales', 'reports.cash', 'reports.inventory', 'reports.finance', 'reports.export',
         ]],
         'Cashier' => ['POS, billing, payments, own shift, cash in/out, customers', [
             'customers.index', 'customers.store', 'customers.update', 'tables.floor', 'tables.status',
             'shifts.index', 'shifts.show', 'shifts.report', 'shifts.open', 'shifts.cash', 'shifts.close',
             'shifts.staff.store', 'shifts.staff.checkout', 'shifts.staff.destroy',
             'pos.index', 'pos.orders.store', 'pos.orders.update', 'pos.orders.discard', 'pos.customers.store',
-            'orders.index', 'orders.show', 'kitchen.tickets.reprint', ...self::PRINT_DEVICE, ...self::BILLING,
+            'orders.index', 'orders.show', 'kitchen.tickets.reprint', ...self::PRINT_DEVICE, ...self::BILLING, ...self::DELIVERY,
+            ...self::RESERVATIONS, 'expenses.index', 'expenses.store',
         ]],
         'Waiter' => ['Waiter app: tables, dine-in orders, send to kitchen, request bill', [
             'waiter.index', 'waiter.table', 'waiter.orders.store', 'waiter.orders.update', 'waiter.orders.serve', 'waiter.orders.bill',
@@ -74,10 +98,11 @@ class DatabaseSeeder extends Seeder
             'kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall', 'kitchen.tickets.reprint',
             ...self::PRINT_DEVICE,
         ]],
-        'Rider' => ['Assigned deliveries, picked up / delivered, cash to settle', []],
+        'Rider' => ['Assigned deliveries, picked up / delivered, cash to settle', ['rider.index', 'rider.deliveries.status']],
         'Storekeeper' => ['Raw materials, ready item stock, purchases, stock counts, waste', [
             'raw-materials.index', 'raw-materials.store', 'raw-materials.update', 'raw-material-categories.index',
-            'ready-items.index', 'units.index', 'stock.add', 'stock-ledger.index',
+            'ready-items.index', 'units.index', 'stock.add', 'stock-ledger.index', ...self::INVENTORY,
+            'reports.index', 'reports.inventory', 'reports.export',
         ]],
     ];
 
@@ -105,6 +130,10 @@ class DatabaseSeeder extends Seeder
             'is_super_admin' => true,
             'is_active' => true,
         ]);
+
+        foreach (self::EXPENSE_CATEGORIES as $category) {
+            ExpenseCategory::withTrashed()->firstOrCreate(['name' => $category]);
+        }
 
         foreach (self::ROLES as $name => [$description, $routes]) {
             $role = Role::withTrashed()->firstOrCreate(['name' => $name], ['description' => $description]);

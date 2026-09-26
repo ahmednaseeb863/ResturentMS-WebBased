@@ -1,0 +1,14 @@
+{
+    "name": "Restaurant MS — Rider",
+    "short_name": "Rider",
+    "description": "Deliveries, customer calls and cash for riders",
+    "start_url": "/rider",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#f2f2f3",
+    "theme_color": "#5980a6",
+    "icons": [
+        { "src": "/waiter-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    ]
+}

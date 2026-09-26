@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\DesignationType;
 use App\Enums\EmployeeStatus;
 use App\Models\Concerns\BelongsToBranch;
 use App\Models\Concerns\HasPublicUuid;
 use App\Models\Concerns\LogsActivity;
 use App\Models\Concerns\Trashable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,6 +50,18 @@ class Employee extends Model
     public function designation(): BelongsTo
     {
         return $this->belongsTo(Designation::class)->withTrashed();
+    }
+
+    /** Active staff of a designation type (pickers: waiters, riders…). */
+    public function scopeOfType(Builder $query, DesignationType $type): void
+    {
+        $query->where('status', EmployeeStatus::Active)
+            ->whereHas('designation', fn ($q) => $q->where('type', $type));
+    }
+
+    public function isRider(): bool
+    {
+        return $this->isActive() && $this->designation?->type === DesignationType::Rider;
     }
 
     public function isActive(): bool

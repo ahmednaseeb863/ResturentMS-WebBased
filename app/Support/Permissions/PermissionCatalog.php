@@ -52,6 +52,32 @@ class PermissionCatalog
                 ],
             ],
             [
+                'title' => 'Deliveries & Riders',
+                'permissions' => [
+                    ['title' => 'Deliveries board', 'routes' => ['deliveries.index']],
+                    ['title' => 'Give deliveries to riders (board and POS)', 'routes' => ['deliveries.assign']],
+                    ['title' => 'Mark deliveries out / delivered / failed / returned for riders', 'routes' => ['deliveries.status']],
+                    ['title' => 'View riders & the cash they hold', 'routes' => ['riders.index']],
+                    ['title' => 'Settle rider cash into my shift', 'routes' => ['riders.settle']],
+                ],
+            ],
+            [
+                'title' => 'Rider Panel',
+                'permissions' => [
+                    ['title' => 'Use the rider panel — my deliveries, picked up, delivered, failed', 'routes' => ['rider.index', 'rider.deliveries.status']],
+                ],
+            ],
+            [
+                'title' => 'Delivery Zones',
+                'permissions' => [
+                    ['title' => 'View delivery zones', 'routes' => ['delivery-zones.index']],
+                    ['title' => 'Add delivery zone', 'routes' => ['delivery-zones.store']],
+                    ['title' => 'Edit delivery zone', 'routes' => ['delivery-zones.update']],
+                    ['title' => 'Move delivery zone to trash', 'routes' => ['delivery-zones.destroy']],
+                    ['title' => 'Restore delivery zone', 'routes' => ['delivery-zones.restore']],
+                ],
+            ],
+            [
                 'title' => 'Kitchen',
                 'permissions' => [
                     ['title' => 'Kitchen display — start, ready (confirm raw materials), served, recall', 'routes' => ['kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall']],
@@ -99,6 +125,68 @@ class PermissionCatalog
                 'permissions' => [
                     ['title' => 'Add stock', 'routes' => ['stock.add']],
                     ['title' => 'View stock ledger', 'routes' => ['stock-ledger.index']],
+                    ['title' => 'Low stock list', 'routes' => ['low-stock.index']],
+                ],
+            ],
+            static::crud('Suppliers', 'supplier', 'suppliers', [
+                ['title' => 'Supplier account (purchases & payments)', 'routes' => ['suppliers.show']],
+                ['title' => 'Pay suppliers (cash from my shift or bank)', 'routes' => ['suppliers.pay']],
+            ]),
+            [
+                'title' => 'Purchases',
+                'permissions' => [
+                    ['title' => 'View purchases', 'routes' => ['purchases.index', 'purchases.show']],
+                    ['title' => 'Receive purchases into stock', 'routes' => ['purchases.create', 'purchases.store']],
+                    ['title' => 'Return goods to suppliers', 'routes' => ['purchases.return']],
+                ],
+            ],
+            [
+                'title' => 'Waste & Stock Counts',
+                'permissions' => [
+                    ['title' => 'View waste', 'routes' => ['waste.index']],
+                    ['title' => 'Write off waste / damage', 'routes' => ['waste.store']],
+                    ['title' => 'View stock counts', 'routes' => ['stock-counts.index', 'stock-counts.show']],
+                    ['title' => 'Count stock (start, enter, submit, cancel)', 'routes' => ['stock-counts.store', 'stock-counts.update', 'stock-counts.cancel']],
+                    ['title' => 'Approve stock counts (corrects stock)', 'routes' => ['stock-counts.approve']],
+                ],
+            ],
+            [
+                'title' => 'Consumption Review',
+                'permissions' => [
+                    ['title' => 'View pending consumption', 'routes' => ['consumptions.pending']],
+                    ['title' => 'Confirm pending raw materials', 'routes' => ['consumptions.confirm']],
+                    ['title' => 'Correct confirmed raw materials', 'routes' => ['consumptions.adjust']],
+                ],
+            ],
+            [
+                'title' => 'Reservations',
+                'permissions' => [
+                    ['title' => 'View reservations (calendar & list)', 'routes' => ['reservations.index']],
+                    ['title' => 'Add reservation', 'routes' => ['reservations.store']],
+                    ['title' => 'Edit reservation', 'routes' => ['reservations.update']],
+                    ['title' => 'Confirm / seat / cancel / mark no-show', 'routes' => ['reservations.status']],
+                ],
+            ],
+            [
+                'title' => 'Expenses',
+                'permissions' => [
+                    ['title' => 'View expenses', 'routes' => ['expenses.index']],
+                    ['title' => 'Record expense (cash from my shift or bank)', 'routes' => ['expenses.store']],
+                    ['title' => 'Void expense', 'routes' => ['expenses.void']],
+                    ['title' => 'Add / edit expense categories', 'routes' => ['expense-categories.store', 'expense-categories.update']],
+                    ['title' => 'Trash / restore expense categories', 'routes' => ['expense-categories.destroy', 'expense-categories.restore']],
+                ],
+            ],
+            [
+                'title' => 'Dashboard & Reports',
+                'permissions' => [
+                    ['title' => 'Dashboard figures — sales, cash, stock (refreshed every minute)', 'routes' => ['dashboard.stats']],
+                    ['title' => 'Reports screen', 'routes' => ['reports.index']],
+                    ['title' => 'Sales reports', 'routes' => ['reports.sales']],
+                    ['title' => 'Cash, shift & delivery reports', 'routes' => ['reports.cash']],
+                    ['title' => 'Inventory reports', 'routes' => ['reports.inventory']],
+                    ['title' => 'Financial reports — profit & loss, food cost', 'routes' => ['reports.finance']],
+                    ['title' => 'Export reports (Excel / PDF)', 'routes' => ['reports.export']],
                 ],
             ],
             static::crud('Units', 'unit', 'units'),

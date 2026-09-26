@@ -35,6 +35,11 @@
   gap: 6px;
 }
 
+.pay-methods .cash-type-btn.on {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
 .pay-section {
   margin-bottom: 12px;
 }

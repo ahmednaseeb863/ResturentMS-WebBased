@@ -63,7 +63,8 @@ class StockLedger
                 'business_date' => BusinessDate::for($locked->branch_id),
                 'type' => $type,
                 'quantity' => round($quantity, 3),
-                'unit_cost' => $unitCost === null ? null : round($unitCost, 4),
+                // stock going out without a cost is valued at the average cost of the moment (cost of goods)
+                'unit_cost' => $unitCost !== null ? round($unitCost, 4) : ($quantity < 0 ? round((float) $locked->avg_cost, 4) : null),
                 'balance_after' => $after,
                 'reference_type' => $reference?->getMorphClass(),
                 'reference_id' => $reference?->getKey(),

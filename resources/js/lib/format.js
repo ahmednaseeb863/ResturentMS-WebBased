@@ -55,6 +55,11 @@ export function dateTime(iso) {
     return `${day}, ${timeFmt.format(d)}`;
 }
 
+/** ISO string → "3:15 PM" (or "15:15") */
+export function time(iso) {
+    return iso ? timeFmt.format(new Date(iso)) : '—';
+}
+
 /** "12 min", "1 h 05" since `iso` (waiting / seated time). */
 export function since(iso, now = Date.now()) {
     const minutes = Math.max(0, Math.floor((now - Date.parse(iso)) / 60000));

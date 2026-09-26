@@ -13,6 +13,7 @@ use App\Http\Requests\PosOrderRequest;
 use App\Models\Admin;
 use App\Models\Branch;
 use App\Models\Deal;
+use App\Models\DeliveryZone;
 use App\Models\DiningTable;
 use App\Models\KitchenTicket;
 use App\Models\MenuItem;
@@ -46,7 +47,7 @@ class SaveOrder
     /** @var list<OrderItem> lines created by the last `send` */
     public array $sent = [];
 
-    public function __construct(private StockLedger $stock, private SetOrderDiscount $discount) {}
+    public function __construct(private StockLedger $stock, private SetOrderDiscount $discount, private AssignRider $assign) {}
 
     public function handle(PosOrderRequest $request, ?Admin $approver = null): Order
     {
@@ -99,6 +100,9 @@ class SaveOrder
             if ($action === 'send') {
                 $this->checkDeliveryMinimum($order);
             }
+            if ($request->riderChanged() && ! $order->isDraft()) {
+                $this->assign->handle($order->delivery, $request->rider(), $admin);
+            }
 
             $event = match ($action) {
                 'hold' => 'order_held',
@@ -119,6 +123,9 @@ class SaveOrder
 
         if ($order->exists && ! $order->isOpen()) {
             $fail("Order {$order->code()} is {$order->status->label()} — it can't be changed.");
+        }
+        if ($order->exists && $order->delivery?->status->isDispatched()) {
+            $fail("Order {$order->code()} is {$order->delivery->status->label()} — it can't be changed.");
         }
         match ($action) {
             'hold' => match (true) {
@@ -152,6 +159,14 @@ class SaveOrder
         // a held order follows today's rates until it is placed
         if ($order->isDraft()) {
             OrderPricing::snapshot($order);
+        }
+
+        // zone fee: a held order follows the zone; a placed one only when the zone changes
+        if ($type === OrderType::Delivery && setting('delivery.use_zones')) {
+            $zone = $request->zone();
+            if ($order->isDraft() || $order->delivery?->delivery_zone_id !== $zone?->id) {
+                $order->delivery_fee = $zone ? (float) $zone->fee : (float) setting('delivery.default_fee');
+            }
         }
     }
 
@@ -211,6 +226,7 @@ class SaveOrder
         $delivery = $order->delivery()->updateOrCreate([], [
             'branch_id' => $order->branch_id,
             'user_address_id' => $saved?->id,
+            'delivery_zone_id' => setting('delivery.use_zones') ? $request->zone()?->id : null,
             'address' => $text,
             'phone' => $order->customer?->phone,
             'fee' => $order->delivery_fee,
@@ -238,6 +254,9 @@ class SaveOrder
             }
             if (blank($order->delivery?->address)) {
                 throw ValidationException::withMessages(['address' => 'Enter the delivery address.']);
+            }
+            if (setting('delivery.use_zones') && ! $order->delivery->delivery_zone_id && DeliveryZone::query()->active()->exists()) {
+                throw ValidationException::withMessages(['zone' => 'Pick the delivery zone.']);
             }
         }
 
@@ -429,7 +448,8 @@ class SaveOrder
 
     private function checkDeliveryMinimum(Order $order): void
     {
-        $minimum = (float) setting('delivery.min_order_amount');
+        $zone = setting('delivery.use_zones') ? $order->delivery?->zone : null;
+        $minimum = $zone ? $zone->minimum() : (float) setting('delivery.min_order_amount');
 
         if ($order->type === OrderType::Delivery && $minimum > 0 && (float) $order->net_total < $minimum) {
             throw ValidationException::withMessages(['order' => 'Delivery orders must be at least '.money($minimum).' — this one is '.money($order->net_total).'.']);

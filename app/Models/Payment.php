@@ -59,6 +59,12 @@ class Payment extends Model
         return $this->belongsTo(Admin::class, 'received_by')->withTrashed();
     }
 
+    /** Cash a rider collected on delivery (no shift until the rider settles it). */
+    public function collectedByRider(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'collected_by_rider_id')->withTrashed();
+    }
+
     public function refunds(): HasMany
     {
         return $this->hasMany(Refund::class)->orderBy('id');

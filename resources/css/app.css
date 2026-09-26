@@ -26,6 +26,9 @@
 @import "./pages/kitchen.css";
 @import "./pages/billing.css";
 @import "./pages/waiter.css";
+@import "./pages/deliveries.css";
+@import "./pages/stock-control.css";
+@import "./pages/reports.css";
 
 @import "./shell.css";
 @import "./ui.css";
