@@ -67,6 +67,8 @@ class HandleInertiaRequests extends Middleware
                     'business_name' => setting('general.business_name'),
                     'currency_symbol' => setting('general.currency_symbol'),
                     'time_format' => setting('general.time_format'),
+                    'print_method' => setting('printing.method'),
+                    'refresh_seconds' => (int) setting('kitchen.refresh_seconds'),
                 ] : null,
                 // the signed-in cashier's open shift in this branch (POS payments go to it)
                 'shift' => $admin && $current->get() ? function () use ($admin) {

@@ -10,5 +10,6 @@ return [
         'dashboard',
         'logout',
         'branch.switch',
+        'live.poll', // screens refreshing themselves (App\Support\LiveUpdates)
     ],
 ];

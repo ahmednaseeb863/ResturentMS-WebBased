@@ -11,7 +11,7 @@
         <div class="print-toolbar no-print">
             <span>Test slip for <strong>{{ $printer->name }}</strong> — choose this printer in the print dialog.</span>
             @if ($method === 'qz')
-                <span class="print-note">Silent QZ Tray printing arrives with the kitchen phase; this test uses the browser print dialog.</span>
+                <span class="print-note">This test uses the browser print dialog; kitchen tickets print silently through QZ Tray.</span>
             @endif
             <button type="button" onclick="window.print()">Print again</button>
         </div>

@@ -36,6 +36,8 @@ class OrderItem extends Model
             'kitchen_status' => KitchenStatus::class,
             'consumption_status' => ConsumptionStatus::class,
             'sent_at' => 'datetime',
+            'ready_at' => 'datetime',
+            'served_at' => 'datetime',
             'voided_at' => 'datetime',
             'void_wasted' => 'boolean',
         ];
@@ -85,6 +87,12 @@ class OrderItem extends Model
     public function ticket(): BelongsTo
     {
         return $this->belongsTo(KitchenTicket::class, 'kitchen_ticket_id');
+    }
+
+    /** Raw materials confirmed for this line (kitchen). */
+    public function consumptions(): HasMany
+    {
+        return $this->hasMany(OrderItemConsumption::class)->orderBy('id');
     }
 
     public function sentBy(): BelongsTo

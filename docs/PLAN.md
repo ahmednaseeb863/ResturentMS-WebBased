@@ -207,14 +207,14 @@ Physical things that only make sense per branch (printers, cash counters, kitche
 ### 4.11 Waiter App *(new — responsive web app / PWA for phones & tablets)*
 - PIN login on the waiter's device; shows only their branch
 - **Table grid** with live status → open table → pick items (same menu, modifiers, deals) → **send to kitchen**
-- Add more items later, see which items are ready (real-time), mark served
+- Add more items later, see which items are ready (auto-refresh), mark served
 - **Request bill**: prints a pre-bill / sends it to the cashier; payment is taken at a cash counter
 - Waiter orders need the branch to have **at least one open shift**; the order is paid in whichever counter shift takes the payment
 
 ### 4.12 Kitchen: KDS + Kitchen Tickets + Consumption
 - **KDS**: live board per station, colour by waiting time, item status `pending → preparing → ready → served`, bump/recall tickets
 - **KOT printing**: each station's items print on that station's thermal printer when sent (and reprint on demand); voided items print a *VOID* slip
-- Ready notifications to the POS and waiter app (Laravel Reverb)
+- Ready notifications to the POS and waiter app (polled — no WebSockets)
 - **Confirm consumption** when marking an item/ticket **ready**: see 4.16 — the cook sees the raw materials pre-filled from the recipe and taps **Confirm**, or adjusts quantities up/down first
 
 ### 4.13 Billing & Payments
@@ -400,7 +400,7 @@ Recipe rule: a variant's own recipe replaces the item's recipe if it has one; mo
 | `tables` **[B]** | area_id, name, capacity, status, shape, pos_x, pos_y (top-left cell of a 24 × 14 floor-plan grid; the shape sets the cells covered), is_active — model `DiningTable` |
 | `cash_counters` **[B]** | name, receipt_printer_id, is_active |
 | `printers` **[B]** | name, type (receipt/kitchen), connection_type (usb/network), device_name (USB) / ip_address + port (network), paper_width, is_active, last_tested_at |
-| `print_jobs` **[B]** | printer_id, document_type (kot/receipt/pre_bill/z_report/void), reference (morph), status, attempts, error |
+| `print_jobs` **[B]** | printer_id, document_type (kot/receipt/pre_bill/z_report/void), reference (morph), title, copies, status (pending → printing → printed / failed), attempts, error, created_by, printed_by, claimed_at, printed_at — never deleted; a device claims a job, prints it (QZ Tray or browser dialog) and reports back |
 | `reservations` **[B]** | user_id, table_id, reserved_for, party_size, status, notes, created_by |
 
 ### Shifts & cash
@@ -417,10 +417,10 @@ Recipe rule: a variant's own recipe replaces the item's recipe if it has one; mo
 |---|---|
 | `orders` **[B]** | order_number, type, source (pos/waiter_app), status, business_date, shift_id (paid in), user_id, table_id, waiter_id, created_by, guests, items_total, discount_total, net_total, service_charge_rate, service_charge_removed, service_charge, delivery_fee, tax_name, tax_rate, tax_total, round_off, grand_total, paid_total, payment_status, held_items (cart of a held/draft order), notes, placed_at, completed_at, cancelled_at, cancelled_by, cancel_reason; one open order per table (generated unique `open_table_id`); number given when placed |
 | `order_items` | order_id, sellable (morph: menu_item / ready_item), variant_id, deal_id, parent_order_item_id, item_name, variant_name, quantity, unit_price, modifiers_total, discount_amount, line_total, kitchen_status, kitchen_station_id, kitchen_ticket_id, consumption_status (pending/confirmed/auto_confirmed/not_required — ready items are "not_required", their stock moves on sale), notes, voided_at, void_reason, voided_by, void_wasted |
-| `order_item_consumptions` | order_item_id, raw_material_id, expected_qty, actual_qty, unit_id, reason, confirmed_by, confirmed_at, stock_movement_id |
+| `order_item_consumptions` | branch_id, order_item_id, raw_material_id, unit_id (recipe unit), business_date, expected_qty, actual_qty, reason, auto, confirmed_by, confirmed_at, stock_movement_id — append-only |
 | `order_item_modifiers` | order_item_id, modifier_id, name, price |
 | `order_discounts` | order_id, order_item_id, discount_id, name, type, value, max_amount, min_amount (copied from the discount), amount, approved_by, reason; replaced ones trashed |
-| `kitchen_tickets` **[B]** | order_id, kitchen_station_id, business_date, number (KOT-001 per day), status, sent_at, started_at, completed_at, printed_at |
+| `kitchen_tickets` **[B]** | order_id, kitchen_station_id, business_date, number (KOT-001 per day), status, sent_at, started_at, completed_at, served_at, printed_at |
 | `order_status_histories` | order_id, from_status, to_status, admin_id, note |
 | `delivery_zones` **[B]** | name, fee, min_order_amount |
 | `deliveries` **[B]** | order_id, user_address_id, address_snapshot, rider_id, delivery_zone_id, fee, status, assigned_at, picked_up_at, delivered_at, cash_to_collect, cash_collected, settled_at, settlement_movement_id |
@@ -487,7 +487,7 @@ Recipe rule: a variant's own recipe replaces the item's recipe if it has one; mo
 
 **Records that are never trashed at all — they are corrected, not removed**
 - Money & operations: orders, order items, payments, refunds, shifts, cash movements → **cancel / void / refund / reverse entry**
-- Ledgers & history: `stock_movements`, `order_status_histories`, `order_item_consumptions`, `activity_log`, `print_jobs` → **append-only**; mistakes are fixed with a new correcting entry
+- Ledgers & history: `stock_movements`, `order_status_histories`, `order_item_consumptions`, `activity_log` → **append-only**; `print_jobs` are never deleted (only their status changes); mistakes are fixed with a new correcting entry
 - The trait blocks trash on these (`canBeTrashed()` returns "use void/cancel instead").
 
 **Exceptions:** Laravel's own framework tables (`sessions`, `cache`, `jobs`, `failed_jobs`, `password_reset_tokens`) are cleaned up normally — they hold no business data.
@@ -505,7 +505,7 @@ Recipe rule: a variant's own recipe replaces the item's recipe if it has one; mo
 - **Migration macro** `$table->publicUuid()` adds the column + unique index (used together with `$table->trashable()` on every business table).
 - **Data sent to React goes through API Resources** (`JsonResource`): `id` → the uuid, relations → their uuids (e.g. `category: { id: uuid, name }`), never raw foreign keys.
 - **Forms send uuids back** (e.g. selected category, table, waiter). Form Requests validate with `exists:<table>,uuid` and convert them to internal ids before saving (`UuidToId` helper / `prepareForValidation`).
-- **Real-time channels, print jobs, and exports** also use uuids (e.g. `branch.{uuid}.orders`).
+- **Poll responses, print jobs, and exports** also use uuids.
 - Human-friendly numbers are still shown where people need them — **order number, receipt number, employee code, shift number** — but those are display values, not keys in URLs.
 - A test checks every Inertia response: **no numeric `id` or `*_id` field leaks** to the frontend.
 
@@ -554,13 +554,13 @@ app/
 ```
 - Guards: **`admin`** (whole system) and **`web`** (reserved for the customer app/API).
 - All money and stock flows run in **DB transactions**; totals are always recalculated on the server.
-- Real-time: **Laravel Reverb** + **Echo**, channels scoped by branch (`branch.{uuid}.kitchen.{station}`, `branch.{uuid}.orders`, `branch.{uuid}.tables`, `rider.{uuid}`, `waiter.{uuid}`).
+- Live screens **without WebSockets** (the app runs on local servers and shared hosting, where Reverb/sockets aren't available): each change bumps a per-branch stamp in the cache (`App\Support\LiveUpdates`, topics kitchen / orders / printers, more later); screens poll one tiny endpoint (`live.poll`) every few seconds (setting *Kitchen → Check for changes every*) and reload their data only when a stamp moved.
 
 ### Thermal printing (KOT + receipts)
 The server is in the cloud, so it cannot reach the printers in a branch directly — printing always happens **from a browser in the branch**. The method comes from the **Printing** settings group (global default, branch override):
 - **QZ Tray** *(recommended)*: a small free app installed on each counter/kitchen PC. The page sends raw **ESC/POS** to USB or network thermal printers **silently** (no dialog), including auto-print of KOTs.
 - **Browser print**: an 80mm/58mm print-CSS page with `window.print()` (shows the print dialog; fine for small branches).
-- The server builds each document from the branch's receipt template and logs a `print_jobs` row; the browser at the counter/kitchen station picks it up (via Reverb), prints it, and reports success/failure → **retry & reprint** from the UI.
+- The server builds each document from the branch's receipt template and logs a `print_jobs` row; the browser at the counter/kitchen station picks it up (polling), prints it, and reports success/failure → **retry & reprint** from the UI.
 - QZ Tray needs a signing certificate so it doesn't ask for permission every time — generate one once and install it with QZ Tray on each PC.
 
 ### Frontend (React + Inertia, JavaScript)
@@ -596,7 +596,7 @@ resources/
       tables/         FloorPlan, TableCard
       shifts/         OpenShiftDrawer, CashCountForm, CashMovementDrawer, ZReport
       inventory/      RecipeEditor, UnitQtyInput, StockLevelBadge, ConsumptionPanel (KDS)
-    hooks/            useCart, useEcho, useCan, useMoney, useShift, useBranch, useMediaQuery, usePrinter
+    hooks/            useCart, useLive, useCan, useMoney, useShift, useBranch, useMediaQuery, usePrinter
     lib/              formatters (money "Rs 1,250", business date), nav config, qz-tray wrapper
 ```
 The **cart and item-picking components are shared** between the cashier POS and the waiter app; only the layouts differ.
@@ -652,7 +652,7 @@ The mockups are a desktop (WPF) app: **skip the window title bar**, match everyt
 | Routes in JS | tightenco/ziggy |
 | Roles & permissions | own module — route-name permissions (no package) |
 | Audit log | own `activity_logs` (no package) |
-| Websockets | laravel/reverb + laravel-echo + pusher-js |
+| Live screens | polling (no WebSockets) — works on shared hosting |
 | Thermal printing | QZ Tray (qz-tray JS) + an ESC/POS builder; print-CSS fallback |
 | PWA (waiter/rider) | vite-plugin-pwa |
 | PDF | barryvdh/laravel-dompdf |
@@ -698,7 +698,7 @@ The mockups are a desktop (WPF) app: **skip the window title bar**, match everyt
 | 6 | **Tables** | Areas, tables, floor plan |
 | 7 | **Shifts & cash** | Multi-counter shifts, overnight business date, cash movements, cash counts, X/Z reports |
 | 8 | **POS & orders** | Cart, dine-in/takeaway/delivery, pricing service (service charge + tax on total bill), ready items deducted on sale, send to kitchen, order list/detail |
-| 9 | **Kitchen** | Reverb, KDS station boards, KOT thermal printing, void slips, ready notifications, **confirm consumption → stock deduction** |
+| 9 | **Kitchen** | Live polling, KDS station boards, KOT thermal printing, void slips, ready notifications, **confirm consumption → stock deduction** |
 | 10 | **Billing** | Cash & bank transfer, split pay/bill, pre-bill, thermal receipts, refunds |
 | 11 | **Waiter app** | Mobile layout/PWA, tables → order → kitchen, request bill, ready alerts |
 | 12 | **Riders & delivery** | Delivery zones, rider assignment, rider panel, COD settlement |

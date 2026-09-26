@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
-import { Ban, BadgePercent, ChevronLeft, ClipboardList, History, ShoppingCart, Ticket, XCircle } from 'lucide-react';
+import { Ban, BadgePercent, ChevronLeft, ClipboardList, History, Printer, Scale, ShoppingCart, Ticket, XCircle } from 'lucide-react';
 import { Button, CheckItem, Corners, Dialog, Field, FormGrid, Input, PageBody, PageStatus, PageToolbar, Tag, Textarea } from '@/components/ui';
 import DiscountDialog from '@/components/pos/DiscountDialog';
 import PinDialog from '@/components/orders/PinDialog';
@@ -9,7 +9,7 @@ import useCan from '@/hooks/useCan';
 import { cx, date, dateTime, money, number } from '@/lib/format';
 
 /** Order detail (pos-react Sales Invoice detail): who / where, the bill, lines, kitchen tickets, history. */
-export default function OrderShow({ order, history, tickets, discounts, rules }) {
+export default function OrderShow({ order, history, tickets, consumptions, discounts, rules }) {
     const can = useCan();
     const [dialog, setDialog] = useState(null);
     const [processing, setProcessing] = useState(false);
@@ -300,6 +300,8 @@ export default function OrderShow({ order, history, tickets, discounts, rules })
                                         <th className="text-center">Lines</th>
                                         <th>Status</th>
                                         <th>Sent</th>
+                                        <th>Printed</th>
+                                        <th />
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -310,6 +312,61 @@ export default function OrderShow({ order, history, tickets, discounts, rules })
                                             <td className="text-center">{t.items}</td>
                                             <td>{t.status}</td>
                                             <td className="mono cell-muted">{dateTime(t.sent_at)}</td>
+                                            <td className="mono cell-muted">{t.printed_at ? dateTime(t.printed_at) : '—'}</td>
+                                            <td className="text-right">
+                                                {t.printer && can('kitchen.tickets.reprint') && (
+                                                    <button
+                                                        type="button"
+                                                        className="cart-tool"
+                                                        title={`Reprint on ${t.printer}`}
+                                                        aria-label={`Reprint ${t.code}`}
+                                                        onClick={() => router.post(route('kitchen.tickets.reprint', t.id), {}, { preserveScroll: true })}
+                                                    >
+                                                        <Printer size={13} strokeWidth={1.5} />
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                )}
+
+                {consumptions.length > 0 && (
+                    <>
+                        <div className="section-title order-section">
+                            <Scale strokeWidth={1.5} />
+                            Raw Materials Used
+                        </div>
+                        <div className="rgrid-wrap">
+                            <table className="rgrid">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Raw Material</th>
+                                        <th className="text-right">Recipe</th>
+                                        <th className="text-right">Used</th>
+                                        <th className="text-right">Difference</th>
+                                        <th>Confirmed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {consumptions.map((c, i) => (
+                                        <tr key={i}>
+                                            <td>{c.item}</td>
+                                            <td className="order-strong">{c.material}</td>
+                                            <td className="mono text-right">{c.expected}</td>
+                                            <td className="mono text-right">{c.actual}</td>
+                                            <td className={cx('mono text-right', c.variance > 0 && 'order-minus')}>
+                                                {c.variance === 0 ? '—' : c.variance_text}
+                                                {c.reason && <span className="cell-sub">{c.reason}</span>}
+                                            </td>
+                                            <td>
+                                                {c.by}
+                                                <span className="cell-sub">{dateTime(c.at)}</span>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

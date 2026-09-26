@@ -5,6 +5,7 @@ import Toolbar from '@/components/layout/Toolbar';
 import StatusBar from '@/components/layout/StatusBar';
 import { LayoutSlotsContext } from '@/components/layout/LayoutSlots';
 import FlashToasts from '@/components/ui/FlashToasts';
+import PrintAgent from '@/components/printing/PrintAgent';
 import { configureFormat, cx } from '@/lib/format';
 
 /**
@@ -55,6 +56,7 @@ export default function AppLayout({ hideSidebar = false, children }) {
                     </div>
                 </div>
                 <FlashToasts />
+                <PrintAgent />
             </div>
         </LayoutSlotsContext.Provider>
     );

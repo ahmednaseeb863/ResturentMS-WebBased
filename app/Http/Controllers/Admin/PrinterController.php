@@ -67,8 +67,8 @@ class PrinterController extends Controller
 
     /**
      * Test slip at the printer's paper width, printed by the browser (opened in a new
-     * window, which calls window.print()). Silent ESC/POS printing through QZ Tray
-     * comes with the print pipeline in the kitchen phase.
+     * window, which calls window.print()). Kitchen tickets go through the print queue
+     * (App\Support\Printing\PrintQueue), silently through QZ Tray when set.
      */
     public function test(Printer $printer, CurrentBranch $current, SettingsResolver $settings): View
     {

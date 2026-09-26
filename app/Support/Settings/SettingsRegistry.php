@@ -175,11 +175,14 @@ class SettingsRegistry
             ],
             'kitchen' => [
                 'label' => 'Kitchen',
-                'description' => 'Ticket timers and raw material consumption',
+                'description' => 'Ticket timers, screen refresh and raw material consumption',
                 'sections' => [
                     ['title' => 'Ticket Timers', 'fields' => [
                         'amber_after' => ['label' => 'Amber after', 'type' => 'int', 'default' => 10, 'min' => 1, 'max' => 240, 'suffix' => 'min'],
                         'red_after' => ['label' => 'Red after', 'type' => 'int', 'default' => 20, 'min' => 1, 'max' => 480, 'suffix' => 'min'],
+                    ]],
+                    ['title' => 'Screen Refresh', 'fields' => [
+                        'refresh_seconds' => ['label' => 'Check for changes every', 'type' => 'int', 'default' => 5, 'min' => 2, 'max' => 60, 'suffix' => 'sec', 'sub' => 'Kitchen display, POS ready alerts and printing screens; raise it on slow hosting'],
                     ]],
                     ['title' => 'Consumption', 'fields' => [
                         'confirm_consumption' => ['label' => 'Confirm raw material used on ready', 'type' => 'bool', 'default' => true, 'sub' => 'Cook checks / adjusts the recipe quantities'],

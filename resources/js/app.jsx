@@ -12,7 +12,7 @@ const appName = document.querySelector('title')?.textContent || 'Restaurant MS';
 // Pages that render without the app shell, or with a variant of it.
 function layoutFor(name) {
     if (name.startsWith('auth/')) return null;
-    if (name.startsWith('pos/')) return [AppLayout, { hideSidebar: true }];
+    if (name.startsWith('pos/') || name.startsWith('kitchen/')) return [AppLayout, { hideSidebar: true }];
     return AppLayout;
 }
 

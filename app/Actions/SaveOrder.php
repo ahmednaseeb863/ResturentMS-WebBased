@@ -25,8 +25,10 @@ use App\Support\Activity;
 use App\Support\BusinessDate;
 use App\Support\CartLine;
 use App\Support\CurrentBranch;
+use App\Support\KitchenSync;
 use App\Support\OrderCart;
 use App\Support\OrderPricing;
+use App\Support\Printing\PrintQueue;
 use App\Support\StockLedger;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -375,19 +377,20 @@ class SaveOrder
             || $modifiers->contains(fn ($m) => $m->recipeItems()->exists());
 
         return [
-            'kitchen_station_id' => $item->kitchen_station_id ?? $item->category?->kitchen_station_id,
+            'kitchen_station_id' => $item->kitchen_station_id ?? $item->loadMissing('category')->category?->kitchen_station_id,
             'kitchen_status' => KitchenStatus::Pending,
             'consumption_status' => $hasRecipe ? ConsumptionStatus::Pending : ConsumptionStatus::NotRequired,
         ];
     }
 
-    /** One ticket per station for this send, numbered per business day. */
+    /** One ticket per station for this send, numbered per business day; printed / shown on the KDS. */
     private function createTickets(Order $order, Collection $items, $now): void
     {
         $kitchen = $items->filter(fn (OrderItem $i) => $i->kitchen_status !== null);
         $date = BusinessDate::for($order->branch_id);
         $number = (int) KitchenTicket::query()->whereDate('business_date', $date)->max('number');
 
+        $tickets = [];
         foreach ($kitchen->groupBy(fn (OrderItem $i) => $i->kitchen_station_id ?? 0) as $stationId => $stationItems) {
             $ticket = KitchenTicket::create([
                 'order_id' => $order->id,
@@ -398,6 +401,12 @@ class SaveOrder
                 'sent_at' => $now,
             ]);
             OrderItem::query()->whereKey($stationItems->pluck('id')->all())->update(['kitchen_ticket_id' => $ticket->id]);
+            $tickets[] = $ticket->setRelation('order', $order);
+        }
+
+        if ($tickets) {
+            PrintQueue::sent($tickets);
+            KitchenSync::changed($order->branch_id);
         }
     }
 

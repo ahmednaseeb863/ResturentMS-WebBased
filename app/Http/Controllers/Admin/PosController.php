@@ -12,6 +12,7 @@ use App\Http\Resources\CustomerResource;
 use App\Http\Resources\OrderResource;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Printer;
 use App\Models\Shift;
 use App\Support\PosMenu;
 use Illuminate\Http\RedirectResponse;
@@ -55,6 +56,7 @@ class PosController extends Controller
                     ->latest('id')->limit(100)->get()
             )->resolve(),
             'customers' => Inertia::optional(fn () => $this->searchCustomers((string) $request->query('customer_q'))),
+            'printers' => Inertia::optional(fn () => Printer::deviceOptions()),
         ]);
     }
 

@@ -58,6 +58,13 @@ class Printer extends Model
         $query->where('type', $type);
     }
 
+    /** Active printers of the branch for "this screen prints for…" pickers. */
+    public static function deviceOptions(): array
+    {
+        return static::query()->active()->orderBy('name')->get()
+            ->map(fn (self $p) => ['id' => $p->uuid, 'name' => $p->name, 'type' => $p->type->label()])->all();
+    }
+
     /** OS printer name (USB) or "IP:port" (network). */
     public function address(): string
     {

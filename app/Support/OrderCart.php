@@ -114,7 +114,7 @@ class OrderCart
 
         return [
             'menu_item' => MenuItem::query()->whereIn('uuid', $ids('menu_item'))
-                ->with(['variants', 'modifierGroups.modifiers'])->get()->keyBy('uuid'),
+                ->with(['category', 'variants', 'modifierGroups.modifiers'])->get()->keyBy('uuid'),
             'ready_item' => ReadyItem::query()->whereIn('uuid', $ids('ready_item'))->get()->keyBy('uuid'),
             'deal' => Deal::query()->whereIn('uuid', $ids('deal'))
                 ->with(['slots.options.sellable', 'slots.options.variant'])->get()->keyBy('uuid'),

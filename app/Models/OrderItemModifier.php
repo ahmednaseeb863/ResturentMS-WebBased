@@ -20,6 +20,11 @@ class OrderItemModifier extends Model
         return ['price' => 'decimal:2'];
     }
 
+    public function modifier(): BelongsTo
+    {
+        return $this->belongsTo(Modifier::class)->withTrashed();
+    }
+
     public function orderItem(): BelongsTo
     {
         return $this->belongsTo(OrderItem::class);

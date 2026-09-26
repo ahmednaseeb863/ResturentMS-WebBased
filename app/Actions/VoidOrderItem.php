@@ -2,12 +2,16 @@
 
 namespace App\Actions;
 
+use App\Enums\ConsumptionStatus;
+use App\Enums\KitchenStatus;
 use App\Enums\StockMovementType;
 use App\Models\Admin;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Support\Activity;
+use App\Support\KitchenSync;
 use App\Support\OrderPricing;
+use App\Support\Printing\PrintQueue;
 use App\Support\StockLedger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -40,6 +44,7 @@ class VoidOrderItem
             }
 
             OrderPricing::apply($order);
+            KitchenSync::order($order);
 
             Activity::log('order_item_voided', $order, array_filter([
                 'item' => "{$quantity} × {$item->fullName()}",
@@ -102,21 +107,41 @@ class VoidOrderItem
         return $copy;
     }
 
-    /** Void the row and its picks; return ready items to stock unless wasted. */
+    /**
+     * Void the row and its picks; return ready items to stock unless wasted. A line the
+     * kitchen hasn't finished needs no raw materials any more, and its station gets a
+     * void slip; the kitchen screens update.
+     */
     public function markVoided(Order $order, OrderItem $item, string $reason, bool $wasted, Admin $admin, ?Admin $approver): void
     {
+        $kitchen = false;
+
         foreach ([$item, ...$item->children()->live()->get()] as $row) {
+            $unfinished = in_array($row->kitchen_status, [KitchenStatus::Pending, KitchenStatus::Preparing], true);
+
             $row->update([
                 'voided_at' => now(),
                 'voided_by' => $admin->id,
                 'void_reason' => $reason,
                 'void_wasted' => $wasted,
                 'void_approved_by' => $approver?->id,
+                'consumption_status' => $unfinished && $row->consumption_status === ConsumptionStatus::Pending
+                    ? ConsumptionStatus::NotRequired : $row->consumption_status,
             ]);
 
             if ($row->sellable_type === 'ready_item' && ! $wasted) {
                 $this->stock->record($row->sellable, StockMovementType::SaleReturn, $row->quantity, note: "Voided on order {$order->code()}", reference: $row);
             }
+
+            if ($row->kitchen_ticket_id && $row->kitchen_status !== KitchenStatus::Served) {
+                $kitchen = true;
+                KitchenSync::ticket($row->ticket);
+                PrintQueue::voidSlip($row);
+            }
+        }
+
+        if ($kitchen) {
+            KitchenSync::changed($order->branch_id);
         }
     }
 }

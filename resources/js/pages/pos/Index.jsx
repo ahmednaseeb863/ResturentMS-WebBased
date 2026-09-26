@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
-import { ClipboardList, Clock, LogOut, Plus, ShoppingCart } from 'lucide-react';
+import { ClipboardList, Clock, LogOut, Plus, Printer, ShoppingCart } from 'lucide-react';
 import { Button, ConfirmDialog, PageStatus, PageToolbar } from '@/components/ui';
 import Cart from '@/components/pos/Cart';
 import CustomerDialog from '@/components/pos/CustomerDialog';
@@ -9,10 +9,12 @@ import DiscountDialog from '@/components/pos/DiscountDialog';
 import ItemDialog from '@/components/pos/ItemDialog';
 import ItemPicker from '@/components/pos/ItemPicker';
 import OpenOrdersDrawer from '@/components/pos/OpenOrdersDrawer';
+import ReadyAlerts from '@/components/pos/ReadyAlerts';
 import TableDialog from '@/components/pos/TableDialog';
 import { fromHeld, lineDiscount, lineGross, newKey, payloadOf, sameLine } from '@/components/pos/cartLines';
 import PinDialog from '@/components/orders/PinDialog';
 import VoidDialog from '@/components/orders/VoidDialog';
+import PrintDeviceDialog from '@/components/printing/PrintDeviceDialog';
 import useCan from '@/hooks/useCan';
 import { money } from '@/lib/format';
 import { bill as billOf } from '@/lib/pricing';
@@ -61,7 +63,7 @@ function initialState(order, index, discounts, types) {
 }
 
 function PosScreen({ onSaved }) {
-    const { order, items, deals, categories, tables, waiters, discounts, rules, openOrders, context } = usePage().props;
+    const { order, items, deals, categories, tables, waiters, discounts, rules, openOrders, printers, context } = usePage().props;
     const can = useCan();
     const index = useMemo(() => new Map([...items, ...deals].map((i) => [i.key, i])), [items, deals]);
     const types = rules.types.map((t) => ({ value: t, label: TYPE_LABELS[t] }));
@@ -225,7 +227,19 @@ function PosScreen({ onSaved }) {
                         All Orders
                     </Button>
                 )}
+                {can('print-jobs.pending') && (
+                    <Button
+                        variant="ghost"
+                        icon={Printer}
+                        onClick={() =>
+                            router.reload({ only: ['printers'], preserveUrl: true, onSuccess: () => setDialog({ kind: 'printing' }) })
+                        }
+                    >
+                        Printing
+                    </Button>
+                )}
             </PageToolbar>
+            <ReadyAlerts />
             <PageStatus>
                 <span>{order ? `${order.is_draft ? 'Held' : order.code} · ${order.label}` : 'New order'}</span>
             </PageStatus>
@@ -349,6 +363,7 @@ function PosScreen({ onSaved }) {
             )}
             {dialog?.kind === 'void' && <VoidDialog order={order} line={dialog.line} pinRequired={rules.pin_void} onClose={close} />}
             {dialog?.kind === 'orders' && <OpenOrdersDrawer orders={openOrders} currentId={order?.id} onClose={close} />}
+            {dialog?.kind === 'printing' && <PrintDeviceDialog printers={printers ?? []} onClose={close} />}
             <ConfirmDialog
                 open={dialog?.kind === 'discard'}
                 onClose={close}

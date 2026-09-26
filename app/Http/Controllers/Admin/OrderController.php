@@ -15,12 +15,14 @@ use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderDiscount;
 use App\Models\OrderItem;
+use App\Models\OrderItemConsumption;
 use App\Support\Activity;
 use App\Support\BusinessDate;
 use App\Support\CartError;
 use App\Support\OrderCart;
 use App\Support\OrderPricing;
 use App\Support\PosMenu;
+use App\Support\Qty;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -91,14 +93,30 @@ class OrderController extends Controller
                 'note' => $h->note,
                 'at' => OrderResource::iso($h->created_at),
             ])->all(),
-            'tickets' => $order->tickets()->with('station')->withCount('items')->get()->map(fn ($t) => [
+            'tickets' => $order->tickets()->with('station.printer')->withCount('items')->get()->map(fn ($t) => [
                 'id' => $t->uuid,
                 'code' => $t->code(),
                 'station' => $t->station?->name ?? 'Kitchen',
                 'status' => $t->status->label(),
                 'items' => $t->items_count,
                 'sent_at' => OrderResource::iso($t->sent_at),
+                'printed_at' => OrderResource::iso($t->printed_at),
+                'printer' => $t->station?->printer && ! $t->station->printer->isTrashed() ? $t->station->printer->name : null,
             ])->all(),
+            'consumptions' => OrderItemConsumption::query()
+                ->whereIn('order_item_id', $order->items()->select('id'))
+                ->with('orderItem', 'rawMaterial', 'unit', 'confirmedBy')->orderBy('id')->get()
+                ->map(fn (OrderItemConsumption $c) => [
+                    'item' => "{$c->orderItem->quantity} × {$c->orderItem->fullName()}",
+                    'material' => $c->rawMaterial?->name,
+                    'expected' => Qty::format($c->expected_qty).' '.$c->unit?->short_name,
+                    'actual' => Qty::format($c->actual_qty).' '.$c->unit?->short_name,
+                    'variance' => round((float) $c->actual_qty - (float) $c->expected_qty, 3),
+                    'variance_text' => ((float) $c->actual_qty >= (float) $c->expected_qty ? '+' : '−').Qty::format(abs((float) $c->actual_qty - (float) $c->expected_qty)).' '.$c->unit?->short_name,
+                    'reason' => $c->reason,
+                    'by' => $c->auto ? 'Auto (recipe)' : $c->confirmedBy?->name,
+                    'at' => OrderResource::iso($c->confirmed_at),
+                ])->all(),
             'discounts' => $order->isOpen() ? PosMenu::discounts() : [],
             'rules' => PosMenu::rules(),
         ]);

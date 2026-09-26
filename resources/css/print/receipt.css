@@ -109,3 +109,48 @@
   .no-print { display: none; }
   .receipt { margin: 0; padding: 0 2mm; }
 }
+
+/* ── Kitchen ticket (KOT) / void slip ── */
+.kot {
+  font-size: 13px;
+}
+
+.kot-heading {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.kot-order {
+  margin-bottom: 1mm;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.kot-line {
+  margin: 1.5mm 0;
+}
+
+.kot-item {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.kot-qty {
+  display: inline-block;
+  min-width: 9mm;
+}
+
+.kot-sub {
+  padding-left: 9mm;
+}
+
+.kot-note {
+  padding-left: 9mm;
+  font-weight: 700;
+}
+
+.kot-voided .kot-item {
+  text-decoration: line-through;
+}

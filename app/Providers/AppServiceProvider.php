@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Deal;
+use App\Models\KitchenTicket;
 use App\Models\MenuItem;
 use App\Models\MenuItemVariant;
 use App\Models\Modifier;
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
             'deal' => Deal::class,
             'order' => Order::class,
             'order_item' => OrderItem::class,
+            'kitchen_ticket' => KitchenTicket::class,
         ]);
 
         if ($this->app->runningUnitTests()) {

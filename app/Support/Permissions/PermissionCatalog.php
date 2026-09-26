@@ -33,6 +33,20 @@ class PermissionCatalog
                     ['title' => 'Cancel orders (and approve cancels with a PIN)', 'routes' => ['orders.cancel']],
                 ],
             ],
+            [
+                'title' => 'Kitchen',
+                'permissions' => [
+                    ['title' => 'Kitchen display — start, ready (confirm raw materials), served, recall', 'routes' => ['kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall']],
+                    ['title' => 'Reprint kitchen tickets', 'routes' => ['kitchen.tickets.reprint']],
+                ],
+            ],
+            [
+                'title' => 'Printing',
+                'permissions' => [
+                    ['title' => 'Print from this device (kitchen tickets, void slips)', 'routes' => ['print-jobs.pending', 'print-jobs.claim', 'print-jobs.show', 'print-jobs.done', 'print-jobs.failed', 'qz.certificate', 'qz.sign']],
+                    ['title' => 'View the print queue and print again', 'routes' => ['print-jobs.index', 'print-jobs.retry']],
+                ],
+            ],
             static::crud('Menu Categories', 'category', 'categories'),
             static::crud('Menu Items', 'menu item', 'menu-items', [
                 ['title' => 'Copy menu from another branch', 'routes' => ['menu-items.copy']],

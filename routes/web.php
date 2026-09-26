@@ -13,12 +13,15 @@ use App\Http\Controllers\Admin\DesignationController;
 use App\Http\Controllers\Admin\DiningTableController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\KitchenController;
 use App\Http\Controllers\Admin\KitchenStationController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\ModifierGroupController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\PrinterController;
+use App\Http\Controllers\Admin\PrintJobController;
+use App\Http\Controllers\Admin\QzController;
 use App\Http\Controllers\Admin\RawMaterialCategoryController;
 use App\Http\Controllers\Admin\RawMaterialController;
 use App\Http\Controllers\Admin\ReadyItemController;
@@ -33,6 +36,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BranchSwitchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Dev\UiKitController;
+use App\Http\Controllers\LivePollController;
 use App\Support\Settings\SettingsRegistry;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +57,7 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::post('/branch/switch', BranchSwitchController::class)->name('branch.switch');
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/live', LivePollController::class)->middleware('throttle:240,1')->name('live.poll');
 
     // POS & orders
     Route::get('pos', [PosController::class, 'index'])->name('pos.index');
@@ -67,6 +72,25 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::put('orders/{order}/discount', [OrderController::class, 'discount'])->middleware('throttle:30,1')->name('orders.discount');
     Route::put('orders/{order}/service-charge', [OrderController::class, 'serviceCharge'])->middleware('throttle:30,1')->name('orders.service-charge');
     Route::put('orders/{order}/items/{item}/void', [OrderController::class, 'void'])->middleware('throttle:30,1')->scopeBindings()->name('orders.items.void');
+
+    // Kitchen display
+    Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+    Route::put('kitchen/tickets/{ticket}/start', [KitchenController::class, 'start'])->name('kitchen.tickets.start');
+    Route::put('kitchen/tickets/{ticket}/ready', [KitchenController::class, 'ready'])->name('kitchen.tickets.ready');
+    Route::put('kitchen/tickets/{ticket}/serve', [KitchenController::class, 'serve'])->name('kitchen.tickets.serve');
+    Route::put('kitchen/tickets/{ticket}/recall', [KitchenController::class, 'recall'])->name('kitchen.tickets.recall');
+    Route::post('kitchen/tickets/{ticket}/reprint', [KitchenController::class, 'reprint'])->middleware('throttle:30,1')->name('kitchen.tickets.reprint');
+
+    // Printing from this device (print agent) + the print queue
+    Route::get('print-jobs', [PrintJobController::class, 'index'])->name('print-jobs.index');
+    Route::get('print-jobs/pending', [PrintJobController::class, 'pending'])->name('print-jobs.pending');
+    Route::post('print-jobs/{job}/claim', [PrintJobController::class, 'claim'])->name('print-jobs.claim');
+    Route::get('print-jobs/{job}', [PrintJobController::class, 'show'])->name('print-jobs.show');
+    Route::post('print-jobs/{job}/done', [PrintJobController::class, 'done'])->name('print-jobs.done');
+    Route::post('print-jobs/{job}/failed', [PrintJobController::class, 'failed'])->name('print-jobs.failed');
+    Route::post('print-jobs/{job}/retry', [PrintJobController::class, 'retry'])->middleware('throttle:30,1')->name('print-jobs.retry');
+    Route::get('qz/certificate', [QzController::class, 'certificate'])->name('qz.certificate');
+    Route::post('qz/sign', [QzController::class, 'sign'])->middleware('throttle:120,1')->name('qz.sign');
 
     // Menu
     Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
