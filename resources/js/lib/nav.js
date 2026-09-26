@@ -4,6 +4,7 @@ import {
     ClipboardList,
     LayoutGrid,
     ChefHat,
+    ConciergeBell,
     FolderTree,
     UtensilsCrossed,
     Package,
@@ -57,6 +58,7 @@ export const navSections = [
             { label: 'Orders', route: 'orders.index', icon: ClipboardList },
             { label: 'Tables', route: 'tables.floor', icon: LayoutGrid },
             { label: 'Kitchen Display', route: 'kitchen.index', icon: ChefHat },
+            { label: 'Waiter App', route: 'waiter.index', icon: ConciergeBell },
         ],
     },
     {

@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 /**
  * The one request screens repeat every few seconds (no WebSockets): the change stamps of
  * the current branch's topics, and the "order ready" events since the last poll. Screens
- * reload their own data only when a stamp moved. Every signed-in admin may poll; ready
- * events only go to those who use the POS / orders.
+ * reload their own data only when a stamp moved. Every signed-in admin may poll; order
+ * events (ready / bill requested) only go to those who use the POS, orders or waiter app.
  */
 class LivePollController extends Controller
 {
@@ -26,7 +26,7 @@ class LivePollController extends Controller
         $since = $request->filled('since') ? (int) $request->query('since') : null;
 
         $admin = $request->user('admin');
-        if (! $admin->canRoute('pos.index') && ! $admin->canRoute('orders.index')) {
+        if (! $admin->canRoute('pos.index') && ! $admin->canRoute('orders.index') && ! $admin->canRoute('waiter.index')) {
             $topics = array_values(array_diff($topics, ['orders']));
         }
 

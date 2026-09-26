@@ -48,6 +48,7 @@ export default function OpenOrdersDrawer({ orders, currentId, onClose }) {
                                 <span className="pos-open-code">{o.is_draft ? 'Held' : o.code}</span>
                                 <span>{o.label}</span>
                                 <Tag tone={o.status.tone}>{o.status.label}</Tag>
+                                {o.bill_requested && <Tag tone="accent">Bill asked</Tag>}
                             </div>
                             <div className="pos-open-sub">
                                 <span>

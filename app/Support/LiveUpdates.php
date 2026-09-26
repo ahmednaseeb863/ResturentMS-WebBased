@@ -11,12 +11,15 @@ use Illuminate\Support\Facades\DB;
  * cache; screens poll `live.poll` every few seconds and reload their data only when a
  * stamp moved. Topics:
  *   kitchen  — tickets sent / started / ready / served / voided (kitchen display)
- *   orders   — an order became ready (POS alert; recent events kept for a few minutes)
+ *   orders   — events kept for a few minutes: an order became ready / a station's items are
+ *              ready (`kind` ready / items_ready — POS and waiter alerts), the waiter asked
+ *              for the bill (`kind` bill — POS alert)
+ *   floor    — an order or table changed (waiter app table grid / table screen)
  *   printers — a print job is waiting (print agent)
  */
 class LiveUpdates
 {
-    public const TOPICS = ['kitchen', 'orders', 'printers'];
+    public const TOPICS = ['kitchen', 'orders', 'floor', 'printers'];
 
     private const EVENTS_KEPT = 30;
 

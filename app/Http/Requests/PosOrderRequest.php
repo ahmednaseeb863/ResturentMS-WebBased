@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\DiscountScope;
 use App\Enums\DiscountType;
 use App\Enums\EmployeeStatus;
+use App\Enums\OrderSource;
 use App\Enums\OrderType;
 use App\Models\Admin;
 use App\Models\Customer;
@@ -154,6 +155,12 @@ class PosOrderRequest extends FormRequest
     public function action(): string
     {
         return $this->validated('action');
+    }
+
+    /** Where a new order is taken. */
+    public function source(): OrderSource
+    {
+        return OrderSource::Pos;
     }
 
     /** A saved (placed) order keeps its type; a held one may still change it. */

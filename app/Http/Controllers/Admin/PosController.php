@@ -29,7 +29,7 @@ class PosController extends Controller
 {
     /** What the POS / order detail load with an order. */
     public const ORDER_WITH = [
-        'table', 'waiter', 'customer', 'createdBy', 'cancelledBy', 'orderDiscount.discount', 'delivery.savedAddress',
+        'table', 'waiter', 'customer', 'createdBy', 'cancelledBy', 'billRequestedBy', 'orderDiscount.discount', 'delivery.savedAddress',
         'lines.modifiers', 'lines.children', 'lines.discount', 'lines.station', 'lines.ticket', 'lines.voidedBy',
         'payments.bankAccount', 'payments.receivedBy', 'payments.shift', 'payments.split', 'splits.payments',
     ];

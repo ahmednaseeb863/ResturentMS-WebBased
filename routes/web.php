@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\ShiftTypeController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\TrashController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\WaiterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BranchSwitchController;
 use App\Http\Controllers\DashboardController;
@@ -83,6 +84,14 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::get('orders/{order}/bill', [BillingController::class, 'page'])->name('orders.bill');
     Route::post('orders/{order}/payments/{payment}/refund', [BillingController::class, 'refund'])->middleware('throttle:30,1')->scopeBindings()->name('orders.payments.refund');
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+
+    // Waiter app (phones / tablets)
+    Route::get('waiter', [WaiterController::class, 'index'])->name('waiter.index');
+    Route::get('waiter/tables/{table}', [WaiterController::class, 'table'])->name('waiter.table');
+    Route::post('waiter/tables/{table}/orders', [WaiterController::class, 'store'])->name('waiter.orders.store');
+    Route::put('waiter/orders/{order}', [WaiterController::class, 'update'])->name('waiter.orders.update');
+    Route::put('waiter/orders/{order}/serve', [WaiterController::class, 'serve'])->name('waiter.orders.serve');
+    Route::post('waiter/orders/{order}/bill', [WaiterController::class, 'requestBill'])->middleware('throttle:30,1')->name('waiter.orders.bill');
 
     // Kitchen display
     Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');

@@ -26,7 +26,7 @@ class LoginController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route($request->user('admin')->homeRoute()));
     }
 
     /** Sign out. `?switch=1` (lock / switch user) goes straight to PIN sign-in. */

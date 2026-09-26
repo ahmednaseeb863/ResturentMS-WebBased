@@ -156,6 +156,7 @@ class SettingsRegistry
                         'paper_width' => ['label' => 'Paper width', 'type' => 'select', 'default' => '80', 'options' => ['80' => '80 mm', '58' => '58 mm'], 'sub' => 'For the browser print page when the counter has no receipt printer'],
                         'copies' => ['label' => 'Copies', 'type' => 'int', 'default' => 1, 'min' => 1, 'max' => 5],
                         'print_on_payment' => ['label' => 'Print receipt when paid', 'type' => 'bool', 'default' => true, 'sub' => 'When the bill is paid in full'],
+                        'print_on_bill_request' => ['label' => 'Print bill when the waiter asks', 'type' => 'bool', 'default' => true, 'sub' => 'On the receipt printer of an open counter'],
                     ]],
                 ],
             ],

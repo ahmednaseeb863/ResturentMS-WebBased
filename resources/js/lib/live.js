@@ -3,8 +3,8 @@ import { request } from '@/lib/http';
 /**
  * Screens refreshing themselves without WebSockets (the app runs on local servers and
  * shared hosting). One shared poller asks `live.poll` for the change stamps of the topics
- * the mounted screens care about — kitchen, orders, printers — every few seconds, and
- * calls a screen only when its stamp moved (or, for orders, when "ready" events arrive).
+ * the mounted screens care about — kitchen, orders, floor, printers — every few seconds, and
+ * calls a screen only when its stamp moved (or, for orders, when ready / bill events arrive).
  * The screen then reloads its own data. Slower while the tab is hidden.
  */
 const subscribers = new Set();
@@ -45,7 +45,7 @@ async function poll() {
             versions[topic] = now;
 
             const events = (data.events[topic] ?? []).filter((e) => {
-                const key = `${e.id}:${e.stamp}`;
+                const key = `${e.id}:${e.kind}:${e.stamp}`;
                 if (seenEvents.has(key)) return false;
                 seenEvents.add(key);
                 return true;

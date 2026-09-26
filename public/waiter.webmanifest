@@ -1,0 +1,14 @@
+{
+    "name": "Restaurant MS — Waiter",
+    "short_name": "Waiter",
+    "description": "Tables, orders and ready alerts for waiters",
+    "start_url": "/waiter",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#f2f2f3",
+    "theme_color": "#5980a6",
+    "icons": [
+        { "src": "/waiter-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    ]
+}

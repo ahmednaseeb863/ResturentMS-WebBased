@@ -156,9 +156,19 @@ export default function OrderShow({ order, history, tickets, consumptions, refun
                             <span className="pi-card-label">Placed</span>
                             <span>{order.placed_at ? dateTime(order.placed_at) : '—'}</span>
                             <span className="pi-card-label">Taken By</span>
-                            <span>{order.created_by?.name}</span>
+                            <span>
+                                {order.created_by?.name} · {order.source}
+                            </span>
                             <span className="pi-card-label">Payment</span>
                             <span>{order.payment_status.label}</span>
+                            {order.bill_requested && (
+                                <>
+                                    <span className="pi-card-label">Bill Asked</span>
+                                    <span>
+                                        {dateTime(order.bill_requested_at)} by {order.bill_requested_by?.name}
+                                    </span>
+                                </>
+                            )}
                         </div>
                     </div>
 

@@ -5,7 +5,6 @@ namespace App\Actions;
 use App\Enums\ConsumptionStatus;
 use App\Enums\DeliveryStatus;
 use App\Enums\KitchenStatus;
-use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\OrderType;
 use App\Enums\StockMovementType;
@@ -35,7 +34,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Saves a POS order (PLAN §4.10 / §5) in one transaction:
+ * Saves a POS / waiter app order (PLAN §4.10 / §4.11 / §5) in one transaction:
  *   hold — park a new order (draft) with its cart
  *   send — place the order / add items: order lines, kitchen tickets per station,
  *          ready items taken out of stock, order number on first send
@@ -62,7 +61,7 @@ class SaveOrder
             $order = $request->order()
                 ? Order::query()->lockForUpdate()->findOrFail($request->order()->id)
                 : new Order([
-                    'source' => OrderSource::Pos,
+                    'source' => $request->source(),
                     'status' => OrderStatus::Draft,
                     'business_date' => BusinessDate::for(),
                     'created_by' => $admin->id,
@@ -260,6 +259,8 @@ class SaveOrder
         $this->takeStock($order, $items);
 
         $order->held_items = null;
+        $order->bill_requested_at = null; // more items: the bill asked for is out of date
+        $order->bill_requested_by = null;
         $order->save();
 
         $hasKitchen = $order->items()->live()->whereNotNull('kitchen_status')->exists();

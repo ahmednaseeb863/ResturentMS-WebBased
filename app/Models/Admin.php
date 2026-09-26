@@ -108,6 +108,20 @@ class Admin extends Authenticatable
         return in_array($routeName, $this->allowedRouteNames(), true);
     }
 
+    /**
+     * Where this admin lands after signing in: the dashboard for back-office / POS users,
+     * else the one screen their role is for (waiter app, kitchen display).
+     */
+    public function homeRoute(): string
+    {
+        return match (true) {
+            $this->is_super_admin, $this->canRoute('pos.index'), $this->canRoute('orders.index') => 'dashboard',
+            $this->canRoute('waiter.index') => 'waiter.index',
+            $this->canRoute('kitchen.index') => 'kitchen.index',
+            default => 'dashboard',
+        };
+    }
+
     public function allowedRouteNames(): array
     {
         return $this->loadMissing('role')->role?->allowedRouteNames() ?? [];

@@ -8,6 +8,7 @@ use App\Models\Concerns\BelongsToBranch;
 use App\Models\Concerns\HasPublicUuid;
 use App\Models\Concerns\LogsActivity;
 use App\Models\Concerns\Trashable;
+use App\Support\LiveUpdates;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,12 @@ class DiningTable extends Model
     protected array $activityHidden = ['status', 'pos_x', 'pos_y'];
 
     protected array $trashParents = ['area'];
+
+    protected static function booted(): void
+    {
+        // table screens (waiter app) reload when a table changes
+        static::saved(fn (self $table) => LiveUpdates::bump('floor', $table->branch_id));
+    }
 
     protected function casts(): array
     {

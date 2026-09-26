@@ -44,6 +44,14 @@ class PermissionCatalog
                 ],
             ],
             [
+                'title' => 'Waiter App',
+                'permissions' => [
+                    ['title' => 'Use the waiter app — tables, take dine-in orders, send to the kitchen', 'routes' => ['waiter.index', 'waiter.table', 'waiter.orders.store', 'waiter.orders.update']],
+                    ['title' => 'Mark ready items served', 'routes' => ['waiter.orders.serve']],
+                    ['title' => 'Ask for the bill (prints the pre-bill at the counter)', 'routes' => ['waiter.orders.bill']],
+                ],
+            ],
+            [
                 'title' => 'Kitchen',
                 'permissions' => [
                     ['title' => 'Kitchen display — start, ready (confirm raw materials), served, recall', 'routes' => ['kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall']],

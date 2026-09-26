@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
  *   voidSlip — tells the station an item was voided
  *   bill     — pre-bill / receipt on the receipt printer of the cashier's counter; without
  *              one the screen prints the bill page itself (browser dialog)
+ *   billRequest — pre-bill the waiter asked for, on an open counter's receipt printer
  */
 class PrintQueue
 {
@@ -79,6 +80,16 @@ class PrintQueue
         $copies = $document === PrintDocument::Receipt && ! $reprint ? (int) setting('receipt.copies', $order->branch_id) : 1;
 
         return static::queue($printer, $document, $split ?? $order, $title, $copies);
+    }
+
+    /** The waiter asked for the bill: the pre-bill on the receipt printer of an open counter (first opened first). */
+    public static function billRequest(Order $order): ?PrintJob
+    {
+        $printer = Shift::query()->open()->with('counter.receiptPrinter')->oldest('opened_at')->get()
+            ->map(fn (Shift $shift) => $shift->counter?->receiptPrinter)
+            ->first(fn (?Printer $p) => $p && ! $p->isTrashed() && $p->is_active);
+
+        return $printer ? static::queue($printer, PrintDocument::PreBill, $order, "Bill · {$order->code()} · {$order->label()} (waiter)", 1) : null;
     }
 
     /** The receipt printer of the admin's counter, else of the counter the order was paid at. */

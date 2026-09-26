@@ -9,6 +9,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Concerns\BelongsToBranch;
 use App\Models\Concerns\HasPublicUuid;
 use App\Models\Concerns\NeverDeleted;
+use App\Support\LiveUpdates;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * A sale (PLAN §5). Created on the POS (later the waiter app); a held order is a draft
+ * A sale (PLAN §5). Created on the POS or the waiter app; a held order is a draft
  * whose cart waits in `held_items`. Sending turns cart lines into order items, kitchen
  * tickets and ready-item stock movements. Never trashed — lines are voided, orders
  * cancelled. Totals come only from App\Support\OrderPricing.
@@ -28,6 +29,12 @@ class Order extends Model
     use BelongsToBranch, HasFactory, HasPublicUuid, NeverDeleted;
 
     protected $guarded = ['id', 'open_table_id'];
+
+    protected static function booted(): void
+    {
+        // table screens (waiter app) reload when an order changes
+        static::saved(fn (self $order) => LiveUpdates::bump('floor', $order->branch_id));
+    }
 
     protected function casts(): array
     {
@@ -54,6 +61,7 @@ class Order extends Model
             'refunded_total' => 'decimal:2',
             'held_items' => 'array',
             'placed_at' => 'datetime',
+            'bill_requested_at' => 'datetime',
             'paid_at' => 'datetime',
             'completed_at' => 'datetime',
             'cancelled_at' => 'datetime',
@@ -78,6 +86,11 @@ class Order extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(Admin::class, 'created_by')->withTrashed();
+    }
+
+    public function billRequestedBy(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'bill_requested_by')->withTrashed();
     }
 
     public function cancelledBy(): BelongsTo
@@ -163,6 +176,12 @@ class Order extends Model
             $this->due() <= 0 => PaymentStatus::Paid,
             default => PaymentStatus::Partial,
         };
+    }
+
+    /** The waiter asked for the bill and it is still to pay. */
+    public function billRequested(): bool
+    {
+        return $this->bill_requested_at !== null && $this->isOpen() && ! $this->isDraft() && $this->due() > 0;
     }
 
     /** Placed, still open and not fully paid. */

@@ -55,6 +55,12 @@ export function dateTime(iso) {
     return `${day}, ${timeFmt.format(d)}`;
 }
 
+/** "12 min", "1 h 05" since `iso` (waiting / seated time). */
+export function since(iso, now = Date.now()) {
+    const minutes = Math.max(0, Math.floor((now - Date.parse(iso)) / 60000));
+    return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')}`;
+}
+
 export function initials(name = '') {
     return name
         .split(' ')

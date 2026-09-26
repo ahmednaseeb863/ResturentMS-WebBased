@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
             'pos.index', 'pos.orders.store', 'pos.orders.update', 'pos.orders.discard', 'pos.customers.store',
             'orders.index', 'orders.show', 'orders.discount', 'orders.service-charge', 'orders.items.void', 'orders.cancel',
             'kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall', 'kitchen.tickets.reprint',
+            'waiter.index', 'waiter.table', 'waiter.orders.store', 'waiter.orders.update', 'waiter.orders.serve', 'waiter.orders.bill',
             ...self::PRINT_DEVICE, 'print-jobs.index', 'print-jobs.retry',
             ...self::BILLING, 'orders.payments.refund', 'settings.branch.payments',
         ]],
@@ -65,7 +66,10 @@ class DatabaseSeeder extends Seeder
             'pos.index', 'pos.orders.store', 'pos.orders.update', 'pos.orders.discard', 'pos.customers.store',
             'orders.index', 'orders.show', 'kitchen.tickets.reprint', ...self::PRINT_DEVICE, ...self::BILLING,
         ]],
-        'Waiter' => ['Waiter app: tables, dine-in orders, send to kitchen, request bill', ['tables.floor', 'tables.status']],
+        'Waiter' => ['Waiter app: tables, dine-in orders, send to kitchen, request bill', [
+            'waiter.index', 'waiter.table', 'waiter.orders.store', 'waiter.orders.update', 'waiter.orders.serve', 'waiter.orders.bill',
+            'tables.floor', 'tables.status',
+        ]],
         'Kitchen' => ['Kitchen display: preparing/ready, confirm raw material used, reprint tickets', [
             'kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall', 'kitchen.tickets.reprint',
             ...self::PRINT_DEVICE,

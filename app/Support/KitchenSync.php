@@ -26,11 +26,18 @@ class KitchenSync
         }
 
         $now = now();
+        $wasReady = in_array($ticket->status, [KitchenStatus::Ready, KitchenStatus::Served], true);
         $ticket->status = $status;
         $ticket->started_at = $status === KitchenStatus::Pending ? $ticket->started_at : ($ticket->started_at ?? $now);
         $ticket->completed_at = in_array($status, [KitchenStatus::Ready, KitchenStatus::Served], true) ? ($ticket->completed_at ?? $now) : null;
         $ticket->served_at = $status === KitchenStatus::Served ? ($ticket->served_at ?? $now) : null;
         $ticket->save();
+
+        // "Grill items for Table 5 are ready" — the waiter app picks them up
+        if ($status === KitchenStatus::Ready && ! $wasReady) {
+            $ticket->loadMissing('order', 'station');
+            static::announce($ticket->order, 'items_ready', ['station' => $ticket->station?->name]);
+        }
     }
 
     /** Move the order along with its kitchen lines; tells the POS when it becomes ready. */
@@ -59,14 +66,32 @@ class KitchenSync
         $order->moveTo($target);
 
         if ($target === OrderStatus::Ready) {
-            $order->loadMissing('table', 'customer');
-            LiveUpdates::bump('orders', $order->branch_id, ['id' => $order->uuid, 'code' => $order->code(), 'label' => $order->label()]);
+            static::announce($order, 'ready');
         }
 
         // paid up front: completes now that the kitchen is done
         if (in_array($target, [OrderStatus::Ready, OrderStatus::Served], true)) {
             CompleteOrder::ifSettled($order);
         }
+    }
+
+    /**
+     * An `orders` event for the alerts: `ready` (the whole order — POS and waiter app),
+     * `items_ready` (one station's ticket — waiter app), `bill` (bill requested — POS).
+     */
+    public static function announce(Order $order, string $kind, array $extra = []): void
+    {
+        $order->loadMissing('table', 'customer', 'waiter');
+
+        LiveUpdates::bump('orders', $order->branch_id, [
+            'id' => $order->uuid,
+            'kind' => $kind,
+            'code' => $order->code(),
+            'label' => $order->label(),
+            'table' => $order->table?->uuid,
+            'waiter' => $order->waiter?->uuid,
+            ...$extra,
+        ]);
     }
 
     /** Kitchen screens of the branch reload on their next poll. */

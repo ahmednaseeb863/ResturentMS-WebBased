@@ -710,3 +710,38 @@
     justify-content: flex-start;
   }
 }
+
+/* Waiter app on phones: two table columns; the order bar sits above the bottom navigation */
+@media (max-width: 767px) {
+  .waiter-page {
+    padding: 12px 12px 20px;
+  }
+
+  .waiter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .waiter-table-bar {
+    padding: 8px 12px;
+  }
+
+  .waiter-shell .pos-cart-bar {
+    bottom: calc(66px + env(safe-area-inset-bottom));
+  }
+
+  .waiter-shell .pos-items {
+    padding-bottom: 80px;
+  }
+}
+
+@media (pointer: coarse) {
+  .waiter-serve {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .waiter-pick {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
