@@ -1,4 +1,5 @@
 import { usePage } from '@inertiajs/react';
+import { date } from '@/lib/format';
 
 /**
  * Bottom status bar: branch · user | page items | counter + shift + business date · version.
@@ -15,8 +16,8 @@ export default function StatusBar({ slotRef }) {
             <span className="statusbar-slot" ref={slotRef} />
 
             <div className="statusbar-right">
-                <span className="sb-keep">{shift ? `${shift.counter} · ${shift.name}` : 'No open shift'}</span>
-                {context?.business_date && <span>Business day {context.business_date}</span>}
+                <span className="sb-keep">{shift ? `${shift.counter} · ${shift.code}` : 'No open shift'}</span>
+                {context?.business_date && <span>Business day {date(context.business_date)}</span>}
                 <span>v{app?.version}</span>
             </div>
         </div>

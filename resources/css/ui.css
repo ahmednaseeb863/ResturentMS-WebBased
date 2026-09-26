@@ -1244,3 +1244,260 @@ form.role-modal {
 .floor-status-btn:disabled {
   cursor: default;
 }
+
+/* ── Shifts & cash (Phase 7) ─────────────────────────────── */
+a.shift-banner-link {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.shift-banner-link:hover {
+  background: var(--color-accent-800);
+}
+
+.shift-overdue {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: #f3c969;
+  color: #3a2a00;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  vertical-align: 2px;
+}
+
+.shift-code {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.cash-plus {
+  color: #4a8c5c;
+}
+
+.cash-minus {
+  color: var(--color-danger);
+}
+
+.shift-close-form {
+  margin-top: 16px;
+}
+
+.shift-cash-input {
+  display: flex;
+  gap: 6px;
+}
+
+.shift-cash-input .cust-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.shift-open-date {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: var(--color-neutral-600);
+}
+
+.text-link {
+  padding: 0;
+  font: inherit;
+  font-size: 11px;
+  color: var(--color-accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Notes & coins count */
+.cash-count {
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  padding: 8px 10px;
+}
+
+.cash-count-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+}
+
+.cash-count-row {
+  display: grid;
+  grid-template-columns: 44px 10px minmax(0, 64px) 1fr;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.cash-count-note {
+  text-align: right;
+  font-weight: 600;
+}
+
+.cash-count-x {
+  color: var(--color-neutral-500);
+}
+
+.cash-count .cash-count-qty {
+  padding: 5px 6px;
+  text-align: right;
+}
+
+.cash-count-amount {
+  text-align: right;
+  color: var(--color-neutral-600);
+}
+
+.cash-count-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-divider);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Cash in / out type buttons */
+.cash-type-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.cash-type-btn {
+  min-height: 44px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.cash-type-btn.ct-cash_in.on,
+.cash-type-btn.ct-cash_in:hover {
+  border-color: #4a8c5c;
+}
+
+.cash-type-btn.ct-cash_out.on,
+.cash-type-btn.ct-cash_out:hover {
+  border-color: var(--color-danger);
+}
+
+.cash-type-btn.ct-safe_drop.on,
+.cash-type-btn.ct-safe_drop:hover {
+  border-color: var(--color-accent);
+}
+
+.cash-type-btn.on {
+  font-weight: 700;
+}
+
+.cash-type-hint {
+  margin: 8px 0 12px;
+}
+
+/* Staff on duty */
+.staff-picker button.role-perm-item {
+  align-items: flex-start;
+}
+
+.staff-picker-sub {
+  display: block;
+  font-size: 10px;
+  color: var(--color-neutral-500);
+}
+
+.shift-staff-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.shift-staff-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-divider);
+  font-size: 12px;
+}
+
+.shift-staff-row:last-child {
+  border-bottom: 0;
+}
+
+.shift-staff-row.is-out {
+  opacity: 0.6;
+}
+
+.shift-staff-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.shift-staff-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.shift-staff-add-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.shift-panel-empty {
+  font-size: 12px;
+  padding: 4px 0 8px;
+}
+
+/* Shift detail */
+.shift-detail-row,
+.shift-count-row {
+  margin-bottom: 0;
+}
+
+.shift-count-row {
+  grid-template-columns: 1fr 1fr;
+}
+
+.shift-drawer-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.shift-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 14px 0 0;
+  font-size: 12px;
+}
+
+.shift-facts dt {
+  color: var(--color-neutral-500);
+}
+
+.shift-facts dd {
+  margin: 0;
+}
+
+/* pos-react defines .btn-danger twice (light in components, solid in shifts); the solid
+   one's hover keeps the light one's red text → invisible label. Keep the text white. */
+.btn-danger:hover,
+.btn-danger:active {
+  color: white;
+}

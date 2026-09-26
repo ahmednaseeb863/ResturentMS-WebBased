@@ -43,6 +43,14 @@ class ShiftType extends Model
         return $this->endsAt() <= $this->startsAt();
     }
 
+    /** Is "HH:MM" inside the type's hours (end not included)? */
+    public function covers(string $time): bool
+    {
+        return $this->isOvernight()
+            ? $time >= $this->startsAt() || $time < $this->endsAt()
+            : $time >= $this->startsAt() && $time < $this->endsAt();
+    }
+
     /** Length in minutes, across midnight when overnight. */
     public function durationMinutes(): int
     {

@@ -19,4 +19,9 @@ class PermanentDeleteNotAllowed extends LogicException
     {
         return new self("[{$model}] is append-only: records cannot be changed or deleted.");
     }
+
+    public static function neverDeleted(string $model): self
+    {
+        return new self("[{$model}] records are never deleted or trashed — close, void or reverse them instead.");
+    }
 }

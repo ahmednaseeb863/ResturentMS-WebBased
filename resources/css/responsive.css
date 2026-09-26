@@ -515,3 +515,40 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Shifts (Phase 7) ── */
+@media (max-width: 1023px) {
+  .shift-count-row {
+    grid-template-columns: 1fr;
+  }
+
+  .shift-banner-stats {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 639px) {
+  .shift-current-banner {
+    padding: 12px 14px;
+  }
+
+  .shift-banner-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cash-count-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cash-count-row {
+    grid-template-columns: 56px 10px minmax(0, 96px) 1fr;
+  }
+
+  .cash-count .cash-count-qty {
+    padding: 8px;
+  }
+}

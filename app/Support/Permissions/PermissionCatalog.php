@@ -101,6 +101,17 @@ class PermissionCatalog
                 ],
             ],
             [
+                'title' => 'Shifts & Cash',
+                'permissions' => [
+                    ['title' => 'View shifts & X / Z reports', 'routes' => ['shifts.index', 'shifts.show', 'shifts.report']],
+                    ['title' => 'Open shift', 'routes' => ['shifts.open']],
+                    ['title' => 'Cash in / cash out / safe drop', 'routes' => ['shifts.cash']],
+                    ['title' => 'Close shift', 'routes' => ['shifts.close']],
+                    ['title' => 'Staff on duty (check in / out)', 'routes' => ['shifts.staff.store', 'shifts.staff.checkout', 'shifts.staff.destroy']],
+                    ['title' => 'Shift manager — reopen shifts, approve cash differences (PIN), handle other cashiers’ shifts', 'routes' => ['shifts.reopen']],
+                ],
+            ],
+            [
                 'title' => 'Cash Counters',
                 'permissions' => [
                     ['title' => 'View cash counters', 'routes' => ['counters.index']],

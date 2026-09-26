@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Http\Resources\AuthAdminResource;
 use App\Http\Resources\BranchOptionResource;
+use App\Models\Shift;
+use App\Support\BusinessDate;
 use App\Support\CurrentBranch;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -31,7 +33,7 @@ class HandleInertiaRequests extends Middleware
 
     /**
      * Props shared with every page. Everything here must be uuid-only — never
-     * numeric ids (CLAUDE.md §2). `shift` / `business_date` arrive in Phase 7.
+     * numeric ids (CLAUDE.md §2).
      *
      * @return array<string, mixed>
      */
@@ -66,8 +68,13 @@ class HandleInertiaRequests extends Middleware
                     'currency_symbol' => setting('general.currency_symbol'),
                     'time_format' => setting('general.time_format'),
                 ] : null,
-                'shift' => null,
-                'business_date' => null,
+                // the signed-in cashier's open shift in this branch (POS payments go to it)
+                'shift' => $admin && $current->get() ? function () use ($admin) {
+                    $shift = Shift::openFor($admin);
+
+                    return $shift ? ['id' => $shift->uuid, 'code' => $shift->code(), 'counter' => $shift->counter?->name] : null;
+                } : null,
+                'business_date' => $admin && $current->get() ? fn () => BusinessDate::for() : null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

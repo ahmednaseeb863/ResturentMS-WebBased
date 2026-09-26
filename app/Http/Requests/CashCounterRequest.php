@@ -27,6 +27,9 @@ class CashCounterRequest extends FormRequest
             if ($this->filled('receipt_printer') && ! $this->receiptPrinter()) {
                 $validator->errors()->add('receipt_printer', 'Pick an active receipt printer of this branch.');
             }
+            if (! $this->boolean('is_active', true) && ($open = $this->counter()?->openShift()->first())) {
+                $validator->errors()->add('is_active', "Shift {$open->code()} is open on this counter — close it first.");
+            }
         }];
     }
 

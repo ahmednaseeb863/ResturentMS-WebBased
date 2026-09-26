@@ -80,6 +80,24 @@
 .receipt-lines dt { font-weight: 700; }
 .receipt-lines dd { margin: 0; text-align: right; word-break: break-all; }
 
+.receipt-lines dt.receipt-normal { font-weight: 400; }
+.receipt-lines .receipt-total { border-top: 1px solid #000; padding-top: 1mm; font-weight: 700; }
+
+.receipt-heading {
+  margin: 2mm 0 1mm;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.receipt-table td { padding: 0.4mm 0; vertical-align: top; }
+.receipt-table td:last-child { text-align: right; white-space: nowrap; }
+.receipt-sub { font-size: 10px; }
+
 .receipt-ruler {
   overflow: hidden;
   white-space: nowrap;

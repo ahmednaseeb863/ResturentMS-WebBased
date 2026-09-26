@@ -13,7 +13,7 @@ Laravel + Inertia + React (**JavaScript/JSX, no TypeScript**) + MySQL. Full plan
 - Register each trashable module in `config/trash.php` (Recycle Bin).
 - Unique validation: `new UniqueWithTrash('<table>', '<column>', $ignoreId, '<noun>')` (also checks trashed rows, tells the user to restore).
 - Pivot links: pivot model with `Trashable` + `protected bool $logTrashActivity = false;`, synced with `TrashablePivot::sync(...)` (never `sync()`/`detach()`).
-- Orders, order items, payments, refunds, shifts, cash movements: **never trashed** — void/cancel/refund/reverse. Ledgers (`stock_movements`, `*_histories`, `order_item_consumptions`, `activity_log`, `print_jobs`) are append-only.
+- Orders, order items, payments, refunds, shifts, cash movements: **never trashed** — void/cancel/refund/reverse (models `use NeverDeleted` when they change state, `AppendOnly` when they never change). Ledgers (`stock_movements`, `*_histories`, `order_item_consumptions`, `activity_log`, `print_jobs`) are append-only.
 
 ### 2. No numeric ids outside the server — `HasPublicUuid`
 - Every table shown in the UI: `$table->publicUuid();` (UUID v7, unique). `id` BIGINT stays the internal PK/FK. Pivots don't need it.
@@ -39,6 +39,7 @@ Laravel + Inertia + React (**JavaScript/JSX, no TypeScript**) + MySQL. Full plan
 - Morph-to relations that must load trashed models: `$this->morphTo()->withoutGlobalScopes([TrashScope::class])` — Laravel's `MorphTo::withTrashed()` only works with SoftDeletes and silently does nothing here.
 - Deals (`Deal` → `DealSlot` → `DealSlotOption`, sellable = menu item / ready item, optional fixed size) and discounts use `HasOfferDates` (`statusOn($businessDate)`, `runningOn`, `withStatus`); sell a deal only when `$deal->isAvailableAt($at, $orderType)`; discount amounts via `$discount->amountOn($amount)`. Menu / ready items and sizes inside a live deal can't be trashed or removed.
 - Tables: model `DiningTable` (table `tables`); floor-plan positions are grid cells (`DiningTable::GRID_COLS/ROWS`, `FloorPlan::freeSpot/hits`). `occupied` is set only by orders; staff set available / reserved / cleaning (`tables.status`).
+- Shifts (`Shift`, `NeverDeleted` trait — no trash): open / close / reopen only through `App\Actions\OpenShift`, `CloseShift`, `ReopenShift`; cash in/out (and later rider settlements, paid-out expenses, supplier cash) only through `RecordCashMovement` (append-only `cash_movements`, takes the shift's business date, refuses more out than in the drawer). Expected cash = `ShiftSummary::of($shift)->expectedCash()` — add cash sales / refunds there when payments arrive. The cashier's open shift: `Shift::openFor($admin)` (also shared as `context.shift`). "Shift manager" = holder of `shifts.reopen` (`Shift::MANAGER_ROUTE`): reopens, approves differences, handles others' shifts. Manager PIN approvals: `ManagerApproval::verify($pin, $route, $branch)` — call it **outside** DB transactions (the rate limiter lives in the DB cache).
 - Financial/stock records store `business_date`; reports use it, never `created_at`.
 - Multi-step money/stock writes in a DB transaction; totals recalculated on the server.
 - Thin controllers → Actions (`app/Actions`, e.g. `SaveEmployee`, `SaveCustomer`); Form Requests for validation; activity log on important changes.

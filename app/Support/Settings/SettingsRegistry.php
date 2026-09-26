@@ -207,12 +207,19 @@ class SettingsRegistry
             ],
             'shifts' => [
                 'label' => 'Shifts',
-                'description' => 'Closing a shift',
+                'description' => 'Closing a shift and counting the drawer',
                 'sections' => [
                     ['title' => 'Closing', 'fields' => [
                         'blind_close' => ['label' => 'Blind close', 'type' => 'bool', 'default' => false, 'sub' => 'Cashier counts without seeing the expected cash'],
                         'require_denominations' => ['label' => 'Require denomination count', 'type' => 'bool', 'default' => true],
                         'max_difference' => ['label' => 'Max cash difference', 'type' => 'money', 'default' => 500, 'min' => 0, 'sub' => 'Above this, a manager must approve the close'],
+                    ]],
+                    ['title' => 'Cash Count', 'fields' => [
+                        'denominations' => [
+                            'label' => 'Notes & coins', 'type' => 'string', 'default' => '5000,1000,500,100,50,20,10,5,2,1',
+                            'required' => true, 'max' => 120, 'regex' => '/^\s*\d+(\.\d{1,2})?(\s*,\s*\d+(\.\d{1,2})?)*\s*$/',
+                            'sub' => 'Counted at open and close, comma separated, e.g. 5000,1000,500',
+                        ],
                     ]],
                 ],
             ],
@@ -293,7 +300,10 @@ class SettingsRegistry
             'int' => ['required', 'integer', 'min:'.($field['min'] ?? 0), 'max:'.($field['max'] ?? 999999)],
             'decimal' => ['required', 'numeric', 'min:'.($field['min'] ?? 0), 'max:'.($field['max'] ?? 999999), 'decimal:0,2'],
             'money' => ['required', 'numeric', 'min:'.($field['min'] ?? 0), 'max:9999999999.99', 'decimal:0,2'],
-            'string' => [($field['required'] ?? false) ? 'required' : 'nullable', 'string', 'max:'.($field['max'] ?? 255)],
+            'string' => [
+                ($field['required'] ?? false) ? 'required' : 'nullable', 'string', 'max:'.($field['max'] ?? 255),
+                ...isset($field['regex']) ? ['regex:'.$field['regex']] : [],
+            ],
             'text' => ['nullable', 'string', 'max:'.($field['max'] ?? 1000)],
             'select' => ['required', Rule::in(array_map('strval', array_keys($field['options'])))],
             'time' => ['required', 'date_format:H:i'],

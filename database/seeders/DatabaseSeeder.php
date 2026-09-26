@@ -44,9 +44,13 @@ class DatabaseSeeder extends Seeder
             'tables.floor', 'tables.status', 'tables.layout',
             'tables.index', 'tables.store', 'tables.update', 'tables.destroy', 'tables.restore',
             'areas.index', 'areas.store', 'areas.update', 'areas.destroy', 'areas.restore',
+            'shifts.index', 'shifts.show', 'shifts.report', 'shifts.open', 'shifts.cash', 'shifts.close', 'shifts.reopen',
+            'shifts.staff.store', 'shifts.staff.checkout', 'shifts.staff.destroy',
         ]],
         'Cashier' => ['POS, billing, payments, own shift, cash in/out, customers', [
             'customers.index', 'customers.store', 'customers.update', 'tables.floor', 'tables.status',
+            'shifts.index', 'shifts.show', 'shifts.report', 'shifts.open', 'shifts.cash', 'shifts.close',
+            'shifts.staff.store', 'shifts.staff.checkout', 'shifts.staff.destroy',
         ]],
         'Waiter' => ['Waiter app: tables, dine-in orders, send to kitchen, request bill', ['tables.floor', 'tables.status']],
         'Kitchen' => ['Kitchen display: preparing/ready, confirm raw material used, reprint tickets', []],

@@ -2,6 +2,7 @@
 
 use App\Models\Concerns\AppendOnly;
 use App\Models\Concerns\HasPublicUuid;
+use App\Models\Concerns\NeverDeleted;
 use App\Models\Concerns\Trashable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,12 +23,12 @@ function appModels(): array
         ->all();
 }
 
-it('makes every model trashable or append-only', function () {
+it('makes every model trashable, append-only or never-deleted', function () {
     foreach (appModels() as $class) {
         $traits = class_uses_recursive($class);
 
-        expect(in_array(Trashable::class, $traits, true) || in_array(AppendOnly::class, $traits, true))
-            ->toBeTrue("{$class} must use Trashable (or AppendOnly for ledgers)");
+        expect(in_array(Trashable::class, $traits, true) || in_array(AppendOnly::class, $traits, true) || in_array(NeverDeleted::class, $traits, true))
+            ->toBeTrue("{$class} must use Trashable (AppendOnly for ledgers, NeverDeleted for shifts / orders)");
     }
 });
 

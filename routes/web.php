@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\RawMaterialController;
 use App\Http\Controllers\Admin\ReadyItemController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ShiftController;
 use App\Http\Controllers\Admin\ShiftTypeController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\TrashController;
@@ -108,6 +109,19 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::post('designations/{designation}/restore', [DesignationController::class, 'restore'])->withTrashed()->name('designations.restore');
 
     // Branch setup
+    Route::get('shifts', [ShiftController::class, 'index'])->name('shifts.index');
+    Route::post('shifts', [ShiftController::class, 'open'])->name('shifts.open');
+    Route::get('shifts/{shift}', [ShiftController::class, 'show'])->name('shifts.show');
+    Route::get('shifts/{shift}/report', [ShiftController::class, 'report'])->name('shifts.report');
+    Route::post('shifts/{shift}/cash', [ShiftController::class, 'cash'])->name('shifts.cash');
+    Route::put('shifts/{shift}/close', [ShiftController::class, 'close'])->middleware('throttle:30,1')->name('shifts.close');
+    Route::put('shifts/{shift}/reopen', [ShiftController::class, 'reopen'])->middleware('throttle:30,1')->name('shifts.reopen');
+    Route::post('shifts/{shift}/staff', [ShiftController::class, 'addStaff'])->name('shifts.staff.store');
+    Route::scopeBindings()->group(function () {
+        Route::put('shifts/{shift}/staff/{staff}/check-out', [ShiftController::class, 'checkOut'])->name('shifts.staff.checkout');
+        Route::delete('shifts/{shift}/staff/{staff}', [ShiftController::class, 'removeStaff'])->name('shifts.staff.destroy');
+    });
+
     Route::resource('counters', CashCounterController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::post('counters/{counter}/restore', [CashCounterController::class, 'restore'])->withTrashed()->name('counters.restore');
 

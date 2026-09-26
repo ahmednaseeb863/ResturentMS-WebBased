@@ -407,9 +407,9 @@ Recipe rule: a variant's own recipe replaces the item's recipe if it has one; mo
 | Table | Key columns |
 |---|---|
 | `shift_types` **[B]** | name, start_time, end_time, is_active |
-| `shifts` **[B]** | cash_counter_id, shift_type_id, business_date, status, opened_by, opened_at, opening_cash, closed_by, closed_at, expected_cash, counted_cash, difference, float_left, handed_over_amount, notes, reopened_by, reopened_at |
-| `shift_cash_counts` | shift_id, type (opening/closing), denomination, quantity, amount |
-| `cash_movements` **[B]** | shift_id, business_date, type (cash_in, cash_out, safe_drop, rider_settlement, expense, supplier_payment), amount, reason, rider_id, reference (morph), admin_id |
+| `shifts` **[B]** | number (per branch, shown as SHF-042), cash_counter_id, shift_type_id, business_date, status, opened_by, opened_at, opening_cash, notes, closed_by, closed_at, expected_cash, counted_cash, difference, float_left, handed_over_amount, closing_notes, approved_by (difference over the limit), reopened_by, reopened_at, reopen_count — never trashed; generated unique columns allow one open shift per counter and per cashier |
+| `shift_cash_counts` | shift_id, type (opening/closing), denomination, quantity, amount — closing rows trashed on reopen |
+| `cash_movements` **[B]** | shift_id, business_date (the shift's), type (cash_in, cash_out, safe_drop, rider_settlement, expense, supplier_payment), amount (positive; type gives the direction), reason, rider_id, reference (morph), admin_id — append-only |
 | `shift_employees` | shift_id, employee_id, checked_in_at, checked_out_at |
 
 ### Orders, kitchen & delivery
