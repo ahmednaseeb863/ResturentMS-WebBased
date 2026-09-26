@@ -84,6 +84,11 @@ async function printWithQz(job) {
 // ── Browser print dialog ───────────────────────────────────────────────
 
 function printWithBrowser(job) {
+    return printInFrame(`${job.page}?auto=1`, job.id);
+}
+
+/** Load a print page (it calls print() itself and posts `print-job-done` with `id`) in a hidden frame. */
+function printInFrame(src, id) {
     return new Promise((resolve) => {
         const frame = document.createElement('iframe');
         frame.className = 'print-frame';
@@ -96,15 +101,23 @@ function printWithBrowser(job) {
             resolve();
         };
         const onMessage = (e) => {
-            if (e.origin === window.location.origin && e.data?.type === 'print-job-done' && e.data.id === job.id) finish();
+            if (e.origin === window.location.origin && e.data?.type === 'print-job-done' && e.data.id === id) finish();
         };
         // the dialog may stay open a while; don't block the queue for ever
         const timer = setTimeout(finish, 120000);
 
         window.addEventListener('message', onMessage);
-        frame.src = `${job.page}?auto=1`;
+        frame.src = src;
         document.body.appendChild(frame);
     });
+}
+
+/**
+ * Print a bill / receipt page right here with the browser dialog — used when the counter
+ * has no receipt printer (the server flashes `print: { url }`).
+ */
+export function printPage(url) {
+    return printInFrame(url, 'page');
 }
 
 /** Claim a pending job and print it; reports printed / failed. Resolves false when another screen took it. */

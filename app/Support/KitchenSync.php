@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Actions\CompleteOrder;
 use App\Enums\KitchenStatus;
 use App\Enums\OrderStatus;
 use App\Enums\OrderType;
@@ -60,6 +61,11 @@ class KitchenSync
         if ($target === OrderStatus::Ready) {
             $order->loadMissing('table', 'customer');
             LiveUpdates::bump('orders', $order->branch_id, ['id' => $order->uuid, 'code' => $order->code(), 'label' => $order->label()]);
+        }
+
+        // paid up front: completes now that the kitchen is done
+        if (in_array($target, [OrderStatus::Ready, OrderStatus::Served], true)) {
+            CompleteOrder::ifSettled($order);
         }
     }
 

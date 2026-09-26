@@ -82,6 +82,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
                 'customer' => fn () => $request->session()->get('customer'), // POS quick-add
+                'print' => fn () => $request->session()->get('print'), // bill / receipt page to print in the browser
             ],
         ];
     }

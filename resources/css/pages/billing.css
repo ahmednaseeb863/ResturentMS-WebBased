@@ -1,0 +1,151 @@
+/* Billing (Phase 10): payment, split bill and refund dialogs; paid / due in the POS cart. */
+
+.ui-dialog.pay-dialog {
+  width: 520px;
+}
+
+.pay-due {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pay-due strong {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+.pay-methods {
+  margin-bottom: 12px;
+}
+
+.pay-methods .cash-type-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pay-section {
+  margin-bottom: 12px;
+}
+
+.pay-share {
+  margin-bottom: 8px;
+}
+
+.pay-quick {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.pay-quick .pos-opt {
+  justify-content: center;
+}
+
+.pay-summary {
+  margin-bottom: 8px;
+}
+
+.pay-change span:last-child {
+  font-size: 18px;
+  color: var(--color-accent);
+}
+
+/* split bill */
+.ui-dialog.split-dialog {
+  width: 600px;
+}
+
+.split-guests {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.split-units {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--color-divider);
+}
+
+.split-unit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.split-unit:last-child {
+  border-bottom: 0;
+}
+
+.split-unit-name {
+  min-width: 0;
+  font-size: 12px;
+}
+
+.split-unit-parts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.split-part-btn {
+  min-width: 34px;
+  height: 34px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.split-part-btn.on {
+  font-weight: 700;
+  color: #f2f2f3;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.split-summary {
+  margin-top: 12px;
+}
+
+/* POS cart: paid / due and the parts of a split bill */
+.cart-due span {
+  font-weight: 600;
+}
+
+.cart-splits {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--color-divider);
+}
+
+.cart-split-tools,
+.order-row-tools {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}

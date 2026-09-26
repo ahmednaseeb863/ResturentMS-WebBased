@@ -11,6 +11,7 @@ use App\Enums\OrderType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PosOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\RefundResource;
 use App\Models\Discount;
 use App\Models\Order;
 use App\Models\OrderDiscount;
@@ -117,7 +118,9 @@ class OrderController extends Controller
                     'by' => $c->auto ? 'Auto (recipe)' : $c->confirmedBy?->name,
                     'at' => OrderResource::iso($c->confirmed_at),
                 ])->all(),
+            'refunds' => RefundResource::collection($order->refunds()->with(['bankAccount', 'refundedBy', 'approvedBy', 'shift', 'payment'])->get())->resolve(),
             'discounts' => $order->isOpen() ? PosMenu::discounts() : [],
+            'bankAccounts' => PosMenu::bankAccounts(),
             'rules' => PosMenu::rules(),
         ]);
     }

@@ -66,6 +66,16 @@
                 @endunless
             </dl>
 
+            @if ($transfers)
+                <div class="receipt-rule"></div>
+                <div class="receipt-heading">Bank transfers (not in drawer)</div>
+                <table class="receipt-table">
+                    @foreach ($transfers as $transfer)
+                        <tr><td>{{ $transfer['account'] }} ({{ $transfer['count'] }})</td><td>{{ money($transfer['total']) }}</td></tr>
+                    @endforeach
+                </table>
+            @endif
+
             @if ($counts->isNotEmpty())
                 <div class="receipt-rule"></div>
                 <div class="receipt-heading">Closing count</div>

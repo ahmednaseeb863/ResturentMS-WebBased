@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Actions\SplitBill;
 use App\Enums\OrderType;
 use App\Models\Order;
 use App\Models\OrderDiscount;
@@ -50,7 +51,15 @@ class OrderPricing
             $discount->update(['amount' => $totals['order_discount']]);
         }
 
-        $order->fill(collect($totals)->except(['order_discount', 'line_discounts'])->all())->save();
+        $order->fill(collect($totals)->except(['order_discount', 'line_discounts'])->all());
+        if (! $order->isDraft()) {
+            $order->syncPaymentStatus(); // new items on a paid order → part paid again
+        }
+        $order->save();
+
+        if ($order->split_mode) {
+            SplitBill::afterRepricing($order);
+        }
 
         return $order;
     }

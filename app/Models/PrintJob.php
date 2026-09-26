@@ -41,7 +41,7 @@ class PrintJob extends Model
         return $this->belongsTo(Printer::class)->withTrashed();
     }
 
-    /** The kitchen ticket (KOT) or order item (void slip) being printed. */
+    /** What is printed: kitchen ticket (KOT), order item (void slip), order or bill split (bill / receipt). */
     public function reference(): MorphTo
     {
         return $this->morphTo()->withoutGlobalScopes([TrashScope::class]);

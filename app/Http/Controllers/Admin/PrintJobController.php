@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PrintJobResource;
 use App\Models\Printer;
 use App\Models\PrintJob;
+use App\Support\Printing\BillSlip;
 use App\Support\Printing\KitchenSlip;
 use App\Support\Printing\PrintQueue;
 use Illuminate\Contracts\View\View;
@@ -95,7 +96,9 @@ class PrintJobController extends Controller
                 'paper_width' => $printer->paper_width,
             ],
             'page' => route('print-jobs.show', $job),
-            'escpos' => base64_encode(KitchenSlip::escPos(KitchenSlip::data($job), (int) $printer->paper_width, $job->copies)),
+            'escpos' => base64_encode($job->document_type->isKitchen()
+                ? KitchenSlip::escPos(KitchenSlip::data($job), (int) $printer->paper_width, $job->copies)
+                : BillSlip::escPos(BillSlip::forJob($job), (int) $printer->paper_width, $job->copies)),
         ]);
     }
 
@@ -103,6 +106,17 @@ class PrintJobController extends Controller
     public function show(PrintJob $job): View
     {
         $job->load('printer', 'reference');
+
+        if (! $job->document_type->isKitchen()) {
+            return view('print.bill', [
+                'title' => $job->title,
+                'printer' => $job->printer->name,
+                'slip' => BillSlip::forJob($job),
+                'paper' => $job->printer->paper_width,
+                'auto' => request()->boolean('auto'),
+                'doneId' => $job->uuid,
+            ]);
+        }
 
         return view('print.kitchen', [
             'job' => $job,
@@ -147,7 +161,7 @@ class PrintJobController extends Controller
         }
 
         if (! $job->printer || $job->printer->isTrashed() || ! $job->printer->is_active) {
-            return back()->with('error', "{$job->printer?->name} is not active — pick another printer on the kitchen station and reprint.");
+            return back()->with('error', "{$job->printer?->name} is not active — pick another printer (kitchen station / cash counter) and print again.");
         }
 
         $job->update(['status' => PrintJobStatus::Pending, 'error' => null]);

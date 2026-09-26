@@ -1,4 +1,4 @@
-import { Ban, BadgePercent, Pencil, Trash2, User, Utensils, X } from 'lucide-react';
+import { Ban, BadgePercent, Pencil, Printer, Trash2, User, Utensils, X } from 'lucide-react';
 import { Tag } from '@/components/ui';
 import { cx, money } from '@/lib/format';
 import { lineDetail, lineDiscount, lineGross } from './cartLines';
@@ -7,7 +7,8 @@ import { QtyStepper } from './ItemDialog';
 /**
  * Right side of the POS (pos-react `.cart`): order type and details, the lines already
  * sent (kitchen status, void) and the new ones (qty, edit, discount, remove), the bill,
- * and Hold / Send. On phones it is a bottom sheet (`open`).
+ * and Hold / Send — or, for a placed order with nothing new, Bill / Split / Pay (split
+ * parts are paid one by one). On phones it is a bottom sheet (`open`).
  */
 export default function Cart({
     order,
@@ -38,11 +39,15 @@ export default function Cart({
     onSend,
     onDiscard,
     saveLabel,
+    billing,
 }) {
     const count = sent.reduce((n, l) => n + l.quantity, 0) + lines.reduce((n, l) => n + l.quantity, 0);
     const typeLocked = order && !order.is_draft;
     const firstError = Object.entries(errors).find(([k]) => k !== 'pin')?.[1];
     const hasKitchen = lines.some((l) => l.type !== 'ready_item' || index.get(`${l.type}:${l.id}`)?.kitchen);
+    const placed = order && !order.is_draft;
+    const billMode = placed && lines.length === 0 && !saveLabel; // nothing new: bill / split / pay
+    const due = placed ? Math.max(0, Number(order.due)) : 0;
 
     return (
         <div className={cx('cart', open && 'cart-open')}>
@@ -210,6 +215,45 @@ export default function Cart({
                     <span>Total</span>
                     <span>{money(bill.grand)}</span>
                 </div>
+                {placed && Number(order.paid_total) > 0 && (
+                    <>
+                        <div className="cart-row">
+                            <span>Paid</span>
+                            <span className="mono">{money(order.paid_total)}</span>
+                        </div>
+                        <div className="cart-row cart-due">
+                            <span>Due</span>
+                            <span className="mono">{money(Math.max(0, bill.grand - Number(order.paid_total)))}</span>
+                        </div>
+                    </>
+                )}
+                {placed && lines.length === 0 && order.splits?.length > 0 && (
+                    <div className="cart-splits">
+                        {order.splits.map((s) => (
+                            <div key={s.id} className="cart-row cart-split">
+                                <span>
+                                    {s.label} · <span className="mono">{money(s.amount)}</span>
+                                </span>
+                                <span className="cart-split-tools">
+                                    {billing.canPrint && Number(s.due) > 0 && (
+                                        <button type="button" className="cart-tool" title={`Print ${s.label}’s bill`} aria-label={`Print ${s.label}’s bill`} onClick={() => billing.onPrintBill(s)}>
+                                            <Printer size={13} strokeWidth={1.5} />
+                                        </button>
+                                    )}
+                                    {Number(s.due) > 0 ? (
+                                        billing.canPay && (
+                                            <button type="button" className="text-link" onClick={() => billing.onPay(s)}>
+                                                Pay {money(s.due)}
+                                            </button>
+                                        )
+                                    ) : (
+                                        <span className="tag tag-accent">PAID</span>
+                                    )}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {firstError && <div className="pos-error">{firstError}</div>}
@@ -225,17 +269,40 @@ export default function Cart({
                         Hold
                     </button>
                 )}
-                <button type="button" className="cart-pay" disabled={processing || (lines.length === 0 && !saveLabel)} onClick={onSend}>
-                    {processing
-                        ? 'Saving…'
-                        : saveLabel
-                          ? saveLabel
-                          : !order || order.is_draft
-                          ? `${hasKitchen ? 'Send to Kitchen' : 'Place Order'} · ${money(bill.grand)}`
-                          : lines.length
-                            ? `Send ${lines.length} New · ${money(bill.grand)}`
-                            : 'Add items to send'}
-                </button>
+                {billMode ? (
+                    <>
+                        {billing.canPrint && (
+                            <button type="button" className="cart-hold" disabled={processing} onClick={() => (due > 0 ? billing.onPrintBill(null) : billing.onPrintReceipt())}>
+                                {due > 0 ? 'Bill' : 'Receipt'}
+                            </button>
+                        )}
+                        {billing.canSplit && due > 0 && Number(order.paid_total) === 0 && (
+                            <button type="button" className="cart-hold" disabled={processing} onClick={billing.onSplit}>
+                                {order.splits?.length ? 'Re-split' : 'Split'}
+                            </button>
+                        )}
+                        <button type="button" className="cart-pay" disabled={processing || !billing.canPay || due <= 0} onClick={() => billing.onPay(null)}>
+                            {due > 0 ? `Pay · ${money(due)}` : 'Paid — waiting for the kitchen'}
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        {billing.canPay && lines.length > 0 && (
+                            <button type="button" className="cart-hold" disabled={processing} onClick={billing.onSendPay} title="Send, then take payment">
+                                Send &amp; Pay
+                            </button>
+                        )}
+                        <button type="button" className="cart-pay" disabled={processing || (lines.length === 0 && !saveLabel)} onClick={onSend}>
+                            {processing
+                                ? 'Saving…'
+                                : saveLabel
+                                  ? saveLabel
+                                  : !order || order.is_draft
+                                    ? `${hasKitchen ? 'Send to Kitchen' : 'Place Order'} · ${money(bill.grand)}`
+                                    : `Send ${lines.length} New · ${money(bill.grand)}`}
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );

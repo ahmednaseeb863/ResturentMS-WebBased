@@ -154,3 +154,18 @@
 .kot-voided .kot-item {
   text-decoration: line-through;
 }
+
+/* ── Customer bill / receipt ── */
+.bill-order {
+  margin: 1mm 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.receipt-lines .bill-grand {
+  font-size: 15px;
+}
+
+.bill-bank {
+  margin-bottom: 1.5mm;
+}

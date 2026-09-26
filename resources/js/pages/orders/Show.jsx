@@ -1,16 +1,26 @@
 import { useState } from 'react';
-import { router } from '@inertiajs/react';
-import { Ban, BadgePercent, ChevronLeft, ClipboardList, History, Printer, Scale, ShoppingCart, Ticket, XCircle } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import { Ban, BadgePercent, Banknote, ChevronLeft, ClipboardList, History, Printer, ReceiptText, Scale, ShoppingCart, Split, Ticket, Undo2, XCircle } from 'lucide-react';
 import { Button, CheckItem, Corners, Dialog, Field, FormGrid, Input, PageBody, PageStatus, PageToolbar, Tag, Textarea } from '@/components/ui';
+import OrderPayments from '@/components/billing/OrderPayments';
+import PaymentDialog from '@/components/billing/PaymentDialog';
+import RefundDialog from '@/components/billing/RefundDialog';
+import SplitBillDialog from '@/components/billing/SplitBillDialog';
 import DiscountDialog from '@/components/pos/DiscountDialog';
 import PinDialog from '@/components/orders/PinDialog';
 import VoidDialog from '@/components/orders/VoidDialog';
 import useCan from '@/hooks/useCan';
 import { cx, date, dateTime, money, number } from '@/lib/format';
 
-/** Order detail (pos-react Sales Invoice detail): who / where, the bill, lines, kitchen tickets, history. */
-export default function OrderShow({ order, history, tickets, consumptions, discounts, rules }) {
+/** Order detail (pos-react Sales Invoice detail): who / where, the bill, payments, lines, kitchen tickets, history. */
+export default function OrderShow({ order, history, tickets, consumptions, refunds, discounts, bankAccounts, rules }) {
     const can = useCan();
+    const { context } = usePage().props;
+    const due = Number(order.due);
+    const paid = Number(order.paid_total);
+    const billable = order.is_open && !order.is_draft && due > 0;
+    const canPay = billable && can('orders.payments.store') && Boolean(context.shift);
+    const refundable = order.payments.some((p) => Number(p.refundable) > 0);
     const [dialog, setDialog] = useState(null);
     const [processing, setProcessing] = useState(false);
     const open = order.is_open;
@@ -30,6 +40,14 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
         });
     }
 
+    function printDoc(name, split = null) {
+        router.post(route(name, order.id), { split: split?.id ?? null }, {
+            preserveScroll: true,
+            onStart: () => setProcessing(true),
+            onFinish: () => setProcessing(false),
+        });
+    }
+
     const lines = order.lines;
     const live = lines.filter((l) => !l.voided);
     const orderDiscount = order.discount
@@ -42,21 +60,53 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
             <PageToolbar
                 title={`Order ${order.is_draft ? '(held)' : order.code}`}
                 primary={
-                    open &&
-                    can('pos.index') && (
-                        <Button variant="primary" icon={ShoppingCart} href={route('pos.index', { order: order.id })}>
-                            Open in POS
+                    canPay ? (
+                        <Button variant="primary" icon={Banknote} onClick={() => setDialog({ kind: 'pay', split: null })}>
+                            Take Payment · {money(due)}
                         </Button>
+                    ) : (
+                        open &&
+                        can('pos.index') && (
+                            <Button variant="primary" icon={ShoppingCart} href={route('pos.index', { order: order.id })}>
+                                Open in POS
+                            </Button>
+                        )
                     )
                 }
             >
                 <Tag tone={order.status.tone}>{order.status.label}</Tag>
-                {open && !order.is_draft && can('orders.discount') && (
+                {!order.is_draft && <Tag tone={order.payment_status.tone}>{order.payment_status.label}</Tag>}
+                {canPay && can('pos.index') && (
+                    <Button icon={ShoppingCart} href={route('pos.index', { order: order.id })}>
+                        Open in POS
+                    </Button>
+                )}
+                {billable && can('orders.print.bill') && (
+                    <Button icon={Printer} disabled={processing} onClick={() => printDoc('orders.print.bill')}>
+                        Print Bill
+                    </Button>
+                )}
+                {order.payments.length > 0 && can('orders.print.receipt') && (
+                    <Button icon={ReceiptText} disabled={processing} onClick={() => printDoc('orders.print.receipt')}>
+                        Receipt
+                    </Button>
+                )}
+                {billable && paid === 0 && can('orders.split') && (
+                    <Button icon={Split} onClick={() => setDialog({ kind: 'split' })}>
+                        {order.splits.length ? 'Re-split' : 'Split Bill'}
+                    </Button>
+                )}
+                {refundable && can('orders.payments.refund') && (
+                    <Button variant="danger" icon={Undo2} onClick={() => setDialog({ kind: 'refund' })}>
+                        Refund
+                    </Button>
+                )}
+                {open && !order.is_draft && paid === 0 && can('orders.discount') && (
                     <Button icon={BadgePercent} onClick={() => setDialog({ kind: 'discount' })}>
                         Discount
                     </Button>
                 )}
-                {open && order.type.value === 'dine_in' && Number(order.service_charge_rate) > 0 && can('orders.service-charge') && rules.service_removable && (
+                {open && paid === 0 && order.type.value === 'dine_in' && Number(order.service_charge_rate) > 0 && can('orders.service-charge') && rules.service_removable && (
                     <Button
                         onClick={() =>
                             send(
@@ -70,7 +120,7 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
                         {order.service_charge_removed ? 'Add Service Charge' : 'Remove Service Charge'}
                     </Button>
                 )}
-                {open && !order.is_draft && can('orders.cancel') && (
+                {open && !order.is_draft && paid === 0 && can('orders.cancel') && (
                     <Button variant="danger" icon={XCircle} onClick={() => setDialog({ kind: 'cancel' })}>
                         Cancel Order
                     </Button>
@@ -188,6 +238,18 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
                             <span className="order-grand">{money(order.grand_total)}</span>
                             <span className="pi-card-label">Paid</span>
                             <span className="mono">{money(order.paid_total)}</span>
+                            {Number(order.refunded_total) > 0 && (
+                                <>
+                                    <span className="pi-card-label">Refunded</span>
+                                    <span className="mono order-minus">({money(order.refunded_total)})</span>
+                                </>
+                            )}
+                            {open && !order.is_draft && (
+                                <>
+                                    <span className="pi-card-label">Due</span>
+                                    <span className={cx('mono', due > 0 && 'order-strong')}>{money(due)}</span>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -254,7 +316,7 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
                                         </td>
                                         <td className="mono text-right order-strong">{number(l.line_total)}</td>
                                         <td className="text-right">
-                                            {open && !l.voided && can('orders.items.void') && (
+                                            {open && !l.voided && paid === 0 && can('orders.items.void') && (
                                                 <button type="button" className="cart-tool" title="Void" aria-label={`Void ${l.full_name}`} onClick={() => setDialog({ kind: 'void', line: l })}>
                                                     <Ban size={13} strokeWidth={1.5} />
                                                 </button>
@@ -284,6 +346,15 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
                         </table>
                     </div>
                 )}
+
+                <OrderPayments
+                    order={order}
+                    refunds={refunds}
+                    canPrint={billable && can('orders.print.bill')}
+                    canPay={canPay}
+                    onPrint={(split) => printDoc('orders.print.bill', split)}
+                    onPay={(split) => setDialog({ kind: 'pay', split })}
+                />
 
                 {tickets.length > 0 && (
                     <>
@@ -403,6 +474,9 @@ export default function OrderShow({ order, history, tickets, consumptions, disco
                 </div>
             </div>
 
+            {dialog?.kind === 'pay' && <PaymentDialog order={order} split={dialog.split} bankAccounts={bankAccounts} rules={rules} onClose={close} />}
+            {dialog?.kind === 'split' && <SplitBillDialog order={order} onClose={close} />}
+            {dialog?.kind === 'refund' && <RefundDialog order={order} bankAccounts={bankAccounts} pinRequired={rules.pin_refund} onClose={close} />}
             {dialog?.kind === 'void' && <VoidDialog order={order} line={dialog.line} pinRequired={rules.pin_void} onClose={close} />}
             {dialog?.kind === 'cancel' && (
                 <CancelDialog

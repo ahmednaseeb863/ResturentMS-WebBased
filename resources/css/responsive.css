@@ -690,3 +690,23 @@
     bottom: 96px;
   }
 }
+
+/* Billing dialogs on phones */
+@media (max-width: 639px) {
+  .pay-quick {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pay-methods {
+    grid-template-columns: 1fr;
+  }
+
+  .split-unit {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .split-unit-parts {
+    justify-content: flex-start;
+  }
+}

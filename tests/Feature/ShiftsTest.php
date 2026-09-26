@@ -145,9 +145,10 @@ it('records cash in, cash out and safe drops into the expected cash', function (
         ->has('movements', 3)
         ->where('movements.0.type.label', 'Safe drop')
         ->where('lines.0', ['key' => 'opening', 'label' => 'Opening cash', 'amount' => 5000, 'count' => 0])
-        ->where('lines.1.amount', 2000)
-        ->where('lines.2.amount', -300)
-        ->where('lines.3.amount', -4000));
+        ->where('lines.1', ['key' => 'cash_sales', 'label' => 'Cash sales', 'amount' => 0, 'count' => 0])
+        ->where('lines.2.amount', 2000)
+        ->where('lines.3.amount', -300)
+        ->where('lines.4.amount', -4000));
 
     $movement = CashMovement::query()->where('type', CashMovementType::CashOut)->sole();
     expect($movement->business_date->toDateString())->toBe($shift->business_date->toDateString())

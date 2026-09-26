@@ -5,14 +5,14 @@ import { cx, money } from '@/lib/format';
 import { newKey } from './cartLines';
 
 /** Quantity − n + (big touch buttons). */
-export function QtyStepper({ value, onChange, min = 1 }) {
+export function QtyStepper({ value, onChange, min = 1, max = 999 }) {
     return (
         <div className="pos-qty">
             <button type="button" className="pos-qty-btn" aria-label="Less" disabled={value <= min} onClick={() => onChange(value - 1)}>
                 <Minus size={14} strokeWidth={1.5} />
             </button>
             <span className="pos-qty-value mono">{value}</span>
-            <button type="button" className="pos-qty-btn" aria-label="More" disabled={value >= 999} onClick={() => onChange(value + 1)}>
+            <button type="button" className="pos-qty-btn" aria-label="More" disabled={value >= max} onClick={() => onChange(value + 1)}>
                 <Plus size={14} strokeWidth={1.5} />
             </button>
         </div>

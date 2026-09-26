@@ -51,8 +51,10 @@ class Order extends Model
             'round_off' => 'decimal:2',
             'grand_total' => 'decimal:2',
             'paid_total' => 'decimal:2',
+            'refunded_total' => 'decimal:2',
             'held_items' => 'array',
             'placed_at' => 'datetime',
+            'paid_at' => 'datetime',
             'completed_at' => 'datetime',
             'cancelled_at' => 'datetime',
         ];
@@ -124,6 +126,49 @@ class Order extends Model
     public function delivery(): HasOne
     {
         return $this->hasOne(Delivery::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class)->orderBy('id');
+    }
+
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(Refund::class)->orderBy('id');
+    }
+
+    /** Live parts of a split bill (replaced ones are in the trash). */
+    public function splits(): HasMany
+    {
+        return $this->hasMany(BillSplit::class)->orderBy('number');
+    }
+
+    /** Still to pay: the bill minus the money kept (payments − refunds). */
+    public function due(): float
+    {
+        return max(0, round((float) $this->grand_total - (float) $this->paid_total, 2));
+    }
+
+    /** Payment status from the money kept and refunded (call after paid / refunded / total changes). */
+    public function syncPaymentStatus(): void
+    {
+        $kept = (float) $this->paid_total;
+        $refunded = (float) $this->refunded_total;
+
+        $this->payment_status = match (true) {
+            $kept <= 0 && $refunded > 0 => PaymentStatus::Refunded,
+            $kept <= 0 => PaymentStatus::Unpaid,
+            $refunded > 0 && ! $this->isOpen() => PaymentStatus::PartRefunded,
+            $this->due() <= 0 => PaymentStatus::Paid,
+            default => PaymentStatus::Partial,
+        };
+    }
+
+    /** Placed, still open and not fully paid. */
+    public function canTakePayment(): bool
+    {
+        return $this->isOpen() && ! $this->isDraft() && $this->due() > 0;
     }
 
     public function scopeOpen(Builder $query): void

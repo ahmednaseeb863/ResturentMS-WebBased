@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\BankAccountController;
+use App\Http\Controllers\Admin\BillingController;
 use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\CashCounterController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Admin\KitchenStationController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\ModifierGroupController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PosController;
 use App\Http\Controllers\Admin\PrinterController;
 use App\Http\Controllers\Admin\PrintJobController;
@@ -72,6 +74,15 @@ Route::middleware(['auth:admin', 'permission'])->group(function () {
     Route::put('orders/{order}/discount', [OrderController::class, 'discount'])->middleware('throttle:30,1')->name('orders.discount');
     Route::put('orders/{order}/service-charge', [OrderController::class, 'serviceCharge'])->middleware('throttle:30,1')->name('orders.service-charge');
     Route::put('orders/{order}/items/{item}/void', [OrderController::class, 'void'])->middleware('throttle:30,1')->scopeBindings()->name('orders.items.void');
+
+    // Billing
+    Route::post('orders/{order}/payments', [BillingController::class, 'pay'])->middleware('throttle:60,1')->name('orders.payments.store');
+    Route::put('orders/{order}/split', [BillingController::class, 'split'])->name('orders.split');
+    Route::post('orders/{order}/print/bill', [BillingController::class, 'printBill'])->name('orders.print.bill');
+    Route::post('orders/{order}/print/receipt', [BillingController::class, 'printReceipt'])->name('orders.print.receipt');
+    Route::get('orders/{order}/bill', [BillingController::class, 'page'])->name('orders.bill');
+    Route::post('orders/{order}/payments/{payment}/refund', [BillingController::class, 'refund'])->middleware('throttle:30,1')->scopeBindings()->name('orders.payments.refund');
+    Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
 
     // Kitchen display
     Route::get('kitchen', [KitchenController::class, 'index'])->name('kitchen.index');

@@ -31,6 +31,7 @@ class PosController extends Controller
     public const ORDER_WITH = [
         'table', 'waiter', 'customer', 'createdBy', 'cancelledBy', 'orderDiscount.discount', 'delivery.savedAddress',
         'lines.modifiers', 'lines.children', 'lines.discount', 'lines.station', 'lines.ticket', 'lines.voidedBy',
+        'payments.bankAccount', 'payments.receivedBy', 'payments.shift', 'payments.split', 'splits.payments',
     ];
 
     public function index(Request $request): Response|RedirectResponse
@@ -50,6 +51,7 @@ class PosController extends Controller
             'waiters' => PosMenu::waiters(),
             'discounts' => PosMenu::discounts(),
             'rules' => PosMenu::rules(),
+            'bankAccounts' => PosMenu::bankAccounts(),
             'openOrders' => fn () => OrderResource::collection(
                 Order::query()->open()->with(['table', 'customer'])
                     ->withSum(['lines as live_quantity' => fn ($q) => $q->whereNull('voided_at')], 'quantity')
@@ -65,7 +67,7 @@ class PosController extends Controller
         $this->requireShift($request);
         $order = $save->handle($request, $request->approver());
 
-        return $this->saved($order, $request->action(), true, $save->sent);
+        return $this->saved($order, $request, true, $save->sent);
     }
 
     public function update(PosOrderRequest $request, Order $order, SaveOrder $save): RedirectResponse
@@ -74,7 +76,7 @@ class PosController extends Controller
         $placing = $order->isDraft();
         $order = $save->handle($request, $request->approver());
 
-        return $this->saved($order, $request->action(), $placing, $save->sent);
+        return $this->saved($order, $request, $placing, $save->sent);
     }
 
     /** Throw away a held order (it is kept as cancelled). */
@@ -108,8 +110,9 @@ class PosController extends Controller
         }
     }
 
-    private function saved(Order $order, string $action, bool $placing, array $sent): RedirectResponse
+    private function saved(Order $order, PosOrderRequest $request, bool $placing, array $sent): RedirectResponse
     {
+        $action = $request->action();
         $kitchen = collect($sent)->contains(fn ($item) => $item->kitchen_status !== null);
 
         $message = match ($action) {
@@ -119,6 +122,11 @@ class PosController extends Controller
                 ? "Order {$order->code()} placed".($kitchen ? ' and sent to the kitchen.' : '.')
                 : "New items added to {$order->code()}".($kitchen ? ' and sent to the kitchen.' : '.'),
         };
+
+        // "Send & Pay": stay on the order with the payment dialog open
+        if ($action === 'send' && $request->input('then') === 'pay' && $order->canTakePayment()) {
+            return to_route('pos.index', ['order' => $order->uuid, 'pay' => 1])->with('success', $message);
+        }
 
         return to_route('pos.index')->with('success', $message);
     }

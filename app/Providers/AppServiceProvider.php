@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\BillSplit;
 use App\Models\Deal;
 use App\Models\KitchenTicket;
 use App\Models\MenuItem;
@@ -44,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
             'order' => Order::class,
             'order_item' => OrderItem::class,
             'kitchen_ticket' => KitchenTicket::class,
+            'bill_split' => BillSplit::class,
         ]);
 
         if ($this->app->runningUnitTests()) {

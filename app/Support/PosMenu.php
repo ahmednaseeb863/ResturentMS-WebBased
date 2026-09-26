@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Enums\DesignationType;
 use App\Enums\EmployeeStatus;
+use App\Models\BankAccount;
 use App\Models\Category;
 use App\Models\Deal;
 use App\Models\DealSlot;
@@ -178,6 +179,18 @@ class PosMenu
             'pin_discount_above' => (float) setting('approvals.pin_discount_above'),
             'pin_service_charge' => (bool) setting('approvals.pin_remove_service_charge'),
             'pin_void' => (bool) setting('approvals.pin_void'),
+            'pin_refund' => (bool) setting('approvals.pin_refund'),
+            'cash' => (bool) setting('payments.cash'),
+            'bank_transfer' => (bool) setting('payments.bank_transfer'),
+            'transfer_reference_required' => (bool) setting('payments.transfer_reference_required'),
+            'transfer_proof_required' => (bool) setting('payments.transfer_proof_required'),
         ];
+    }
+
+    /** Bank accounts a transfer can be paid into at this branch. */
+    public static function bankAccounts(): array
+    {
+        return BankAccount::query()->active()->availableAt(app(CurrentBranch::class)->id())->orderBy('bank_name')->get()
+            ->map(fn (BankAccount $b) => ['value' => $b->uuid, 'label' => $b->trashLabel(), 'number' => $b->account_number])->all();
     }
 }

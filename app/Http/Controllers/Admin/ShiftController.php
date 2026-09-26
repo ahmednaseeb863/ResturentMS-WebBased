@@ -110,6 +110,7 @@ class ShiftController extends Controller
         return Inertia::render('shifts/Show', [
             'shift' => (new ShiftResource($shift))->resolve(),
             'lines' => $showCash ? $summary->lines() : [],
+            'transfers' => $summary->transfers(),
             'movements' => CashMovementResource::collection($shift->movements()->with(['admin', 'rider'])->reorder('id', 'desc')->get())->resolve(),
             'counts' => [
                 'opening' => $this->countLines($shift, CashCountType::Opening),
@@ -197,6 +198,7 @@ class ShiftController extends Controller
             'shift' => $shift,
             'kind' => $kind,
             'lines' => $summary->lines(),
+            'transfers' => $summary->transfers(),
             'expected' => $shift->isOpen() ? $summary->expectedCash() : (float) $shift->expected_cash,
             'movements' => $shift->movements()->with('admin')->get(),
             'counts' => $shift->counts()->where('type', CashCountType::Closing)->get(),

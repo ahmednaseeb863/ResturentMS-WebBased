@@ -51,6 +51,7 @@ class PosOrderRequest extends FormRequest
 
         return [
             'action' => ['required', 'in:hold,send,save'],
+            'then' => ['nullable', 'in:pay'],
             'type' => [$this->order() ? 'nullable' : 'required', Rule::in(OrderType::values())],
             'table' => ['nullable', 'uuid'],
             'waiter' => ['nullable', 'uuid'],

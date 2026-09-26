@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
     /** Routes a screen needs to print kitchen tickets / receipts (print agent). */
     private const PRINT_DEVICE = ['print-jobs.pending', 'print-jobs.claim', 'print-jobs.show', 'print-jobs.done', 'print-jobs.failed', 'qz.certificate', 'qz.sign'];
 
+    /** Take payment, split, print bills / receipts, list payments (refunds are the manager's). */
+    private const BILLING = ['orders.payments.store', 'orders.split', 'orders.print.bill', 'orders.print.receipt', 'orders.bill', 'payments.index'];
+
     /**
      * Default roles (PLAN §3). Permissions are listed by route name and grow as
      * modules are built; the super admin can change them from the Roles screen.
@@ -53,13 +56,14 @@ class DatabaseSeeder extends Seeder
             'orders.index', 'orders.show', 'orders.discount', 'orders.service-charge', 'orders.items.void', 'orders.cancel',
             'kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall', 'kitchen.tickets.reprint',
             ...self::PRINT_DEVICE, 'print-jobs.index', 'print-jobs.retry',
+            ...self::BILLING, 'orders.payments.refund', 'settings.branch.payments',
         ]],
         'Cashier' => ['POS, billing, payments, own shift, cash in/out, customers', [
             'customers.index', 'customers.store', 'customers.update', 'tables.floor', 'tables.status',
             'shifts.index', 'shifts.show', 'shifts.report', 'shifts.open', 'shifts.cash', 'shifts.close',
             'shifts.staff.store', 'shifts.staff.checkout', 'shifts.staff.destroy',
             'pos.index', 'pos.orders.store', 'pos.orders.update', 'pos.orders.discard', 'pos.customers.store',
-            'orders.index', 'orders.show', 'kitchen.tickets.reprint', ...self::PRINT_DEVICE,
+            'orders.index', 'orders.show', 'kitchen.tickets.reprint', ...self::PRINT_DEVICE, ...self::BILLING,
         ]],
         'Waiter' => ['Waiter app: tables, dine-in orders, send to kitchen, request bill', ['tables.floor', 'tables.status']],
         'Kitchen' => ['Kitchen display: preparing/ready, confirm raw material used, reprint tickets', [

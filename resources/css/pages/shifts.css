@@ -107,3 +107,8 @@
 .btn-danger:hover { background: var(--color-danger-600); }
 
 
+
+/* bank transfers taken in the shift (not in the drawer) */
+.shift-transfers {
+  margin-top: 10px;
+}

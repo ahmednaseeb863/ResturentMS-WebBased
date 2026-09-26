@@ -247,7 +247,7 @@ function CountTable({ title, lines }) {
 }
 
 /** One shift: drawer, cash in / out, staff, close / reopen, X / Z report. */
-export default function ShiftShow({ shift, lines, movements, counts, staff, staffOptions, movementTypes, denominations, canHandle, canReopen, rules }) {
+export default function ShiftShow({ shift, lines, transfers, movements, counts, staff, staffOptions, movementTypes, denominations, canHandle, canReopen, rules }) {
     const can = useCan();
     const { url } = usePage();
     const open = shift.is_open;
@@ -359,6 +359,19 @@ export default function ShiftShow({ shift, lines, movements, counts, staff, staf
                         </>
                     ) : (
                         <div className="cell-muted shift-panel-empty">Blind close is on — the expected cash is shown after closing.</div>
+                    )}
+                    {transfers.length > 0 && (
+                        <div className="shift-close-summary shift-transfers">
+                            {transfers.map((t) => (
+                                <div key={t.account} className="shift-close-row">
+                                    <span>
+                                        Bank transfers · {t.account}
+                                        <span className="cell-muted"> ({t.count})</span>
+                                    </span>
+                                    <span className="mono">{money(t.total)}</span>
+                                </div>
+                            ))}
+                        </div>
                     )}
                     <dl className="shift-facts">
                         <dt>Opened</dt>

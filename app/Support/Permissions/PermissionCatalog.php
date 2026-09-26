@@ -34,6 +34,16 @@ class PermissionCatalog
                 ],
             ],
             [
+                'title' => 'Billing',
+                'permissions' => [
+                    ['title' => 'Take payments — cash, bank transfer, split payment', 'routes' => ['orders.payments.store']],
+                    ['title' => 'Split bills', 'routes' => ['orders.split']],
+                    ['title' => 'Print bills and receipts', 'routes' => ['orders.print.bill', 'orders.print.receipt', 'orders.bill']],
+                    ['title' => 'Refund payments (and approve refunds with a PIN)', 'routes' => ['orders.payments.refund']],
+                    ['title' => 'View payments & refunds', 'routes' => ['payments.index']],
+                ],
+            ],
+            [
                 'title' => 'Kitchen',
                 'permissions' => [
                     ['title' => 'Kitchen display — start, ready (confirm raw materials), served, recall', 'routes' => ['kitchen.index', 'kitchen.tickets.start', 'kitchen.tickets.ready', 'kitchen.tickets.serve', 'kitchen.tickets.recall']],
@@ -43,7 +53,7 @@ class PermissionCatalog
             [
                 'title' => 'Printing',
                 'permissions' => [
-                    ['title' => 'Print from this device (kitchen tickets, void slips)', 'routes' => ['print-jobs.pending', 'print-jobs.claim', 'print-jobs.show', 'print-jobs.done', 'print-jobs.failed', 'qz.certificate', 'qz.sign']],
+                    ['title' => 'Print from this device (kitchen tickets, void slips, bills, receipts)', 'routes' => ['print-jobs.pending', 'print-jobs.claim', 'print-jobs.show', 'print-jobs.done', 'print-jobs.failed', 'qz.certificate', 'qz.sign']],
                     ['title' => 'View the print queue and print again', 'routes' => ['print-jobs.index', 'print-jobs.retry']],
                 ],
             ],

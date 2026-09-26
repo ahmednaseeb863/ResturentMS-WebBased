@@ -64,6 +64,10 @@ class SettingsRegistry
                         'delivery' => ['label' => 'Delivery', 'type' => 'bool', 'default' => true, 'sub' => 'Customer + rider orders'],
                         'require_customer_for_delivery' => ['label' => 'Require customer for delivery', 'type' => 'bool', 'default' => true],
                         'hold_orders' => ['label' => 'Allow holding orders', 'type' => 'bool', 'default' => true, 'sub' => 'Park an order on the POS and resume it later'],
+                        'table_after_payment' => ['label' => 'Table after the bill is paid', 'type' => 'select', 'default' => 'available', 'options' => [
+                            'available' => 'Available',
+                            'cleaning' => 'Needs cleaning',
+                        ]],
                     ]],
                     ['title' => 'Order Numbering', 'fields' => [
                         'number_prefix' => ['label' => 'Order number prefix', 'type' => 'string', 'default' => null, 'max' => 10, 'sub' => 'Optional, e.g. GUL-'],
@@ -149,8 +153,9 @@ class SettingsRegistry
                         'show_bank_accounts' => ['label' => 'Bank accounts', 'type' => 'bool', 'default' => false, 'sub' => 'Accounts marked "show on receipt"'],
                     ]],
                     ['title' => 'Paper', 'fields' => [
-                        'paper_width' => ['label' => 'Paper width', 'type' => 'select', 'default' => '80', 'options' => ['80' => '80 mm', '58' => '58 mm']],
+                        'paper_width' => ['label' => 'Paper width', 'type' => 'select', 'default' => '80', 'options' => ['80' => '80 mm', '58' => '58 mm'], 'sub' => 'For the browser print page when the counter has no receipt printer'],
                         'copies' => ['label' => 'Copies', 'type' => 'int', 'default' => 1, 'min' => 1, 'max' => 5],
+                        'print_on_payment' => ['label' => 'Print receipt when paid', 'type' => 'bool', 'default' => true, 'sub' => 'When the bill is paid in full'],
                     ]],
                 ],
             ],

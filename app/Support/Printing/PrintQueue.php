@@ -4,10 +4,14 @@ namespace App\Support\Printing;
 
 use App\Enums\PrintDocument;
 use App\Enums\PrintJobStatus;
+use App\Models\Admin;
+use App\Models\BillSplit;
 use App\Models\KitchenTicket;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Printer;
 use App\Models\PrintJob;
+use App\Models\Shift;
 use App\Support\LiveUpdates;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
  * the job; a browser at the counter / kitchen that prints for that printer claims it.
  *   kot      — a kitchen ticket on its station's printer (auto on send, or reprint)
  *   voidSlip — tells the station an item was voided
+ *   bill     — pre-bill / receipt on the receipt printer of the cashier's counter; without
+ *              one the screen prints the bill page itself (browser dialog)
  */
 class PrintQueue
 {
@@ -56,6 +62,34 @@ class PrintQueue
         }
 
         return static::queue($printer, PrintDocument::Void, $item, "VOID {$item->quantity} × {$item->fullName()} · {$ticket->code()}", 1);
+    }
+
+    /**
+     * A pre-bill or receipt of the order (or one part of a split bill). Null when there is no
+     * receipt printer — the caller then prints the page in the browser.
+     */
+    public static function bill(Order $order, PrintDocument $document, ?BillSplit $split = null, bool $reprint = false, ?Admin $admin = null): ?PrintJob
+    {
+        $printer = static::receiptPrinter($order, $admin);
+        if (! $printer) {
+            return null;
+        }
+
+        $title = ($document === PrintDocument::Receipt ? 'Receipt' : 'Bill').' · '.$order->code().($split ? " · {$split->label}" : '').($reprint ? ' (reprint)' : '');
+        $copies = $document === PrintDocument::Receipt && ! $reprint ? (int) setting('receipt.copies', $order->branch_id) : 1;
+
+        return static::queue($printer, $document, $split ?? $order, $title, $copies);
+    }
+
+    /** The receipt printer of the admin's counter, else of the counter the order was paid at. */
+    public static function receiptPrinter(Order $order, ?Admin $admin = null): ?Printer
+    {
+        $admin ??= Auth::guard('admin')->user();
+        $shift = ($admin ? Shift::openFor($admin) : null) ?? $order->shift;
+
+        $printer = $shift?->counter?->receiptPrinter;
+
+        return $printer && ! $printer->isTrashed() && $printer->is_active ? $printer : null;
     }
 
     /** Print a printed / failed job again (a new job, so the history stays). */

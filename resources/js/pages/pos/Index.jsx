@@ -12,6 +12,8 @@ import OpenOrdersDrawer from '@/components/pos/OpenOrdersDrawer';
 import ReadyAlerts from '@/components/pos/ReadyAlerts';
 import TableDialog from '@/components/pos/TableDialog';
 import { fromHeld, lineDiscount, lineGross, newKey, payloadOf, sameLine } from '@/components/pos/cartLines';
+import PaymentDialog from '@/components/billing/PaymentDialog';
+import SplitBillDialog from '@/components/billing/SplitBillDialog';
 import PinDialog from '@/components/orders/PinDialog';
 import VoidDialog from '@/components/orders/VoidDialog';
 import PrintDeviceDialog from '@/components/printing/PrintDeviceDialog';
@@ -63,14 +65,16 @@ function initialState(order, index, discounts, types) {
 }
 
 function PosScreen({ onSaved }) {
-    const { order, items, deals, categories, tables, waiters, discounts, rules, openOrders, printers, context } = usePage().props;
+    const { order, items, deals, categories, tables, waiters, discounts, rules, bankAccounts, openOrders, printers, context } = usePage().props;
+    const { url } = usePage();
     const can = useCan();
     const index = useMemo(() => new Map([...items, ...deals].map((i) => [i.key, i])), [items, deals]);
     const types = rules.types.map((t) => ({ value: t, label: TYPE_LABELS[t] }));
 
     const [start] = useState(() => initialState(order, index, discounts, rules.types));
     const [state, setState] = useState(start);
-    const [dialog, setDialog] = useState(null); // { kind, ... }
+    // "Send & Pay" lands here with ?pay=1
+    const [dialog, setDialog] = useState(() => (order?.due > 0 && !order.is_draft && url.includes('pay=1') ? { kind: 'pay', split: null } : null)); // { kind, ... }
     const [errors, setErrors] = useState({});
     const [processing, setProcessing] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
@@ -148,9 +152,10 @@ function PosScreen({ onSaved }) {
     const removeLine = (key) => set({ lines: state.lines.filter((l) => l.key !== key) });
 
     // ── saving ────────────────────────────────────────────────────────
-    function payload(action, pin) {
+    function payload(action, pin, then) {
         return {
             action,
+            then: then ?? null,
             type: state.type,
             table: state.type === 'dine_in' ? state.table : null,
             waiter: state.type === 'dine_in' ? state.waiter : null,
@@ -168,7 +173,7 @@ function PosScreen({ onSaved }) {
         };
     }
 
-    function save(action, pin) {
+    function save(action, pin, then) {
         const options = {
             preserveScroll: true,
             preserveState: true,
@@ -176,7 +181,7 @@ function PosScreen({ onSaved }) {
             onFinish: () => setProcessing(false),
             onError: (errs) => {
                 setErrors(errs);
-                if (errs.pin) setDialog({ kind: 'pin', action, message: pinMessage(), error: pin ? errs.pin : null });
+                if (errs.pin) setDialog({ kind: 'pin', action, then, message: pinMessage(), error: pin ? errs.pin : null });
                 else setCartOpen(true);
             },
             onSuccess: () => {
@@ -184,7 +189,7 @@ function PosScreen({ onSaved }) {
                 onSaved();
             },
         };
-        const data = payload(action, pin);
+        const data = payload(action, pin, then);
         if (order) router.put(route('pos.orders.update', order.id), data, options);
         else router.post(route('pos.orders.store'), data, options);
     }
@@ -195,6 +200,15 @@ function PosScreen({ onSaved }) {
             state.removeService && !order?.service_charge_removed && 'removing the service charge',
         ].filter(Boolean);
         return `A manager must approve ${what.join(' and ') || 'this'} with their PIN.`;
+    }
+
+    function printDoc(name, split) {
+        router.post(route(name, order.id), { split: split?.id ?? null }, {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => setProcessing(true),
+            onFinish: () => setProcessing(false),
+        });
     }
 
     const detailsDirty =
@@ -293,6 +307,16 @@ function PosScreen({ onSaved }) {
                     onSend={() => save(placed && state.lines.length === 0 ? 'save' : 'send')}
                     onDiscard={() => setDialog({ kind: 'discard' })}
                     saveLabel={placed && state.lines.length === 0 && detailsDirty ? 'Save Changes' : null}
+                    billing={{
+                        canPay: can('orders.payments.store') && Boolean(context.shift),
+                        canSplit: can('orders.split'),
+                        canPrint: can('orders.print.bill'),
+                        onPay: (split) => setDialog({ kind: 'pay', split }),
+                        onSplit: () => setDialog({ kind: 'split' }),
+                        onPrintBill: (split) => printDoc('orders.print.bill', split),
+                        onPrintReceipt: () => printDoc('orders.print.receipt', null),
+                        onSendPay: () => save('send', null, 'pay'),
+                    }}
                 />
             </div>
 
@@ -359,9 +383,13 @@ function PosScreen({ onSaved }) {
                 />
             )}
             {dialog?.kind === 'pin' && (
-                <PinDialog message={dialog.message} error={dialog.error} processing={processing} onSubmit={(pin) => save(dialog.action, pin)} onClose={close} />
+                <PinDialog message={dialog.message} error={dialog.error} processing={processing} onSubmit={(pin) => save(dialog.action, pin, dialog.then)} onClose={close} />
             )}
             {dialog?.kind === 'void' && <VoidDialog order={order} line={dialog.line} pinRequired={rules.pin_void} onClose={close} />}
+            {dialog?.kind === 'pay' && order && (
+                <PaymentDialog order={order} split={dialog.split} bankAccounts={bankAccounts} rules={rules} returnTo="pos" onClose={close} />
+            )}
+            {dialog?.kind === 'split' && order && <SplitBillDialog order={order} onClose={close} />}
             {dialog?.kind === 'orders' && <OpenOrdersDrawer orders={openOrders} currentId={order?.id} onClose={close} />}
             {dialog?.kind === 'printing' && <PrintDeviceDialog printers={printers ?? []} onClose={close} />}
             <ConfirmDialog

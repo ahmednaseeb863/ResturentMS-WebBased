@@ -40,6 +40,7 @@ import {
     Settings,
     ArchiveRestore,
     ScrollText,
+    Wallet,
 } from 'lucide-react';
 
 /**
@@ -97,6 +98,7 @@ export const navSections = [
         section: 'Operations',
         items: [
             { label: 'Shifts', route: 'shifts.index', icon: Clock },
+            { label: 'Payments', route: 'payments.index', icon: Wallet },
             { label: 'Deliveries', route: 'deliveries.index', icon: Truck },
             { label: 'Reservations', route: 'reservations.index', icon: CalendarDays },
             { label: 'Expenses', route: 'expenses.index', icon: Receipt },

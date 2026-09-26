@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\BillSplit;
 use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 
 /**
@@ -29,7 +31,7 @@ class OrderResource extends Resource
             'status' => ['value' => $order->status->value, 'label' => $order->status->label(), 'tone' => $order->status->tone()],
             'is_open' => $order->isOpen(),
             'is_draft' => $order->isDraft(),
-            'payment_status' => ['value' => $order->payment_status->value, 'label' => $order->payment_status->label()],
+            'payment_status' => ['value' => $order->payment_status->value, 'label' => $order->payment_status->label(), 'tone' => $order->payment_status->tone()],
             'business_date' => $order->business_date->toDateString(),
             'table' => $this->ref('table'),
             'waiter' => $this->ref('waiter'),
@@ -55,6 +57,11 @@ class OrderResource extends Resource
             'round_off' => $order->round_off,
             'grand_total' => $order->grand_total,
             'paid_total' => $order->paid_total,
+            'refunded_total' => $order->refunded_total,
+            'due' => $order->isDraft() ? (float) $order->grand_total : $order->due(),
+            'paid_at' => static::iso($order->paid_at),
+            'completed_at' => static::iso($order->completed_at),
+            'split_mode' => $order->split_mode,
             'discount' => $discount ? [
                 'preset' => $discount->discount?->uuid,
                 'name' => $discount->name,
@@ -77,6 +84,29 @@ class OrderResource extends Resource
             $this->mergeWhen($order->relationLoaded('lines'), fn () => [
                 'lines' => OrderItemResource::collection($order->lines)->resolve(),
             ]),
+            $this->mergeWhen($order->relationLoaded('payments'), fn () => [
+                'payments' => PaymentResource::collection($order->payments)->resolve(),
+            ]),
+            $this->mergeWhen($order->relationLoaded('splits'), fn () => [
+                'splits' => $this->splits($order),
+            ]),
         ];
+    }
+
+    /** Parts of a split bill; items by the line uuids. Load `splits.payments`. */
+    private function splits(Order $order): array
+    {
+        $ids = $order->splits->flatMap(fn (BillSplit $s) => array_column($s->items ?? [], 'order_item_id'))->unique();
+        $uuids = $ids->isEmpty() ? collect() : OrderItem::query()->whereIn('id', $ids)->pluck('uuid', 'id');
+
+        return $order->splits->map(fn (BillSplit $s) => [
+            'id' => $s->uuid,
+            'number' => $s->number,
+            'label' => $s->label,
+            'amount' => $s->amount,
+            'paid' => $s->paid(),
+            'due' => $s->due(),
+            'items' => array_map(fn (array $row) => ['item' => $uuids[$row['order_item_id']] ?? null, 'quantity' => $row['quantity']], $s->items ?? []),
+        ])->all();
     }
 }
